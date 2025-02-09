@@ -169,9 +169,12 @@
 }
 
 .alternative-btn {
+    margin-left: 8px;
+
     font-weight: 500;
-    color: var(--color-brand);
     text-decoration: inherit;
+
+    color: var(--color-brand);
 }
 
 .alternative-btn:hover {

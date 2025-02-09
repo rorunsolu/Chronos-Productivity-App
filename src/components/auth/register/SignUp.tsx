@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase/firebase";
+import { Link } from "react-router-dom";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -33,7 +34,7 @@ const SignUp = () => {
 
       <div className="header">
         <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-        <h1 className="title display-xs-semibold">Sign Up</h1>
+        <h1 className="title display-xs-semibold">Sign up</h1>
       </div>
 
       <div className="content">
@@ -62,7 +63,9 @@ const SignUp = () => {
       </div>
 
       <div className="footer">
-        <p className="text-sm-regular">Already have an account? <a className="alternative-btn" href="/signin">Sign in</a></p>
+        <p className="text-sm-regular">Already have an account?
+          <Link to="/signin" className="alternative-btn">Sign in</Link>
+        </p>
       </div>
 
     </div>
