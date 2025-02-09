@@ -21,3 +21,16 @@
 #root {
   margin: 0 auto;
 }
+
+body {
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+
+  margin: 0;
+
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+
+  background: #ffffff;
+}

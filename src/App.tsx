@@ -1,15 +1,18 @@
-import SignIn from "./components/auth/login/SignIn.tsx";
-import SignUp from "./components/auth/register/SignUp.tsx";
-import './App.css'
+import SignIn from "./components/auth/login/SignIn";
+import SignUp from "./components/auth/register/SignUp";
+import { Routes, Route } from "react-router-dom";
+import './App.css';
 
 function App() {
 
   return (
     <>
-    <SignIn />
-    <SignUp />
+      <Routes>
+        <Route path="/" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

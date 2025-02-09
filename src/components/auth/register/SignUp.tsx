@@ -1,8 +1,33 @@
-import { registerWithEmail } from '../../../../src/firebase';
-
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../firebase/firebase";
 import "./SignUp.css";
 
 const SignUp = () => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const registerWithEmail = async (email: string, password: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
+    } catch (error) {
+      setError("Could not register user. Please try again.");
+      console.error("Could not register user", error);
+    }
+  };
+
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+    registerWithEmail(email, password);
+  };
+
   return (
     <div className="container">
 
@@ -16,41 +41,28 @@ const SignUp = () => {
         <div className="form">
 
           <div className="input-group">
-            <label className="label" htmlFor="first-name">First Name</label>
-            <input className="input" type="text" placeholder="First Name" />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="last-name">Last Name</label>
-            <input type="text" placeholder="Last Name" />
-          </div>
-
-          <div className="input-group">
             <label htmlFor="email">Email</label>
-            <input type="email" placeholder="Email" />
+            <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
           </div>
 
           <div className="input-group">
             <label htmlFor="password">Password</label>
-            <input type="password" placeholder="Password" />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="confirm-password">Confirm Password</label>
-            <input type="password" placeholder="Confirm Password" />
+            <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
           </div>
 
         </div>
 
+        {error && <p className="error">{error}</p>}
+
         <div className="actions">
-          <button className="signup-btn">Sign up</button>
+          <button className="signup-btn" type="submit" onClick={handleSignUp}>Sign up</button>
           <button className="social-btn"> <img src="/google-logo.svg" alt="Google Logo" /> Sign up with Google</button>
         </div>
 
       </div>
 
       <div className="footer">
-        <p className="text-sm-regular">Already have an account? <a href="/signin">Sign in</a></p>
+        <p className="text-sm-regular">Already have an account? <a className="alternative-btn" href="/signin">Sign in</a></p>
       </div>
 
     </div>
