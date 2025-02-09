@@ -1,5 +1,6 @@
-import React from "react";
-import "../styles/forms/SignUp.css";
+import { registerWithEmail } from '../../../../src/firebase';
+
+import "./SignUp.css";
 
 const SignUp = () => {
   return (
@@ -7,7 +8,7 @@ const SignUp = () => {
 
       <div className="header">
         <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-        <h1 className="title">Sign Up</h1>
+        <h1 className="title display-xs-semibold">Sign Up</h1>
       </div>
 
       <div className="content">
@@ -15,8 +16,8 @@ const SignUp = () => {
         <div className="form">
 
           <div className="input-group">
-            <label htmlFor="first-name">First Name</label>
-            <input type="text" placeholder="First Name" />
+            <label className="label" htmlFor="first-name">First Name</label>
+            <input className="input" type="text" placeholder="First Name" />
           </div>
 
           <div className="input-group">
@@ -35,6 +36,7 @@ const SignUp = () => {
           </div>
 
           <div className="input-group">
+            <label htmlFor="confirm-password">Confirm Password</label>
             <input type="password" placeholder="Confirm Password" />
           </div>
 
@@ -42,13 +44,13 @@ const SignUp = () => {
 
         <div className="actions">
           <button className="signup-btn">Sign up</button>
-          <button className="google-btn"> <img src="/google-logo.svg" alt="Google Logo" /> Sign up with Google</button>
+          <button className="social-btn"> <img src="/google-logo.svg" alt="Google Logo" /> Sign up with Google</button>
         </div>
 
       </div>
 
       <div className="footer">
-        <p>Already have an account? <a href="/signin">Sign in</a></p>
+        <p className="text-sm-regular">Already have an account? <a href="/signin">Sign in</a></p>
       </div>
 
     </div>

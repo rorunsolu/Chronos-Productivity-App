@@ -1,5 +1,5 @@
-import SignIn from "./components/SignIn.jsx";
-import SignUp from "./components/SignUp.jsx";
+import SignIn from "./components/auth/login/SignIn.tsx";
+import SignUp from "./components/auth/register/SignUp.tsx";
 import './App.css'
 
 function App() {

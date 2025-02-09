@@ -1,5 +1,4 @@
-import React from 'react';
-import "../styles/forms/SignUp.css";
+import "./SignIn.css";
 
 const SignIn = () => {
   return (
