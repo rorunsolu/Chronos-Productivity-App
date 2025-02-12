@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,36 +11,34 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-console.log("auth key", import.meta.env.VITE_FIREBASE_API_KEY);
-console.log(import.meta.env);
-
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const loginAnonymously = async () => {
-    try {
-        const userCredential = await signInAnonymously(auth);
-        console.log("User logged in anonymously:", userCredential.user);
-    } catch (error) {
-        console.error("Could not login user", error);
-    }
-};
+// const loginWithEmail = async (email: string, password: string) => {
+//     try {
+//         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+//         return userCredential.user;
+//     } catch (error) {
+//         console.error("Could not login user", error);
+//     }
+// };
 
-const checkIfUserIsStillLoggedIn = () => {
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            console.log("User is signed in:", user.uid);
-        } else {
-            console.log("User is signed out");
-        }
-    });
-};
+const checkIfUserIsStillLoggedIn = () =>
+    onAuthStateChanged(auth, user =>
+        console.log(user ? `User is signed in: ${user.uid}` : "User is signed out")
+    );
 
-const logOut = async () => {
-    await signOut(auth);
-};
+// const loginAnonymously = async () => {
+//     try {
+//         const userCredential = await signInAnonymously(auth);
+//         console.log("User logged in anonymously:", userCredential.user);
+//     } catch (error) {
+//         console.error("Could not login user", error);
+//     }
+// };
 
 checkIfUserIsStillLoggedIn();
 
-export { app, db, auth, loginAnonymously, checkIfUserIsStillLoggedIn, logOut };
+export { app, db, auth, checkIfUserIsStillLoggedIn };

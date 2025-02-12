@@ -16,7 +16,7 @@ const Dashboard = () => {
 
     return (
         <div className="container">
-            <h1 className="dashboard__title">{user?.displayName}'s Dashboard</h1>
+            <h1 className="dashboard__title">Welcome to your Chronos Dashboard</h1>
         </div>
     );
 };
