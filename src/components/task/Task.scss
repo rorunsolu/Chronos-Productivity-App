@@ -1,0 +1,38 @@
+.task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 24px;
+
+    border-radius: 8px;
+    border: 1px #d5d7da solid;
+
+    //  background: #0c0e12;
+
+    &__content {
+        display: inline-flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    &__checkbox {
+        cursor: pointer;
+    }
+
+    &__text {
+        color: #22262f;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    &__actions {
+        display: inline-flex;
+        gap: 12px;
+    }
+}
+
+.task--completed {
+    background: #5f5e5e;
+}

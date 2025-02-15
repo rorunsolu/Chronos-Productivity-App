@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { UserAuth } from '../../contexts/authContext/AuthContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./SignUp.css";
+import "./SignUp.scss";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -45,53 +45,52 @@ const SignUp = () => {
 
   return (
 
-    <div className="signup-page">
+    <div className="section">
 
-      <div className="container">
+      <div className="signuppage">
 
-        <div className="header">
-          <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-          <h1 className="title display-xs-semibold">Sign up</h1>
+        <div className="signuppage__header">
+          <img className="signuppage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
+          <h1 className="signuppage__title display-xs-semibold">Sign up</h1>
         </div>
 
-        <div className="content">
+        <div className="signuppage__content">
 
-          <div className="form">
+          <div className="signuppage__form">
 
-            <div className="input-group">
+            <div className="signuppage__input-group">
               <label htmlFor="email">Email</label>
               <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
             </div>
 
-            <div className="input-group">
+            <div className="signuppage__input-group">
               <label htmlFor="password">Password</label>
               <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
             </div>
 
           </div>
 
-          {error && <p className="error">{error}</p>}
+          {error && <p className="signuppage__error">{error}</p>}
 
-          <div className="actions">
-            <button className="signup-btn" type="submit" onClick={handleEmailSignUp}>Sign up</button>
-            <button className="social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignUp} /> Sign up with Google</button>
+          <div className="signuppage__actions">
+            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignUp}>Sign up</button>
+            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignUp} /> Sign up with Google</button>
           </div>
 
         </div>
 
-        <div className="footer">
-          <p className="text-sm-regular">Already have an account?
-            <Link to="/signin" className="alternative-btn">Sign in</Link>
+        <div className="signuppage__footer">
+          <p className="signuppage__footer-text text-sm-regular">Already have an account?
+            <Link to="/signin" className="signuppage__footer-btn">Sign in</Link>
           </p>
-          <p className="text-sm-regular">Don't want to sign in?
-            <Link to="/" className="alternative-btn">Go back to home</Link>
+          <p className="signuppage__footer-text text-sm-regular">Don't want to sign in?
+            <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
           </p>
         </div>
 
       </div>
 
     </div>
-
 
   );
 };

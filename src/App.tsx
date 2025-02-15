@@ -3,10 +3,11 @@ import SignUp from "./pages/register/SignUp";
 import Home from "./pages/home/Home";
 import Navbar from "./components/navbar/Navbar";
 import Dashboard from "./pages/dashboard/Dashboard";
+import TaskPage from "./pages/tasks/TaskPage";
 import Protected from "./components/auth/Protected";
+import { AuthContextProvider } from "./contexts/authContext/AuthContext";
 import { Routes, Route } from "react-router-dom";
 import './App.css';
-import { AuthContextProvider } from "./contexts/authContext/AuthContext";
 
 function App() {
 
@@ -21,6 +22,11 @@ function App() {
           <Route path="/dashboard" element={
             <Protected>
               <Dashboard />
+            </Protected>}
+          />
+          <Route path="/tasks" element={
+            <Protected>
+              <TaskPage />
             </Protected>}
           />
         </Routes>

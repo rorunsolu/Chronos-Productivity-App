@@ -1,14 +1,15 @@
-// import { Link } from "react-router-dom";
-import "./Home.css";
-import "../../components/button/Button.css";
+import "./Home.scss";
 
 const Home = () => {
   return (
-    <div className="container">
+    <div className="section">
 
-      <div className="actions">
-        <div className="actions-primary">
-          <button className="social-btn" type="button">Start without an account</button>
+      <div className="homepage">
+
+        <div className="homepage__actions">
+          <div className="homepage__actions-primary">
+            <button className="homepage__social-btn" type="button">Start without an account</button>
+          </div>
         </div>
 
       </div>

@@ -11,24 +11,22 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+
 const app = initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+export const db = getFirestore(app);
 const auth = getAuth(app);
-
-// const loginWithEmail = async (email: string, password: string) => {
-//     try {
-//         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-//         return userCredential.user;
-//     } catch (error) {
-//         console.error("Could not login user", error);
-//     }
-// };
 
 const checkIfUserIsStillLoggedIn = () =>
     onAuthStateChanged(auth, user =>
         console.log(user ? `User is signed in: ${user.uid}` : "User is signed out")
     );
+
+checkIfUserIsStillLoggedIn();
+
+console.log("Firestore DB:", db);
+
+export { app, auth, checkIfUserIsStillLoggedIn };
 
 // const loginAnonymously = async () => {
 //     try {
@@ -38,7 +36,3 @@ const checkIfUserIsStillLoggedIn = () =>
 //         console.error("Could not login user", error);
 //     }
 // };
-
-checkIfUserIsStillLoggedIn();
-
-export { app, db, auth, checkIfUserIsStillLoggedIn };

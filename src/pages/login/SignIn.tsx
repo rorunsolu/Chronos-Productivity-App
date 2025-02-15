@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { UserAuth } from '../../contexts/authContext/AuthContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./SignIn.css";
+import "./SignIn.scss";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -44,45 +44,49 @@ const SignIn = () => {
   }, [user, navigate]);
 
   return (
-    <div className="container">
+    <div className="section">
 
-      <div className="header">
-        <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-        <h1 className="title display-xs-semibold">Sign in</h1>
-      </div>
+      <div className="signuppage">
 
-      <div className="content">
+        <div className="signuppage__header">
+          <img className="signuppage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
+          <h1 className="signuppage__title display-xs-semibold">Sign up</h1>
+        </div>
 
-        <div className="form">
+        <div className="signuppage__content">
 
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+          <div className="signuppage__form">
+
+            <div className="signuppage__input-group">
+              <label htmlFor="email">Email</label>
+              <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+            </div>
+
+            <div className="signuppage__input-group">
+              <label htmlFor="password">Password</label>
+              <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+            </div>
+
           </div>
 
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          {error && <p className="signuppage__error">{error}</p>}
+
+          <div className="signuppage__actions">
+            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignIn}>Sign in</button>
+            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignIn} /> Sign in with Google</button>
           </div>
 
         </div>
 
-        {error && <p className="error">{error}</p>}
-
-        <div className="actions">
-          <button className="signup-btn" type="submit" onClick={handleEmailSignIn}>Sign in</button>
-          <button className="social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignIn} />Sign in with Google</button>
+        <div className="signuppage__footer">
+          <p className="signuppage__footer-text text-sm-regular">Don't have an account?
+            <Link to="/signin" className="signuppage__footer-btn">Sign up</Link>
+          </p>
+          <p className="signuppage__footer-text text-sm-regular">Don't want to sign up?
+            <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
+          </p>
         </div>
 
-      </div>
-
-      <div className="footer">
-        <p className="text-sm-regular">Don't have an account?
-          <Link to="/SignUp" className="alternative-btn">Sign up</Link>
-        </p>
-        <p className="text-sm-regular">Don't want to sign up?
-          <Link to="/" className="alternative-btn">Go back to home</Link>
-        </p>
       </div>
 
     </div>

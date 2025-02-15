@@ -1,4 +1,4 @@
-import './Navbar.css';
+import "./Navbar.scss";
 import { Link } from 'react-router-dom';
 import { UserAuth } from '../../contexts/authContext/AuthContext';
 
@@ -20,6 +20,15 @@ const Navbar = () => {
                 <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
                 <span className="navbar__brand">Chronos</span>
             </div>
+
+            <ul className="navbar__menu">
+                <li className="navbar__item navbar__button">
+                    <Link to="/dashboard">Dashboard</Link>
+                </li>
+                <li className="navbar__item navbar__button">
+                    <Link to="/tasks">Tasks</Link>
+                </li>
+            </ul>
 
             {user ?
 
