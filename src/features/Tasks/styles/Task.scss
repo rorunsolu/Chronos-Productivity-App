@@ -1,0 +1,132 @@
+.task {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 8px;
+    border: var(--primary-border);
+
+    height: 56px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow);
+
+    &__info {
+        display: flex;
+        gap: 12px;
+
+        margin-right: auto;
+        padding: 16px 24px;
+
+        &-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            border-radius: 6px;
+            border: var(--primary-border);
+            padding: 2px 6px;
+
+            height: 24px;
+
+            box-shadow: var(--shadow);
+
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            path {
+                stroke-width: 2;
+                stroke: #414651;
+            }
+        }
+
+        &-text {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 18px;
+            word-wrap: break-word;
+
+            color: #414651;
+        }
+
+        &-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 100%;
+
+            color: #22dfb6;
+        }
+    }
+
+    &__content {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        width: 200px;
+
+        padding: 16px 24px;
+
+        overflow: hidden;
+
+        &-item {
+            padding: 2px 6px;
+
+            height: 24px;
+        }
+
+        &-text {
+            text-align: left;
+
+            height: 20px;
+
+            overflow-y: hidden;
+
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            word-wrap: break-word;
+
+            color: #181d27;
+        }
+    }
+
+    &__checkbox {
+        cursor: pointer;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 12px;
+
+        height: 56px;
+
+        padding: 16px 24px;
+
+        &-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 24px;
+            height: 24px;
+
+            cursor: pointer;
+
+            stroke: #85888e;
+
+            &:hover path {
+                stroke-width: 2;
+                stroke: #414651;
+            }
+        }
+    }
+}
+
+.task--completed {
+    background: hsl(0, 0%, 95%);
+}

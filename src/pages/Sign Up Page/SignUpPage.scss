@@ -1,4 +1,4 @@
-.signinpage {
+.signuppage {
     min-width: 400px;
 
     &__header {
@@ -50,13 +50,13 @@
         }
 
         input {
-            display: inline-flex;
+            display: flex;
             justify-content: flex-start;
             align-items: center;
             gap: 8px;
 
             border-radius: 8px;
-            border: 1px #d5d7da solid;
+            border: var(--primary-border);
 
             padding-left: 14px;
             padding-right: 14px;
@@ -67,8 +67,8 @@
             height: 100%;
 
             color: #181d27;
-            background: white;
-            box-shadow: 0px 1px 2px rgba(10, 12.67, 18, 0.05);
+            background: var(--main-bg);
+            box-shadow: var(--shadow);
             background: #0c0e12;
         }
 
@@ -78,7 +78,7 @@
 
         input::placeholder {
             font-size: 16px;
-            font-family: Inter;
+
             font-weight: 400;
             line-height: 24px;
             word-wrap: break-word;
@@ -101,7 +101,7 @@
     }
 
     &__signup-btn {
-        display: inline-flex;
+        display: flex;
         justify-content: center;
         align-items: center;
         gap: 6px;
@@ -115,7 +115,7 @@
         padding-bottom: 10px;
 
         background: var(--color-brand);
-        box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+        box-shadow: var(--shadow);
 
         border-radius: 8px;
         border: 2px white solid;
@@ -123,7 +123,7 @@
 
         color: white;
         font-size: 16px;
-        font-family: Inter;
+
         font-weight: 600;
         line-height: 24px;
         word-wrap: break-word;
@@ -140,19 +140,19 @@
         padding-right: 16px;
         padding-top: 10px;
         padding-bottom: 10px;
-        background: white;
-        box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+        background: var(--main-bg);
+        box-shadow: var(--shadow);
         border-radius: 8px;
         overflow: hidden;
-        border: 1px #d5d7da solid;
+        border: var(--primary-border);
         justify-content: center;
         align-items: center;
         gap: 12px;
-        display: inline-flex;
+        display: flex;
 
         color: #414651;
         font-size: 16px;
-        font-family: Inter;
+
         font-weight: 600;
         line-height: 24px;
         word-wrap: break-word;

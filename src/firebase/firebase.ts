@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,22 +11,19 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-
-const app = initializeApp(firebaseConfig);
-
+export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-const auth = getAuth(app);
-
-const checkIfUserIsStillLoggedIn = () =>
-    onAuthStateChanged(auth, user =>
-        console.log(user ? `User is signed in: ${user.uid}` : "User is signed out")
-    );
-
-checkIfUserIsStillLoggedIn();
+export const auth = getAuth(app);
 
 console.log("Firestore DB:", db);
 
-export { app, auth, checkIfUserIsStillLoggedIn };
+// const checkIfUserIsStillLoggedIn = () =>
+//     onAuthStateChanged(auth, user =>
+//         console.log(user ? `User is signed in: ${user.uid}` : "User is signed out")
+//     );
+
+// checkIfUserIsStillLoggedIn();
+
 
 // const loginAnonymously = async () => {
 //     try {

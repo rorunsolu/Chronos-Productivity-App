@@ -14,43 +14,39 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar">
+        <>
+            {user ? null : (
+                <nav className="navbar">
 
-            <div className="navbar__logo">
-                <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-                <span className="navbar__brand">Chronos</span>
-            </div>
+                    <div className="navbar__inner">
 
-            <ul className="navbar__menu">
-                <li className="navbar__item navbar__button">
-                    <Link to="/dashboard">Dashboard</Link>
-                </li>
-                <li className="navbar__item navbar__button">
-                    <Link to="/tasks">Tasks</Link>
-                </li>
-            </ul>
+                        <div className="navbar__content">
 
-            {user ?
+                            <div className="navbar__logo">
+                                <img className="logo" src="/chronos-logo.svg" alt="Chronos Logo" />
+                                <span className="navbar__brand">Chronos</span>
+                            </div>
 
-                <div className="navbar__actions">
-                    <button className="navbar__button navbar__button--signin" onClick={handleSignOut}>Log out</button>
-                </div>
+                        </div>
 
-                :
+                        <div className="navbar__actions">
 
-                <div className="navbar__actions">
+                            <Link to="/SignIn">
+                                <button className="navbar__actions-btn">Sign in</button>
+                            </Link>
 
-                    <Link to="/SignIn">
-                        <button className="navbar__button navbar__button--signin">Sign in</button>
-                    </Link>
-                    <Link to="/SignUp">
-                        <button className="navbar__button navbar__button--signup">Sign up</button>
-                    </Link>
+                            <Link to="/SignUp">
+                                <button className="navbar__actions-btn">Sign up</button>
+                            </Link>
 
-                </div>
-            }
+                        </div>
 
-        </nav>
+
+                    </div>
+
+                </nav>
+            )}
+        </>
     );
 };
 

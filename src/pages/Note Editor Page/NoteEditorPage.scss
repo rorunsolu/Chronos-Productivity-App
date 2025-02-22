@@ -1,0 +1,75 @@
+.note-editor {
+    /* show a centered full page of text before scrolling */
+
+    &__header {
+        height: 75px;
+        gap: 4px;
+        display: flex;
+        justify-content: center;
+    }
+
+    &__textarea {
+        width: 50%;
+        height: 80vh;
+        display: block;
+        margin: 0 auto;
+
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        padding: 0 50px;
+        resize: none;
+    }
+
+    &__loaing-animation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row-reverse;
+        gap: 0.5rem;
+
+        &::after {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid #3a0808;
+            border-top-color: rgb(250, 0, 0);
+            animation: spin 0.5s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.date {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.media {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.media button {
+    background-color: #e57373;
+    border: none;
+    color: #fff;
+    padding: 7px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.media button:hover {
+    background-color: #ef5350;
+}

@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UserAuth } from '../../contexts/authContext/AuthContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./SignUp.scss";
+import "./SignInPage.scss";
 
-const SignUp = () => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const { googleSignIn, emailSignUp, user } = UserAuth();
+  const { googleSignIn, emailSignIn, user } = UserAuth();
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
 
@@ -21,7 +21,7 @@ const SignUp = () => {
     }
   };
 
-  const handleEmailSignUp = async (event) => {
+  const handleEmailSignIn = async (event) => {
 
     event.preventDefault();
     if (!email || !password) {
@@ -30,10 +30,10 @@ const SignUp = () => {
     }
 
     try {
-      await emailSignUp(email, password);
+      await emailSignIn(email, password);
     } catch (error) {
       console.log(error);
-      setError("Failed to sign up. Please check your credentials.");
+      setError("Failed to sign in. Please check your credentials.");
     }
   };
 
@@ -44,7 +44,6 @@ const SignUp = () => {
   }, [user, navigate]);
 
   return (
-
     <div className="section">
 
       <div className="signuppage">
@@ -73,17 +72,17 @@ const SignUp = () => {
           {error && <p className="signuppage__error">{error}</p>}
 
           <div className="signuppage__actions">
-            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignUp}>Sign up</button>
-            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignUp} /> Sign up with Google</button>
+            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignIn}>Sign in</button>
+            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignIn} /> Sign in with Google</button>
           </div>
 
         </div>
 
         <div className="signuppage__footer">
-          <p className="signuppage__footer-text text-sm-regular">Already have an account?
-            <Link to="/signin" className="signuppage__footer-btn">Sign in</Link>
+          <p className="signuppage__footer-text text-sm-regular">Don't have an account?
+            <Link to="/signin" className="signuppage__footer-btn">Sign up</Link>
           </p>
-          <p className="signuppage__footer-text text-sm-regular">Don't want to sign in?
+          <p className="signuppage__footer-text text-sm-regular">Don't want to sign up?
             <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
           </p>
         </div>
@@ -91,8 +90,7 @@ const SignUp = () => {
       </div>
 
     </div>
-
   );
 };
 
-export default SignUp;
+export default SignIn;
