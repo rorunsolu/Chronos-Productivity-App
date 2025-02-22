@@ -9,6 +9,9 @@
     }
   ],
   "compilerOptions": {
+    "outDir": "./dist", // Set output directory to avoid conflicts
+    "composite": true, 
+    "noEmit": false,
     "types": [
       "vite/client"
     ],
@@ -16,7 +19,7 @@
     "jsx": "react",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "include": [
     "src"
