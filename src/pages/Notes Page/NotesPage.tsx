@@ -2,28 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { UseNotes } from '../../features/Notes/context/NoteContext';
+import Modal from 'react-modal';
 import './NotesPage.scss';
 import '../../App.css';
 import '../../features/Notes/styles/Note.scss';
 
 const NotesPage = () => {
 
+    // New method for creating notes with modal
     const { notes, fetchNotes, createNote, deleteNote } = UseNotes();
-    const [title, setTitle] = useState("");
-    //const [content, setContent] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const [noteTitle, setNoteTitle] = useState("");
+    const [noteContent, setNoteContent] = useState("");
     const navigate = useNavigate();
+
+    const handleCreateNote = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        createNote(noteTitle, noteContent);
+        setNoteTitle("");
+        setNoteContent("");
+        // if i put noteContent before noteTitle it would make the text in the noteContent field the title of the note which is not what I want is it
+    };
 
     useEffect(() => {
         fetchNotes();
     }, [fetchNotes]);
 
-    const handleCreateNote = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        console.log("Creating note...");
-        //createNote(title, content);
-        createNote(title);
-        setTitle("");
-    };
+    // Old method b4 modal for creating notes
+    //const { notes, fetchNotes, createNote, deleteNote } = UseNotes();
+    //const [title, setTitle] = useState("");
+    //const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     fetchNotes();
+    // }, [fetchNotes]);
+
+    // const handleCreateNote = async (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+
+    //     createNote(title);
+    //     setTitle("");
+    // };
 
     return (
         <div className="section">
@@ -37,10 +57,10 @@ const NotesPage = () => {
                 <div className="notespage__inputs">
 
                     <form className="notespage__form" onSubmit={handleCreateNote}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        <input className="notespage__form-input" value={title} onChange={(event) => setTitle(event.target.value)} type="text" placeholder="Add notes" />
+                        </svg> */}
+                        {/* <input className="notespage__form-input" value={title} onChange={(event) => setTitle(event.target.value)} type="text" placeholder="Add notes" /> */}
                     </form>
 
                     <form className="notespage__form">
@@ -56,7 +76,56 @@ const NotesPage = () => {
                         </svg>
                     </button>
 
+                    <button className="notespage__filter-button" onClick={openModal}>
+                        New note
+                    </button>
+
                 </div>
+
+
+                <Modal
+                    isOpen={isModalOpen}
+                    onRequestClose={() => setIsModalOpen(false)}
+                    contentLabel="Create a new note"
+                    className="modal"
+                    overlayClassName="modal-overlay">
+
+                    <p className="modal__title">Create note</p>
+
+                    <form className="modal__form" onSubmit={handleCreateNote}>
+
+                        <input
+                            className="modal__input"
+                            onChange={(e) => setNoteTitle(e.target.value)}
+                            value={noteTitle}
+                            type="text"
+                            placeholder="Title"
+                        />
+
+                        <textarea
+                            className="modal__textarea"
+                            onChange={(e) => setNoteContent(e.target.value)}
+                            value={noteContent}
+                            placeholder="Content"
+                        />
+
+                        <button className="modal__button" disabled={!noteTitle || !noteContent} type="submit">
+                            Create note
+                        </button>
+
+                        <button
+                            className="modal__button"
+                            onClick={() => setIsModalOpen(false)}
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+
+                    </form>
+
+
+
+                </Modal>
 
                 <>
 
@@ -101,25 +170,14 @@ const NotesPage = () => {
                                 </div>
 
                                 <div className="note__content">
-
                                     <p className="note__content-title line-clamp-1">{note.title}</p>
-
                                     <p className="note__content-description line-clamp-3">{note.content}</p>
-
                                 </div>
 
                                 <div className="note__tasks">
 
                                     <div className="note__tasks-item">
-                                        <div className="note__tasks-checkbox note__tasks-checkbox--checked">
-                                            <i className="ri-check-line"></i>
-                                        </div>
                                         <p className="note__tasks-title">Cultivate the immortal dao</p>
-                                    </div>
-
-                                    <div className="note__tasks-item">
-                                        <div className="note__tasks-checkbox"></div>
-                                        <p className="note__tasks-title">Get a job</p>
                                     </div>
 
                                 </div>

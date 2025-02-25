@@ -9,14 +9,17 @@ import { set } from 'date-fns';
 const NoteEditorPage = () => {
     const { id } = useParams<{ id: string; }>(); // Get the notebook id from the URL
     const [note, setNote] = useState<Notedata>(); // State to store the content of a new note
-    const [input, setInput] = useState(""); // State to store the content of a new note
+    const [noteContent, setNoteContent] = useState(""); // State to store the content of a new note
+    const [noteTitle, setNoteTitle] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
         const fetchNote = async () => {
 
-            if (!id) return;
+            if (!id) {
+              return;
+            }
 
             const note = doc(db, "notes", id);
             const noteSnapshot = await getDoc(note);
@@ -28,18 +31,22 @@ const NoteEditorPage = () => {
             }
 
             const noteObjectData = noteSnapshot.data();
-            setInput(noteObjectData.content);
+            setNoteContent(noteObjectData.content);
+            setNoteTitle(noteObjectData.title);
             setNote(noteObjectData as Notedata);
             setIsLoading(false);
         };
+        fetchNote();
     }, [id]);
 
-    const updateNoteInFirebase = async (newContent: string) => {
+    const updateNoteInFirebase = async (newTitle: string, newContent: string) => {
         try {
-            if (!id) return;
+            if (!id) {
+                return;
+            }
 
             const note = doc(db, "notes", id);
-            await setDoc(note, { content: newContent }, { merge: true }); // merge: true will only update the content field
+            await setDoc(note, { title: newTitle, content: newContent }, { merge: true }); // merge: true will only update the content field
 
         } catch (error) {
             console.error("Error updating note:", error);
@@ -51,32 +58,40 @@ const NoteEditorPage = () => {
 
     useEffect(() => {
         console.log("checking if note has changed, finna wait 1 second before updating in firebase");
-        if (input === note?.content) return;
+        if (noteTitle === note?.title && noteContent === note?.content) {
+            return; // returns if the BOTH the title and content havent changed
+        }
 
         setIsLoading(true);
         const getData = setTimeout(() => {
             console.log("updating note in firebase");
-            updateNoteInFirebase(input);
+            updateNoteInFirebase(noteTitle, noteContent);
         }, 1000);
         return () => clearTimeout(getData);
-    }, [input, note?.content]);
+    }, [noteTitle, noteContent, note?.title, note?.content]);
 
     return (
-        <div className="note-editor">
+        <form className="note-editor">
             <div className="note-editor__header">
-                {!isLoading && <h1 className="note-editor__title">{note?.title ?? "Notes"}</h1>}
+                <input
+                    className="note-editor__title"
+                    value={noteTitle}
+                    onChange={(e) => setNoteTitle(e.target.value)}
+                />
+
                 {isLoading && <div className="note-editor__loading-animation">
                     <p>Saving...</p>
                 </div>}
             </div>
+
             <textarea className="note-editor__textarea"
+                value={noteContent}
+                onChange={(event) => setNoteContent(event.target.value)}
                 // need to add rich text functionality
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                placeholder="What's on your mind?"
             />
-        </div>
-    );
+        </form>
+    );//! USE MIXIONS IN SCSS TO SAVE SPACE RAHHHHH
 };
 
 export default NoteEditorPage;
+
