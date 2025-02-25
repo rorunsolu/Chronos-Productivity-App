@@ -7,8 +7,12 @@ import { db } from "../../../firebase/firebase";
 export interface taskData {
     id: string;
     title: string;
-    label?: string; // the ? means label is optional
+    label?: string; // optional
     completion: boolean;
+    content?: string; // optional
+    project?: string;
+    status?: string;
+    // dueDate?: Date;
     createdAt: Timestamp;
 }
 
@@ -16,9 +20,10 @@ interface tasksContextType {
     tasks: taskData[];
     fetchTasks: () => void;
     deleteTask: (id: string) => void;
-    createTask: (title: string) => void;
+    createTask: (title: string, content: string) => void;
 
     toggleTaskCompletion: (id: string) => void;
+    // updateTaskDueDate: (id: string, dueDate: Date) => void;
 }
 
 const taskContext = createContext<tasksContextType | undefined>(undefined);
@@ -44,15 +49,19 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
         const taskList = taskSnapshot.docs.map((doc) => ({
             id: doc.id,
             title: doc.data().title,
+            content: doc.data().content,
             label: doc.data().label,
+            project: doc.data().project,
             completion: doc.data().completion,
+            status: doc.data().status,
+            // dueDate: doc.data().dueDate,
             createdAt: doc.data().createdAt
         }));
 
         setTasks(taskList.sort((a, b) => b.createdAt - a.createdAt));
     };
 
-    const createTask = async (title: string) => {
+    const createTask = async (title: string, content: string) => {
         //if (!auth.currentUser) return;
 
         const newDate = Timestamp.fromDate(new Date());
@@ -60,9 +69,13 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
         try {
             const docRef = await addDoc(collection(db, "tasks"), {
                 title,
+                content,
                 createdAt: newDate,
-                label: "", // Assuming label is an empty string initially
-                completion: false // Set initial completion state to false
+                label: "",
+                project: "",
+                status: "",
+                // dueDate: new Date(),
+                completion: false
                 //userId: auth.currentUser.uid
             });
 
@@ -70,9 +83,13 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
                 {
                     id: docRef.id,
                     title,
+                    content,
                     createdAt: newDate,
-                    label: "", // Assuming label is an empty string initially
-                    completion: false // Set initial completion state to false
+                    label: "",
+                    project: "",
+                    status: "",
+                    // dueDate: new Date(),
+                    completion: false
                 }, ...tasks
             ]);
 
@@ -100,9 +117,24 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
         }
     };
 
+    // const updateTaskDueDate = async (id: string, dueDate: Date) => {
+    //     try {
+    //         const dueTimestamp = Timestamp.fromDate(dueDate);
+    //         await updateDoc(doc(db, "tasks", id), {
+    //             dueDate: dueTimestamp
+    //         });
+    //         setTasks(tasks.map(task => task.id === id ? { ...task, dueDate } : task));
+    //     } catch (error) {
+    //         console.error("Error updating task due date:", error);
+    //     }
+    // };
+
     return (
         <taskContext.Provider value={{ tasks, fetchTasks, createTask, deleteTask, toggleTaskCompletion }}>
             {children}
         </taskContext.Provider>
+        // <taskContext.Provider value={{ tasks, fetchTasks, createTask, deleteTask, toggleTaskCompletion, updateTaskDueDate }}>
+        //     {children}
+        // </taskContext.Provider>
     );
 };

@@ -1,27 +1,31 @@
-import React, { useEffect, useState } from 'react';
-//import { format } from 'date-fns';
+import Modal from "react-modal";
+import React, { useCallback, useEffect, useState } from "react";
+import TaskPageSection from "../../features/Tasks/components/TaskPageSection";
 import { taskData, UseTasks } from "../../features/Tasks/context/TaskContext";
-import './TaskPage.scss';
-import '../../App.css';
-import '../../features/Tasks/styles/Task.scss';
+import "./TaskPage.scss";
+import "../../App.css";
+import "../../features/Tasks/styles/Task.scss";
 
 const TaskPage = () => {
 
     const { tasks, fetchTasks, createTask, deleteTask, toggleTaskCompletion } = UseTasks();
-    const [title, setTitle] = useState("");
+    const [taskTitle, setTaskTitle] = useState("");
+    const [taskContent, setTaskContent] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
 
     useEffect(() => {
         fetchTasks();
     }, [fetchTasks]);
 
-    const handlecreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handlecreateTask = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Creating task...");
-        createTask(title);
-        setTitle("");
+        createTask(taskTitle, taskContent);
+        setTaskTitle("");
+        setTaskContent("");
     };
 
-    const completionToggle = async (task: taskData) => {
+    const completionToggle = (task: taskData) => {
         toggleTaskCompletion(task.id);
     };
 
@@ -40,10 +44,10 @@ const TaskPage = () => {
                 <div className="taskpage__inputs">
 
                     <form className="taskpage__form" onSubmit={handlecreateTask}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
-                        <input className="taskpage__form-input" value={title} onChange={(event) => setTitle(event.target.value)} type="text" placeholder="Add task" />
+                        <input className="taskpage__form-input" value={title} onChange={(event) => setTitle(event.target.value)} type="text" placeholder="Add task" /> */}
                     </form>
 
                     <form className="taskpage__form">
@@ -59,77 +63,60 @@ const TaskPage = () => {
                         </svg>
                     </button>
 
+                    <button className="taskpage__filter-button" type="submit" onClick={openModal}>
+                        Create Task
+                    </button>
+
                 </div>
 
+                <Modal
+                    isOpen={isModalOpen}
+                    onRequestClose={() => setIsModalOpen(false)}
+                    contentLabel="Create a new task"
+                    className="modal"
+                    overlayClassName="modal-overlay">
+
+                    <p className="modal__title">Create a task</p>
+
+                    <form className="modal__form" onSubmit={handlecreateTask}>
+
+                        <input
+                            className="modal__input"
+                            onChange={(e) => setTaskTitle(e.target.value)}
+                            value={taskTitle}
+                            type="text"
+                            placeholder="Title"
+                        />
+
+                        <textarea
+                            className="modal__textarea"
+                            onChange={(e) => setTaskContent(e.target.value)}
+                            value={taskContent}
+                            placeholder="Content"
+                        />
+
+                        <button className="modal__button" disabled={!taskTitle || !taskContent} type="submit">
+                            Create Task
+                        </button>
+
+                        <button
+                            className="modal__button"
+                            onClick={() => setIsModalOpen(false)}
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+
+                    </form>
+
+
+
+                </Modal>
+
                 <div className="taskpage__content">
-
-                    <ul className="taskpage__task-list">
-
-                        {tasks.map((task) => (
-                            <li key={task.id} className={`task ${task.completion ? "task--completed" : ""}`}>
-
-                                <div className="task__content">
-
-                                    <div className="task__content-item">
-                                        <input
-                                            onChange={() => completionToggle(task)}
-                                            className="task__checkbox"
-                                            type="checkbox"
-                                            checked={task.completion}
-                                        />
-                                    </div>
-
-                                    <div className="task__content-item">
-                                        <p onClick={() => completionToggle(task)} className="task__content-text">{task.title}</p>
-                                    </div>
-
-                                </div>
-
-                                <div className="task__info">
-
-                                    <div className="task__info-item">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                                        </svg>
-
-                                        <p className="task__info-text">Project</p>
-                                    </div>
-
-                                    {task.label ? (
-                                        <div className="task__info-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                                            </svg>
-
-                                            <p className="task__info-text">{task.label}</p>
-                                        </div>
-                                    ) : null}
-
-                                    <div className="task__info-item">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg>
-                                        <p className="task__info-text">Due Date</p>
-                                    </div>
-
-                                </div>
-
-                                <div className="task__actions">
-
-                                    <button className="task__actions-btn" onClick={(event) => { event.stopPropagation(); deleteTask(task.id); }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                        </svg>
-
-                                    </button>
-
-                                </div>
-
-                            </li>
-                        ))}
-
-                    </ul>
-
+                    <TaskPageSection title="Todo" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
+                    <TaskPageSection title="Doing" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
+                    <TaskPageSection title="Done" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
                 </div>
 
             </div>
@@ -140,4 +127,3 @@ const TaskPage = () => {
 };
 
 export default TaskPage;
-
