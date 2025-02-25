@@ -4,8 +4,7 @@ import { db } from "../../../firebase/firebase";
 // import { query, where } from 'firebase/firestore';
 // import { auth } from "../../../firebase/firebase";
 
-
-export interface Notedata {
+export interface noteData {
     id: string;
     title: string;
     content: string;
@@ -13,11 +12,11 @@ export interface Notedata {
 }
 
 interface NotesContextType {
-    notes: Notedata[];
+    notes: noteData[];
     fetchNotes: () => void;
     deleteNote: (id: string) => void;
-    createNote: (title: string) => void;
-    //createNote: (title: string, content: string) => void;
+    createNote: (title: string, content: string) => void;
+
     //updateNote: (id: string, title: string, content: string) => void;
 }
 
@@ -32,7 +31,7 @@ export const UseNotes = () => {
 };
 
 export const NoteProvider = ({ children }: { children: ReactNode; }) => {
-    const [notes, setNotes] = useState<Notedata[]>([]);
+    const [notes, setNotes] = useState<noteData[]>([]);
 
     const fetchNotes = async () => {
         // Go back and add the auth match check so that a user can only see notes associated with their own account (unique id)
@@ -51,8 +50,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
         setNotes(noteList.sort((a, b) => b.createdAt - a.createdAt));
     };
 
-    // const createNote = async (title: string, content: string) => {
-    const createNote = async (title: string) => {
+    const createNote = async (title: string, content: string) => {
         //if (!auth.currentUser) return;
 
         const newDate = Timestamp.fromDate(new Date());
@@ -60,7 +58,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
         try {
             const docRef = await addDoc(collection(db, "notes"), {
                 title,
-                content: "",
+                content,
                 createdAt: newDate,
                 //userId: auth.currentUser.uid
             });
@@ -69,7 +67,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
                 {
                     id: docRef.id,
                     title,
-                    content: "",
+                    content,
                     createdAt: newDate
                 }, ...notes
             ]);
