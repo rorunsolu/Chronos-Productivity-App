@@ -1,0 +1,103 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    //background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal p {
+    margin-top: 0;
+}
+
+.modal button {
+    margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .modal {
+        width: 70%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .modal {
+        width: 50%;
+    }
+}
+
+.modal {
+    position: relative;
+
+    border: var(--primary-border);
+    border-radius: 8px;
+    padding: 20px;
+
+    max-width: 500px;
+
+    background: white;
+    box-shadow: var(--shadow);
+
+    &__title {
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &:focus {
+            border: 1px #a0d3bb solid;
+        }
+    }
+
+    &__input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__input,
+    &__textarea,
+    select {
+        border: var(--primary-border);
+        border-radius: 6px;
+        padding: 5px 10px;
+
+        box-shadow: var(--shadow);
+
+        &:focus {
+            border: 1px black solid;
+            outline: none;
+        }
+    }
+
+    &__button-wrapper {
+        display: flex;
+        gap: 10px;
+    }
+
+    &__button {
+        border: var(--primary-border);
+        border-radius: 8px;
+        padding: 5px 10px;
+
+        width: 100%;
+
+        box-shadow: var(--shadow);
+
+        transition: 0.2s ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            background: #fafafa;
+        }
+    }
+}
