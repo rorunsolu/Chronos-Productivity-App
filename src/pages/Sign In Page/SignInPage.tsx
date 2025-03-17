@@ -44,48 +44,40 @@ const SignIn = () => {
   }, [user, navigate]);
 
   return (
-    <div className="section">
+    <div className="flex w-full h-full justify-center items-center mt-16">
 
       <div className="signuppage">
 
-        <div className="signuppage__header">
-          <img className="signuppage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-          <h1 className="signuppage__title display-xs-semibold">Sign up</h1>
-        </div>
+        <form className="login-form">
 
-        <div className="signuppage__content">
-
-          <div className="signuppage__form">
-
-            <div className="signuppage__input-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-            </div>
-
-            <div className="signuppage__input-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
-            </div>
-
+          <div className="login-form__header">
+            <h2 className="login-form__title">Login</h2>
+            <p className="login-form__subtitle">Enter your email below to login to your account</p>
           </div>
 
-          {error && <p className="signuppage__error">{error}</p>}
-
-          <div className="signuppage__actions">
-            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignIn}>Sign in</button>
-            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignIn} /> Sign in with Google</button>
+          <div className="login-form__group">
+            <label htmlFor="email">Email</label>
+            <input type="email" placeholder="m@example.com" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <a href="#" className="login-form__forgot">Forgot your email?</a>
           </div>
 
-        </div>
+          <div className="login-form__group">
+            <label htmlFor="password">Password</label>
+            <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+            <a href="#" className="login-form__forgot">Forgot your password?</a>
+          </div>
 
-        <div className="signuppage__footer">
-          <p className="signuppage__footer-text text-sm-regular">Don't have an account?
-            <Link to="/signin" className="signuppage__footer-btn">Sign up</Link>
-          </p>
-          <p className="signuppage__footer-text text-sm-regular">Don't want to sign up?
-            <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
-          </p>
-        </div>
+          <div className="login-form__buttons">
+            <button className="login-form__button" type="submit" onClick={handleEmailSignIn}>Login</button>
+            <button className="login-form__google" type="button" onClick={handleGoogleSignIn}>Login with Google</button>
+          </div>
+
+          <p className="login-form__signup">Don't have an account?<Link to="/signup">Sign up</Link></p>
+          <p className="login-form__signup">Don't want to create an account?<Link to="/">Go back to home</Link></p>
+
+        </form>
+
+        {error && <p className="signuppage__error">{error}</p>}
 
       </div>
 

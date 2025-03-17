@@ -1,187 +1,199 @@
-import "./DashboardPage.scss";
-import '../../App.css';
-import { UserAuth } from "../../contexts/authContext/AuthContext";
-import { useEffect } from "react";
+import { Layers, Search } from "lucide-react";
+import { ListTodo } from "lucide-react";
+import { NotebookTabs } from "lucide-react";
+import { LayoutList } from 'lucide-react';
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UseNotes } from "@/features/Notes/context/NoteContext";
+import { UseProjects } from "@/features/Projects/context/ProjectContext";
+import { UseTasks } from "@/features/Tasks/context/TaskContext";
+import "./DashboardPage.scss";
+import "../../App.css";
+import NoteCard from "@/features/Notes/Note Card/NoteCard";
+import "@/components/Creation Modal/CreationModal.scss";
+import ProjectCard from '@/features/Projects/Project Card/ProjectCard';
+import TaskCard from "@/features/Tasks/Task Card/TaskCard";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Timestamp } from 'firebase/firestore';
+
 
 const Dashboard = () => {
-    const navigate = useNavigate();
 
-    const { user } = UserAuth();
+   const navigate = useNavigate();
 
-    useEffect(() => {
-        if (user === null) {
-            navigate("/");
-        }
-    }, [user, navigate]);
+   const { projects, fetchProjects } = UseProjects();
+   const { tasks, fetchTasks } = UseTasks();
+   const { notes, fetchNotes } = UseNotes();
+   const { user } = UserAuth();
+   const [searchQuery, setSearchQuery] = useState("");
 
-    return (
-        <div className="section">
+   interface Task {
+      createdAt: Timestamp;
+   }
 
-            <div className="dashboard">
+   const uncompletedTasks = tasks.filter(task => !task.completion);
 
-                <div className="dashboard__header">
-                    <h1 className="dashboard__title">Dashboard</h1>
-                </div>
+   const getTasksCreatedEachDay = (tasks: Task[]) => {
+      const tasksByDay = tasks.reduce((acc, task) => {
+         const taskDate = task.createdAt.toDate(); // Convert Timestamp to Date
+         const day = taskDate.toLocaleDateString(); // Get date in 'MM/DD/YYYY' format
 
-                <div className="dashboard__content">
+         if (!acc[day]) {
+            acc[day] = 0;
+         }
+         acc[day]++;
+         return acc;
+      }, {} as Record<string, number>);
 
-                    <div className="dashboard__top">
+      return Object.entries(tasksByDay).map(([day, count]) => ({
+         day,
+         count,
+      }));
+   };
 
-                        <span className="dashboard__section-header">Most used categories</span>
+   const tasksCreatedEachDay = getTasksCreatedEachDay(tasks);
 
-                        <div className="dashboard__folders">
+   const chartData = tasksCreatedEachDay.map(day => ({
+      name: day.day,
+      tasks: day.count,
+   }));
 
-                            <div className="dashboard__folder">
-                                <div className="dashboard__folder-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 2.4578C14.053 2.16035 13.0452 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 10.2847 21.5681 8.67022 20.8071 7.25945M17 5.75H17.005M10.5001 21.8883L10.5002 19.6849C10.5002 19.5656 10.5429 19.4502 10.6205 19.3596L13.1063 16.4594C13.3106 16.2211 13.2473 15.8556 12.9748 15.6999L10.1185 14.0677C10.0409 14.0234 9.97663 13.9591 9.93234 13.8814L8.07046 10.6186C7.97356 10.4488 7.78657 10.3511 7.59183 10.3684L2.06418 10.8607M21 6C21 8.20914 19 10 17 12C15 10 13 8.20914 13 6C13 3.79086 14.7909 2 17 2C19.2091 2 21 3.79086 21 6ZM17.25 5.75C17.25 5.88807 17.1381 6 17 6C16.8619 6 16.75 5.88807 16.75 5.75C16.75 5.61193 16.8619 5.5 17 5.5C17.1381 5.5 17.25 5.61193 17.25 5.75Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                                <p className="dashboard__folder-name line-clamp-1">Travel</p>
-                            </div>
+   useEffect(() => {
+      fetchProjects();
+      fetchTasks();
+      fetchNotes();
+   }, [fetchProjects, fetchTasks, fetchNotes]);
 
-                            <div className="dashboard__folder">
-                                <div className="dashboard__folder-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 2.4578C14.053 2.16035 13.0452 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 10.2847 21.5681 8.67022 20.8071 7.25945M17 5.75H17.005M10.5001 21.8883L10.5002 19.6849C10.5002 19.5656 10.5429 19.4502 10.6205 19.3596L13.1063 16.4594C13.3106 16.2211 13.2473 15.8556 12.9748 15.6999L10.1185 14.0677C10.0409 14.0234 9.97663 13.9591 9.93234 13.8814L8.07046 10.6186C7.97356 10.4488 7.78657 10.3511 7.59183 10.3684L2.06418 10.8607M21 6C21 8.20914 19 10 17 12C15 10 13 8.20914 13 6C13 3.79086 14.7909 2 17 2C19.2091 2 21 3.79086 21 6ZM17.25 5.75C17.25 5.88807 17.1381 6 17 6C16.8619 6 16.75 5.88807 16.75 5.75C16.75 5.61193 16.8619 5.5 17 5.5C17.1381 5.5 17.25 5.61193 17.25 5.75Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                                <p className="dashboard__folder-name line-clamp-1">Finance</p>
-                            </div>
+   const summaryData = [
+      { icon: <Layers />, title: 'Projects', value: projects.length },
+      { icon: <NotebookTabs />, title: 'Notes created', value: notes.length },
+      { icon: <ListTodo />, title: 'Tasks', value: tasks.length },
+      { icon: <LayoutList />, title: 'Unfinished tasks', value: uncompletedTasks.length },
+   ];
 
-                            <div className="dashboard__folder">
-                                <div className="dashboard__folder-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 2.4578C14.053 2.16035 13.0452 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 10.2847 21.5681 8.67022 20.8071 7.25945M17 5.75H17.005M10.5001 21.8883L10.5002 19.6849C10.5002 19.5656 10.5429 19.4502 10.6205 19.3596L13.1063 16.4594C13.3106 16.2211 13.2473 15.8556 12.9748 15.6999L10.1185 14.0677C10.0409 14.0234 9.97663 13.9591 9.93234 13.8814L8.07046 10.6186C7.97356 10.4488 7.78657 10.3511 7.59183 10.3684L2.06418 10.8607M21 6C21 8.20914 19 10 17 12C15 10 13 8.20914 13 6C13 3.79086 14.7909 2 17 2C19.2091 2 21 3.79086 21 6ZM17.25 5.75C17.25 5.88807 17.1381 6 17 6C16.8619 6 16.75 5.88807 16.75 5.75C16.75 5.61193 16.8619 5.5 17 5.5C17.1381 5.5 17.25 5.61193 17.25 5.75Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                                <p className="dashboard__folder-name line-clamp-1">Folder name</p>
-                            </div>
+   return (
+      <div className="flex w-full h-full justify-center items-center mt-16">
+         <div className="dashboard">
 
-                            <div className="dashboard__folder">
-                                <div className="dashboard__folder-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 2.4578C14.053 2.16035 13.0452 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 10.2847 21.5681 8.67022 20.8071 7.25945M17 5.75H17.005M10.5001 21.8883L10.5002 19.6849C10.5002 19.5656 10.5429 19.4502 10.6205 19.3596L13.1063 16.4594C13.3106 16.2211 13.2473 15.8556 12.9748 15.6999L10.1185 14.0677C10.0409 14.0234 9.97663 13.9591 9.93234 13.8814L8.07046 10.6186C7.97356 10.4488 7.78657 10.3511 7.59183 10.3684L2.06418 10.8607M21 6C21 8.20914 19 10 17 12C15 10 13 8.20914 13 6C13 3.79086 14.7909 2 17 2C19.2091 2 21 3.79086 21 6ZM17.25 5.75C17.25 5.88807 17.1381 6 17 6C16.8619 6 16.75 5.88807 16.75 5.75C16.75 5.61193 16.8619 5.5 17 5.5C17.1381 5.5 17.25 5.61193 17.25 5.75Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                                <p className="dashboard__folder-name line-clamp-1">Folder name</p>
-                            </div>
+            <div className="dashboard__header">
 
-                        </div>
+               <>
+                  <h1 className="dashboard__title">Dashboard</h1>
 
-                    </div>
+                  { user ? (
+                     <p className="dashboard__subtitle">Welcome back, { user.displayName }</p>
+                  ) : "" }
+               </>
 
-                    <div className="dashboard__overview">
-
-                        <div className="dashboard__activity">
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Grind</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">3 minutes ago</p>
-                                    <p className="dashboard__activity-category">Job hunting</p>
-                                </div>
-                            </div>
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Workout</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">10 minutes ago</p>
-                                    <p className="dashboard__activity-category">Fitness</p>
-                                </div>
-                            </div>
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Read</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">30 minutes ago</p>
-                                    <p className="dashboard__activity-category">Education</p>
-                                </div>
-                            </div>
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Cook</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">1 hour ago</p>
-                                    <p className="dashboard__activity-category">Cooking</p>
-                                </div>
-                            </div>
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Meditate</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">2 hours ago</p>
-                                    <p className="dashboard__activity-category">Wellness</p>
-                                </div>
-                            </div>
-
-                            <div className="dashboard__activity-item">
-                                <div className="dashboard__activity-context">
-                                    <p className="dashboard__activity-name">Code</p>
-                                </div>
-                                <div className="dashboard__activity-details">
-                                    <p className="dashboard__activity-time">3 hours ago</p>
-                                    <p className="dashboard__activity-category">Programming</p>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="dashboard__stats">
-
-                            <div className="dashboard__stats-item">
-                                <div className="dashboard__stats-context">
-                                    <div className="dashboard__stats-dot"></div>
-                                    <p className="dashboard__stats-name">Finance</p>
-                                </div>
-                                <p className="dashboard__stats-number">73</p>
-                            </div>
-
-                            <div className="dashboard__stats-item">
-                                <div className="dashboard__stats-context">
-                                    <div className="dashboard__stats-dot"></div>
-                                    <p className="dashboard__stats-name">Gym</p>
-                                </div>
-                                <p className="dashboard__stats-number">23</p>
-                            </div>
-
-                            <div className="dashboard__stats-item">
-                                <div className="dashboard__stats-context">
-                                    <div className="dashboard__stats-dot"></div>
-                                    <p className="dashboard__stats-name">Home</p>
-                                </div>
-                                <p className="dashboard__stats-number">81</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div className="dashboard__pages">
-                        <div className="dashboard__notes"></div>
-                        <div className="dashboard__tasks"></div>
-                    </div>
-
-                    <div className="dashboard__calendar"></div>
-
-                </div>
+               <form className="dashboard__form">
+                  <Search />
+                  <input className="dashboard__form-input" type="text" placeholder="Search for an item"
+                     value={ searchQuery }
+                     onChange={ (e) => setSearchQuery(e.target.value) } />
+               </form>
 
             </div>
 
-        </div >
+            <div className="dashboard__content">
 
-    );
+               <div className="dashboard-summary div1">
+                  { summaryData.map((item, index) => (
+                     <div key={ index } className="dashboard-summary__item">
+                        <div className="dashboard-summary__icon">{ item.icon }</div>
+                        <div>
+                           <p className="dashboard-summary__title">{ item.title }</p>
+                           <p className="dashboard-summary__value">{ item.value }</p>
+                        </div>
+
+                     </div>
+                  )) }
+               </div>
+
+               <div className="dashboard__projects div2 ">
+                  <ul className="dashboard-projects__list">
+                     <div className="dashboard-projects__list-header">
+                        <div className="dashboard-projects__list-title">Projects</div>
+                        <div className="dashboard-projects__list-count">{ projects.length }</div>
+                     </div>
+                     <div className="dashboard-projects__list-content">
+                        { projects.map((project) => (
+                           <ProjectCard project={ project } key={ project.id } />
+                        )) }
+                     </div>
+                     <button className="dashboard-projects__list-button" onClick={ () => navigate(`/projects`) }>View all</button>
+                  </ul>
+               </div>
+
+               <div className="dashboard-notes div3 ">
+                  <ul className="dashboard-notes__list">
+                     <div className="dashboard-notes__list-header">
+                        <div className="dashboard-notes__list-title">Notes</div>
+                        <div className="dashboard-notes__list-count">{ notes.length }</div>
+                     </div>
+                     <div className="dashboard-notes__list-content">
+                        { notes.map((note) => (
+                           <NoteCard note={ note } key={ note.id } />
+                        )) }
+                     </div>
+                     <button className="dashboard-notes__list-button" onClick={ () => navigate(`/notes`) }>View all</button>
+                  </ul>
+               </div>
+
+               <div className="dashboard-tasks div4 ">
+                  <ul className="dashboard-tasks__list">
+                     <div className="dashboard-tasks__list-header">
+                        <div className="dashboard-tasks__list-title">Tasks</div>
+                        <div className="dashboard-tasks__list-count">{ tasks.length }</div>
+                     </div>
+                     <div className="dashboard-tasks__list-content">
+                        { tasks.map((task) => (
+                           <TaskCard task={ task } key={ task.id } />
+                        )) }
+                     </div>
+
+                     <button className="dashboard-tasks__list-button" onClick={ () => navigate(`/tasks`) }>View all</button>
+
+                  </ul>
+               </div>
+
+               <div className="dashboard-chart div5">
+
+                  <div className="dashboard-chart__header">
+                     <h2 className="dashboard-chart__title">Tasks Overview</h2>
+                  </div>
+
+                  <ResponsiveContainer width="100%" height="100%">
+                     <LineChart
+                        width={ 500 }
+                        height={ 300 }
+                        data={ chartData }
+                        margin={ {
+                           top: 25,
+                           right: 30,
+                           left: 20,
+                           bottom: 5,
+                        } }
+                     >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="tasks" stroke="#47df95" activeDot={ { r: 8 } } />
+                     </LineChart>
+                  </ResponsiveContainer>
+
+               </div>
+
+            </div>
+
+         </div>
+
+      </div>
+
+
+   );
 };
 
 export default Dashboard;

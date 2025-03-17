@@ -49,44 +49,34 @@ const SignUp = () => {
 
       <div className="signuppage">
 
-        <div className="signuppage__header">
-          <img className="signuppage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
-          <h1 className="signuppage__title display-xs-semibold">Sign up</h1>
-        </div>
+        <form className="signin-form">
 
-        <div className="signuppage__content">
-
-          <div className="signuppage__form">
-
-            <div className="signuppage__input-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-            </div>
-
-            <div className="signuppage__input-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
-            </div>
-
+          <div className="signin-form__header">
+            <h2 className="signin-form__title">Sign up</h2>
+            <p className="signin-form__subtitle">Enter your email below to sign up for an account</p>
           </div>
 
-          {error && <p className="signuppage__error">{error}</p>}
-
-          <div className="signuppage__actions">
-            <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignUp}>Sign up</button>
-            <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignUp} /> Sign up with Google</button>
+          <div className="signin-form__group">
+            <label htmlFor="email">Email</label>
+            <input type="email" placeholder="m@example.com" value={email} onChange={(event) => setEmail(event.target.value)} />
           </div>
 
-        </div>
+          <div className="signin-form__group">
+            <label htmlFor="password">Password</label>
+            <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          </div>
 
-        <div className="signuppage__footer">
-          <p className="signuppage__footer-text text-sm-regular">Already have an account?
-            <Link to="/signin" className="signuppage__footer-btn">Sign in</Link>
-          </p>
-          <p className="signuppage__footer-text text-sm-regular">Don't want to sign in?
-            <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
-          </p>
-        </div>
+          <div className="signin-form__buttons">
+            <button className="signin-form__button" type="submit" onClick={handleEmailSignUp}>Sign up</button>
+            <button className="signin-form__google" type="button" onClick={handleGoogleSignUp}>Sign up with Google</button>
+          </div>
+
+          <p className="signin-form__signup">Already have an account?<Link to="/signin">Sign in</Link></p>
+          <p className="signin-form__signup">Don't want to sign in?<Link to="/">Go back to home</Link></p>
+
+        </form>
+
+        {error && <p className="signuppage__error">{error}</p>}
 
       </div>
 

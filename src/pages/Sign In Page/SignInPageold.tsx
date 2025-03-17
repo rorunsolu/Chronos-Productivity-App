@@ -1,0 +1,101 @@
+import { useEffect, useState } from "react";
+import { UserAuth } from '../../contexts/authContext/AuthContext';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./SignInPage.scss";
+
+const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const { googleSignIn, emailSignIn, user } = UserAuth();
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await googleSignIn();
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEmailSignIn = async (event) => {
+
+    event.preventDefault();
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    try {
+      await emailSignIn(email, password);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to sign in. Please check your credentials.");
+    }
+  };
+
+  useEffect(() => {
+    if (user != null) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+  return (
+    <div className="section">
+
+      <div className="signuppage">
+
+        <div className="">
+          
+          <div className="signuppage__header">
+            <img className="signuppage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
+            <h1 className="signuppage__title display-xs-semibold">Sign in</h1>
+          </div>
+
+          <div className="signuppage__content">
+
+            <div className="signuppage__form">
+
+              <div className="signuppage__input-group">
+                <label htmlFor="email">Email</label>
+                <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+              </div>
+
+              <div className="signuppage__input-group">
+                <label htmlFor="password">Password</label>
+                <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+              </div>
+
+            </div>
+
+            {error && <p className="signuppage__error">{error}</p>}
+
+            <div className="signuppage__actions">
+              <button className="signuppage__signup-btn" type="submit" onClick={handleEmailSignIn}>Sign in</button>
+              <button className="signuppage__social-btn" type="button"> <img src="/google-logo.svg" alt="Google Logo" onClick={handleGoogleSignIn} /> Sign in with Google</button>
+            </div>
+
+          </div>
+
+          <div className="signuppage__footer">
+            <p className="signuppage__footer-text text-sm-regular">Don't have an account?
+              <Link to="/signin" className="signuppage__footer-btn">Sign up</Link>
+            </p>
+            <p className="signuppage__footer-text text-sm-regular">Don't want to sign up?
+              <Link to="/" className="signuppage__footer-btn">Go back to home</Link>
+            </p>
+          </div>
+        </div>
+
+
+
+      </div>
+
+    </div>
+  );
+};
+
+export default SignIn;
