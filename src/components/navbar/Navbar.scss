@@ -31,9 +31,9 @@
         gap: 10px;
     }
     &__brand {
-        font-size: 24px;
-        line-height: 32px;
+        font-size: 20px;
         font-weight: 600;
+        color: #181d27;
     }
     &__list {
         display: flex;
@@ -180,6 +180,6 @@
 }
 
 .logo {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
 }
