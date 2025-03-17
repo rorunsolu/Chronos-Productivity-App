@@ -1,129 +1,221 @@
 import Modal from "react-modal";
-import React, { useCallback, useEffect, useState } from "react";
-import TaskPageSection from "../../features/Tasks/components/TaskPageSection";
-import { taskData, UseTasks } from "../../features/Tasks/context/TaskContext";
+import React, { useEffect, useState } from "react";
+import {
+   Check,
+   EllipsisVertical,
+   ListFilter,
+   Plus,
+   Search,
+   Star,
+   Trash
+} from "lucide-react";
+import { TaskData, UseTasks } from "../../features/Tasks/context/TaskContext";
+import { useNavigate } from "react-router-dom";
 import "./TaskPage.scss";
-import "../../App.css";
-import "../../features/Tasks/styles/Task.scss";
+import "@/components/Creation Modal/CreationModal.scss";
+import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 
 const TaskPage = () => {
 
-    const { tasks, fetchTasks, createTask, deleteTask, toggleTaskCompletion } = UseTasks();
-    const [taskTitle, setTaskTitle] = useState("");
-    const [taskContent, setTaskContent] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
+   const navigate = useNavigate();
+   const { tasks, fetchTasks, createTask, deleteTask, toggleTaskCompletion } = UseTasks();
+   const [taskTitle, setTaskTitle] = useState("");
+   const [taskContent, setTaskContent] = useState("");
+   const [taskStatus, setTaskStatus] = useState("");
+   const [taskDueDate, setTaskDueDate] = useState<Date | null>(null);
+   const [taskLabel, setTaskLabel] = useState("");
+   const [searchQuery, setSearchQuery] = useState("");
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const openModal = () => setIsModalOpen(true);
 
-    useEffect(() => {
-        fetchTasks();
-    }, [fetchTasks]);
+   useEffect(() => {
+      fetchTasks();
+   }, [fetchTasks]);
 
-    const handlecreateTask = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        createTask(taskTitle, taskContent);
-        setTaskTitle("");
-        setTaskContent("");
-    };
+   const filteredTasks = tasks.filter(task => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+         task.title.toLowerCase().includes(searchLower) ||
+         task.content?.toLowerCase().includes(searchLower)
+      );
+   });
 
-    const completionToggle = (task: taskData) => {
-        toggleTaskCompletion(task.id);
-    };
+   const handlecreateTask = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    return (
+      //! The order of the parameters is important (match the order in the tasksContextType interface)
+      createTask(taskTitle, taskContent, undefined, taskDueDate, taskLabel);
+      setTaskTitle("");
+      setTaskContent("");
+      setTaskDueDate(null);
+      setTaskStatus("");
+      setTaskLabel("");
+      setIsModalOpen(false);
+   };
 
-        <div className="section">
+   const completionToggle = (task: TaskData) => {
+      toggleTaskCompletion(task.id);
+   };
 
-            <div className="taskpage">
+   return (
 
-                <div className="taskpage__header">
+      <div className="flex w-full h-full justify-center items-center mt-16">
 
-                    <h1 className="taskpage__title">Tasks</h1>
+         <div className="taskpage">
 
-                </div>
+            <div className="taskpage__header">
 
-                <div className="taskpage__inputs">
-
-                    <form className="taskpage__form" onSubmit={handlecreateTask}>
-                        {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        <input className="taskpage__form-input" value={title} onChange={(event) => setTitle(event.target.value)} type="text" placeholder="Add task" /> */}
-                    </form>
-
-                    <form className="taskpage__form">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
-                        <input className="taskpage__form-input" type="text" placeholder="Search tasks" />
-                    </form>
-
-                    <button className="taskpage__filter-button" onClick={() => console.log("Filter button clicked")}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                        </svg>
-                    </button>
-
-                    <button className="taskpage__filter-button" type="submit" onClick={openModal}>
-                        Create Task
-                    </button>
-
-                </div>
-
-                <Modal
-                    isOpen={isModalOpen}
-                    onRequestClose={() => setIsModalOpen(false)}
-                    contentLabel="Create a new task"
-                    className="modal"
-                    overlayClassName="modal-overlay">
-
-                    <p className="modal__title">Create a task</p>
-
-                    <form className="modal__form" onSubmit={handlecreateTask}>
-
-                        <input
-                            className="modal__input"
-                            onChange={(e) => setTaskTitle(e.target.value)}
-                            value={taskTitle}
-                            type="text"
-                            placeholder="Title"
-                        />
-
-                        <textarea
-                            className="modal__textarea"
-                            onChange={(e) => setTaskContent(e.target.value)}
-                            value={taskContent}
-                            placeholder="Content"
-                        />
-
-                        <button className="modal__button" disabled={!taskTitle || !taskContent} type="submit">
-                            Create Task
-                        </button>
-
-                        <button
-                            className="modal__button"
-                            onClick={() => setIsModalOpen(false)}
-                            type="button"
-                        >
-                            Cancel
-                        </button>
-
-                    </form>
-
-
-
-                </Modal>
-
-                <div className="taskpage__content">
-                    <TaskPageSection title="Todo" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
-                    <TaskPageSection title="Doing" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
-                    <TaskPageSection title="Done" tasks={tasks} completionToggle={completionToggle} deleteTask={deleteTask} />
-                </div>
+               <h1 className="taskpage__title">Tasks</h1>
+               <p className="taskpage__subtitle">All your tasks in one place</p>
 
             </div>
 
-        </div >
+            <div className="taskpage__actions">
 
-    );
+               <form className="taskpage__form">
+                  <Search />
+                  <input
+                     className="taskpage__form-input"
+                     type="text"
+                     placeholder="Search tasks"
+                     value={ searchQuery }
+                     onChange={ (e) => setSearchQuery(e.target.value) }
+                  />
+               </form>
+
+               <button className="taskpage__actions-button" type="button" onClick={ openModal }>
+                  <Plus />
+               </button>
+
+               <button className="taskpage__actions-button">
+                  <ListFilter />
+               </button>
+
+               <button className="taskpage__actions-button">
+                  <EllipsisVertical />
+               </button>
+
+            </div>
+
+            <Modal
+               isOpen={ isModalOpen }
+               onRequestClose={ () => setIsModalOpen(false) }
+               contentLabel="Create a new task"
+               className="modal"
+               overlayClassName="modal-overlay"
+               appElement={ document.getElementById('root') || undefined }>
+
+               <p className="modal__title">Create a task</p>
+
+               <form className="modal__form" onSubmit={ handlecreateTask }>
+
+                  <div className="modal__input-group">
+                     <input
+                        className="modal__input"
+                        onChange={ (e) => setTaskTitle(e.target.value) }
+                        value={ taskTitle }
+                        type="text"
+                        placeholder="Title"
+                     />
+                  </div>
+
+                  <div className="modal__input-group">
+                     <textarea
+                        className="modal__textarea"
+                        onChange={ (e) => setTaskContent(e.target.value) }
+                        value={ taskContent }
+                        placeholder="Content"
+                     />
+                  </div>
+
+                  <div className="modal__input-group">
+                     <DateTimePickerCompo
+                        value={ taskDueDate }
+                        onChange={ (date) => setTaskDueDate(date) }
+                     />
+                  </div>
+
+                  <div className="modal__input-group">
+                     <input
+                        className="modal__input"
+                        onChange={ (e) => setTaskStatus(e.target.value) }
+                        value={ taskStatus }
+                        type="text"
+                        placeholder="Status"
+                     />
+                  </div>
+
+                  <div className="modal__input-group">
+                     <input
+                        className="modal__input"
+                        onChange={ (e) => setTaskLabel(e.target.value) }
+                        value={ taskLabel }
+                        type="text"
+                        placeholder="Label"
+                     />
+                  </div>
+
+                  <div className="modal__button-group">
+
+                     <button
+                        className="modal__button"
+                        onClick={ () => setIsModalOpen(false) }
+                        type="button"
+                     >
+                        Cancel
+                     </button>
+
+                     <button className="modal__button" disabled={ !taskTitle || !taskContent } type="submit">
+                        Create Task
+                     </button>
+
+                  </div>
+
+               </form>
+
+            </Modal>
+
+            <div className="taskpage__task-list">
+               { filteredTasks.map(task => (
+                  <li className="taskpage-card" key={ task.id } onClick={ () => navigate(`/tasks/${task.id}`) } >
+
+                     <div className="taskpage-card__left">
+                        <div
+                           role="checkbox"
+                           onClick={ (e) => { e.stopPropagation(); completionToggle(task); } }
+                           className={ `taskpage-card__checkbox ${task.completion ? "taskpage-card__checkbox--checked" : ""}` }
+                        >
+                           { task.completion && <span className="taskpage-card__checkbox-icon"><Check /></span> }
+                        </div>
+
+                        <div className="taskpage-card__content">
+                           <p className="taskpage-card__title">{ task.title }</p>
+                           <p className="taskpage-card__description">{ task.content }</p>
+                        </div>
+
+                     </div>
+
+                     <div className="taskpage-card__actions">
+
+                        <button className="taskpage-card__button" onClick={ (e) => e.stopPropagation() }>
+                           <Star />
+                        </button>
+
+                        <button className="taskpage-card__button" onClick={ (e) => { e.stopPropagation(); deleteTask(task.id); } }>
+                           <Trash />
+                        </button>
+
+                     </div>
+
+                  </li>
+               )) }
+            </div>
+
+         </div>
+
+      </div >
+
+   );
 };
 
 export default TaskPage;
