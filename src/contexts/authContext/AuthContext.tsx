@@ -1,7 +1,8 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
-import { AuthContextProviderProps, AuthContextType } from '../../types';
+import { UserCredential } from "firebase/auth";
+import { ReactNode } from 'react';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -54,3 +55,17 @@ export const UserAuth = (): AuthContextType => {
     }
     return context;
 };
+
+// types
+
+interface AuthContextType {
+   googleSignIn: () => Promise<UserCredential>;
+   emailSignIn: (email: string, password: string) => Promise<UserCredential>;
+   emailSignUp: (email: string, password: string) => Promise<UserCredential>;
+   logOut: () => void;
+   user: User | null;
+}
+
+interface AuthContextProviderProps {
+   children: ReactNode;
+}
