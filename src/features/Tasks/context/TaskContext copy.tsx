@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from "../../../firebase/firebase";
-import { format } from 'date-fns';
 // import { query, where } from 'firebase/firestore';
 // import { auth } from "../../../firebase/firebase";
 
-export type TaskStatus = "pending" | "ongoing" | "completed";
+//TODO: Remove the status fields. Only task created via a project should have a status field
 
+export type TaskStatus = "pending" | "ongoing" | "completed";
 export interface TaskData {
     id: string;
     title: string;
@@ -14,8 +14,8 @@ export interface TaskData {
     completion: boolean;
     content?: string; 
     projectId?: string;
-    status: TaskStatus;
-    dueDate?: Timestamp | Date | null;
+    status: TaskStatus; //TODO: Remove this field
+    dueDate?: Date;
     createdAt: Timestamp;
 }
 
@@ -27,13 +27,7 @@ interface tasksContextType {
     tasks: TaskData[];
     fetchTasks: () => void;
     deleteTask: (id: string) => void;
-    createTask: (
-        title: string,
-        content: string,
-        projectId?: string,
-        dueDate?: Date | null,
-        label?: string
-    ) => void;
+    createTask: (title: string, content: string, dueDate?: string) => void;
     toggleTaskCompletion: (id: string) => void;
     // updateTaskDueDate: (id: string, dueDate: Date) => void;
 }
@@ -67,52 +61,54 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
             completion: doc.data().completion,
             dueDate: doc.data().dueDate,
             status: doc.data().status as TaskStatus,
+            // dueDate: doc.data().dueDate,
             createdAt: doc.data().createdAt
         }));
 
         setTasks(taskList.sort((a, b) => b.createdAt - a.createdAt));
     };
 
-    const createTask = async (title: string, content?: string, projectId?: string, dueDate?: Date | null, label?: string) => {
+    const createTask = async (title: string, content?: string, projectId?: string, dueDate?: Date) => {
+        //if (!auth.currentUser) return;
+
         const newDate = Timestamp.fromDate(new Date());
-    
+
         try {
-            const taskData = {
+            
+            const docRef = await addDoc(collection(db, "tasks"), {
                 title,
                 content,
-                dueDate: dueDate ? Timestamp.fromDate(dueDate) : null, // Convert Date to Timestamp
-                createdAt: Timestamp.now(),
-                label,
+                createdAt: newDate,
+                label: "",
                 projectId: projectId || "",
+                dueDate: dueDate ? new Date(dueDate) : undefined,
                 status: "pending" as TaskStatus,
                 completion: false
-              };
-    
-            console.log("Due Date:", dueDate ? format(dueDate, 'yyyy-MM-dd') : "No due date");
-    
-            const docRef = await addDoc(collection(db, "tasks"), taskData);
-    
+                //userId: auth.currentUser.uid
+            });
+
             if (projectId) {
                 const projectRef = doc(db, "projects", projectId);
                 await updateDoc(projectRef, {
                     tasks: arrayUnion(docRef.id)
                 });
             }
-    
+
             setTasks([
                 {
                     id: docRef.id,
                     title,
                     content,
                     createdAt: newDate,
-                    label,
+                    label: "",
                     projectId: projectId || "",
-                    dueDate: dueDate || null, // Ensure dueDate is a Date object or null
+                    dueDate: dueDate ? new Date(dueDate) : undefined,
+                    // dueDate: dueDate ? new Date(dueDate) : undefined,
                     status: "pending" as TaskStatus,
                     completion: false
                 }, ...tasks
             ]);
-    
+
         } catch (error) {
             console.error("Error creating task:", error);
         }

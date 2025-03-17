@@ -4,15 +4,16 @@ import { db } from "../../../firebase/firebase";
 // import { query, where } from 'firebase/firestore';
 // import { auth } from "../../../firebase/firebase";
 
-export interface noteData {
+export interface NoteData {
     id: string;
     title: string;
     content: string;
+    folder?: string;
     createdAt: Timestamp;
 }
 
 interface NotesContextType {
-    notes: noteData[];
+    notes: NoteData[];
     fetchNotes: () => void;
     deleteNote: (id: string) => void;
     createNote: (title: string, content: string) => void;
@@ -31,7 +32,7 @@ export const UseNotes = () => {
 };
 
 export const NoteProvider = ({ children }: { children: ReactNode; }) => {
-    const [notes, setNotes] = useState<noteData[]>([]);
+    const [notes, setNotes] = useState<NoteData[]>([]);
 
     const fetchNotes = async () => {
         // Go back and add the auth match check so that a user can only see notes associated with their own account (unique id)
@@ -44,6 +45,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
             id: doc.id,
             title: doc.data().title,
             content: doc.data().content,
+            folder: doc.data().folder,
             createdAt: doc.data().createdAt
         }));
 
@@ -59,6 +61,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
             const docRef = await addDoc(collection(db, "notes"), {
                 title,
                 content,
+                folder: "",
                 createdAt: newDate,
                 //userId: auth.currentUser.uid
             });
@@ -68,6 +71,7 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
                     id: docRef.id,
                     title,
                     content,
+                    folder: "",
                     createdAt: newDate
                 }, ...notes
             ]);
