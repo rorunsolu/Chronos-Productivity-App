@@ -4,7 +4,6 @@ import { UseFolders } from "@/features/Folders/context/FolderContext";
 import "@/pages/Folder List Page/FolderListPage.scss";
 import FolderListCard from "@/features/Folders/Folder List Card/FolderListCard";
 import {
-  ArrowDownUp,
   EllipsisVertical,
   ListFilter,
   Plus,
@@ -43,7 +42,7 @@ const FolderListPage = () => {
         <div className="folder-list-page__actions">
           <form className="folder-list-page__form">
             <Search />
-            <input className="folder-list-page__form-input" type="text" placeholder="Search projects" />
+            <input className="folder-list-page__form-input" type="text" placeholder="Search folders" />
           </form>
 
           <button className="folder-list-page__button" onClick={ () => console.log("Filter button clicked") }>
@@ -61,10 +60,10 @@ const FolderListPage = () => {
         </div>
 
         <div>
-          <ul className="folder-list-page__project-list">
+          <ul className="folder-list-page__folder-list">
 
             { folders.map((folder) => (
-              <FolderListCard folder={ folder } key={ folder.id } />
+              <FolderListCard folder={ folder } key={ folder.id } deleteFolder={ deleteFolder } />
             )) }
 
           </ul>
@@ -73,7 +72,7 @@ const FolderListPage = () => {
         <Modal
           isOpen={ isModalOpen }
           onRequestClose={ () => setIsModalOpen(false) }
-          contentLabel="Create a new project"
+          contentLabel="Create a new folder"
           className="modal"
           overlayClassName="modal-overlay"
           appElement={ document.getElementById('root') || undefined }>
@@ -86,7 +85,7 @@ const FolderListPage = () => {
               onChange={ (e) => setNoteName(e.target.value) }
               value={ noteName }
               type="text"
-              placeholder="Title"
+              placeholder="Name"
             />
 
             <div className="modal__button-wrapper">
