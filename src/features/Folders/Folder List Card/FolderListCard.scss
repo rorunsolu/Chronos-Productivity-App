@@ -1,0 +1,63 @@
+.folder-list-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border: var(--primary-border);
+    border-radius: 8px;
+    padding: 16px;
+
+    //height: 85px;
+
+    box-shadow: var(--shadow);
+
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+        cursor: pointer;
+        background: #fafafa;
+    }
+
+    &__title {
+        font-size: 20px;
+        font-weight: 500;
+
+        color: #181d27;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    &__button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+
+        width: 32px;
+        height: 32px;
+
+        border-radius: 6px;
+        border: var(--primary-border);
+        padding: 2px 6px;
+
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        word-wrap: break-word;
+
+        color: #181d27;
+        background: var(--main-bg);
+        box-shadow: var(--shadow);
+
+        transition: 0.2s ease-in-out;
+
+        cursor: pointer;
+
+        &:hover {
+            background: #f5f6f8;
+        }
+    }
+}
