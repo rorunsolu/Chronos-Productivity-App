@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Protected from "@/components/auth/Protected";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
+import { FolderProvider } from "@/features/Folders/context/FolderContext";
 import { NoteProvider } from "@/features/Notes/context/NoteContext";
 import { ProjectsProvider } from "@/features/Projects/context/ProjectContext";
 import { Route, Routes } from "react-router-dom";
@@ -17,6 +18,8 @@ import NoteEditorPage from '@/pages/Note Editor Page/NoteEditorPage';
 import TaskEditPage from "@/pages/Task Edit Page/TaskEditPage";
 import ProjectsPage from '@/pages/Project List Page/ProjectListPage';
 import ProjectEditingPage from '@/pages/Project Editing Page/ProjectEditingPage';
+import FolderEditPage from "@/pages/Folder Edit Page/FolderEditPage";
+import FolderListPage from "@/pages/Folder List Page/FolderListPage";
 
 function App() {
 
@@ -25,53 +28,75 @@ function App() {
 
          <Sidebar />
          <Navbar />
+         <FolderProvider>
+            <ProjectsProvider>
+               <NoteProvider>
+                  <TaskProvider>
+                     <Routes>
+                        <Route path="/" element={ <Home /> } />
+                        <Route path="/signup" element={ <SignUp /> } />
+                        <Route path="/signin" element={ <SignIn /> } />
 
-         <ProjectsProvider>
-            <NoteProvider>
-               <TaskProvider>
-                  <Routes>
-                     <Route path="/" element={ <Home /> } />
-                     <Route path="/signup" element={ <SignUp /> } />
-                     <Route path="/signin" element={ <SignIn /> } />
-                     <Route path="/dashboard" element={
-                        <Protected>
-                           <Dashboard />
-                        </Protected>
-                     } />
-                     <Route path="/tasks" element={
-                        <Protected>
-                           <TaskPage />
-                        </Protected>
-                     } />
-                     <Route path="/notes" element={
-                        <Protected>
-                           <NotesPage />
-                        </Protected>
-                     } />
-                     <Route path="/notes/:id" element={
-                        <Protected>
-                           <NoteEditorPage />
-                        </Protected>
-                     } />
-                     <Route path="/tasks/:id" element={
-                        <Protected>
-                           <TaskEditPage />
-                        </Protected>
-                     } />
-                     <Route path="/projects" element={
-                        <Protected>
-                           <ProjectsPage />
-                        </Protected>
-                     } />
-                     <Route path="/projects/:id" element={
-                        <Protected>
-                           <ProjectEditingPage />
-                        </Protected>
-                     } />
-                  </Routes>
-               </TaskProvider>
-            </NoteProvider>
-         </ProjectsProvider>
+                        <Route path="/dashboard" element={
+                           <Protected>
+                              <Dashboard />
+                           </Protected>
+                        } />
+
+                        <Route path="/tasks" element={
+                           <Protected>
+                              <TaskPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/tasks/:id" element={
+                           <Protected>
+                              <TaskEditPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/notes" element={
+                           <Protected>
+                              <NotesPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/notes/:id" element={
+                           <Protected>
+                              <NoteEditorPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/projects" element={
+                           <Protected>
+                              <ProjectsPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/projects/:id" element={
+                           <Protected>
+                              <ProjectEditingPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/folders" element={
+                           <Protected>
+                              <FolderListPage />
+                           </Protected>
+                        } />
+
+                        <Route path="/folders/:id" element={
+                           <Protected>
+                              <FolderEditPage />
+                           </Protected>
+                        } />
+
+                     </Routes>
+                  </TaskProvider>
+               </NoteProvider>
+            </ProjectsProvider>
+         </FolderProvider>
+
       </AuthContextProvider>
    );
 }
