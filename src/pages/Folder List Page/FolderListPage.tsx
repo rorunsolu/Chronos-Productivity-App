@@ -35,33 +35,33 @@ const FolderListPage = () => {
 
       <div className="folder-list-page">
 
-        <div className="project-list-page__header">
-          <h1 className="project-list-page__title">Folders</h1>
-          <p className="project-list-page__subtitle">Access and manage your folders</p>
+        <div className="folder-list-page__header">
+          <h1 className="folder-list-page__title">Folders</h1>
+          <p className="folder-list-page__subtitle">Access and manage your folders</p>
         </div>
 
-        <div className="project-list-page__actions">
-          <form className="project-list-page__form">
+        <div className="folder-list-page__actions">
+          <form className="folder-list-page__form">
             <Search />
-            <input className="project-list-page__form-input" type="text" placeholder="Search projects" />
+            <input className="folder-list-page__form-input" type="text" placeholder="Search projects" />
           </form>
 
-          <button className="project-list-page__button" onClick={ () => console.log("Filter button clicked") }>
+          <button className="folder-list-page__button" onClick={ () => console.log("Filter button clicked") }>
             <ListFilter />
           </button>
 
-          <button className="project-list-page__button" onClick={ openModal }>
+          <button className="folder-list-page__button" onClick={ openModal }>
             <Plus />
           </button>
 
-          <button className="project-list-page__button">
+          <button className="folder-list-page__button">
             <EllipsisVertical />
           </button>
 
         </div>
 
         <div>
-          <ul className="project-list-page__project-list">
+          <ul className="folder-list-page__project-list">
 
             { folders.map((folder) => (
               <FolderListCard folder={ folder } key={ folder.id } />
