@@ -3,6 +3,8 @@
     border-radius: 8px;
     padding: 16px;
 
+    box-shadow: var(--shadow);
+
     &__header {
         display: flex;
         gap: 10px;
