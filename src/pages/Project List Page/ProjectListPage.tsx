@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import React, { useEffect, useState } from "react";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import "@/pages/Project List Page/ProjectListPage.scss";
-import "../../App.css";
 import ProjectListCard from "@/features/Projects/Project List Card/ProjectListCard";
 import {
    ArrowDownUp,
@@ -44,6 +43,7 @@ const ProjectPage = () => {
       <div className="flex w-full h-full justify-center items-center mt-16">
 
          <div className="project-list-page">
+            
             <div className="project-list-page__header">
                <h1 className="project-list-page__title">Projects</h1>
                <p className="project-list-page__subtitle">All your projects in one place</p>
