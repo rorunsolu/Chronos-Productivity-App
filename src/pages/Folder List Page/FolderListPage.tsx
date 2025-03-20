@@ -13,6 +13,7 @@ import {
 const FolderListPage = () => {
   const { folders, fetchFolders, createFolder, deleteFolder } = UseFolders();
   const [noteName, setNoteName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -29,6 +30,13 @@ const FolderListPage = () => {
     fetchFolders();
   }, [fetchFolders]);
 
+  const filteredFolders = folders.filter((folder) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      folder.name.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <div className="flex w-full h-full justify-center items-center mt-16">
 
@@ -42,7 +50,7 @@ const FolderListPage = () => {
         <div className="folder-list-page__actions">
           <form className="folder-list-page__form">
             <Search />
-            <input className="folder-list-page__form-input" type="text" placeholder="Search folders" />
+            <input className="folder-list-page__form-input" type="text" placeholder="Search folders" onChange={ (e) => setSearchQuery(e.target.value) } />
           </form>
 
           <button className="folder-list-page__button" onClick={ () => console.log("Filter button clicked") }>
@@ -62,7 +70,7 @@ const FolderListPage = () => {
         <div>
           <ul className="folder-list-page__folder-list">
 
-            { folders.map((folder) => (
+            { filteredFolders.map((folder) => (
               <FolderListCard folder={ folder } key={ folder.id } deleteFolder={ deleteFolder } />
             )) }
 
