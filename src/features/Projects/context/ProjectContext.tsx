@@ -2,8 +2,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from "../../../firebase/firebase";
 
-type ProjectStatus = "pending" | "ongoing" | "completed";
-export type ProjectPriority = "low" | "medium" | "high";
+export type ProjectStatus = "pending" | "ongoing" | "completed";
 
 export interface ProjectData {
    id: string;
@@ -11,7 +10,6 @@ export interface ProjectData {
    description?: string;
    tasks: string[]; // Array of task IDs
    label?: string;
-   priority: ProjectPriority;
    status: ProjectStatus;
    createdAt: Timestamp;
    updatedAt?: Timestamp;
@@ -20,7 +18,7 @@ export interface ProjectData {
 interface ProjectsContextType {
    projects: ProjectData[];
    fetchProjects: () => void;
-   createProject: (name: string, description?: string, label?: string, priority?: string) => void;
+   createProject: (name: string, description?: string, label?: string) => void;
    deleteProject: (id: string) => void;
    updateProject: (id: string, updates: Partial<ProjectData>) => void;
    addTaskToProject: (projectId: string, taskId: string) => void;
@@ -29,11 +27,7 @@ interface ProjectsContextType {
 
 export interface ProjectCardProps {
    project: ProjectData;
-   // deleteProject: (id: string) => void;
-   // updateProject: (id: string, updates: Partial<ProjectData>) => void;
-   // addTaskToProject: (projectId: string, taskId: string) => void;
 }
-
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
 
@@ -58,7 +52,6 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             description: doc.data().description,
             tasks: doc.data().tasks || [],
             label: doc.data().label,
-            priority: doc.data().priority as ProjectPriority,
             status: doc.data().status as ProjectStatus,
             createdAt: doc.data().createdAt,
             updatedAt: doc.data().updatedAt,
@@ -71,7 +64,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
       }
    };
 
-   const createProject = async (name: string, description?: string, label?: string, prioity?: string) => {
+   const createProject = async (name: string, description?: string, label?: string) => {
       const newDate = Timestamp.fromDate(new Date());
       try {
          const docRef = await addDoc(collection(db, "projects"), {
@@ -79,8 +72,6 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             description: description || "",
             tasks: [],
             label: label || "",
-            // priority: "low" as ProjectPriority,
-            priority: prioity as ProjectPriority,
             status: "pending" as ProjectStatus,
             createdAt: newDate,
             updatedAt: newDate,
@@ -91,8 +82,6 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             description: description || "",
             tasks: [],
             label: label || "",
-            // priority: "low" as ProjectPriority,
-            priority: prioity as ProjectPriority,
             status: "pending" as ProjectStatus,
             createdAt: newDate,
             updatedAt: newDate,
@@ -111,29 +100,64 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
       }
    };
 
+   // const updateProject = async (id: string, updates: Partial<ProjectData>) => {
+   //    try {
+   //       const projectRef = doc(db, "projects", id);
+   //       const updateData = {
+   //          ...updates,
+   //          updatedAt: Timestamp.fromDate(new Date()),
+   //       };
+   //       await updateDoc(projectRef, updateData);
+   //       setProjects(projects.map(project =>
+   //          project.id === id ? { ...project, ...updateData } : project
+   //       ));
+   //    } catch (error) {
+   //       console.error("Error updating project:", error);
+   //    }
+   // };
+
    const updateProject = async (id: string, updates: Partial<ProjectData>) => {
       try {
-         const projectRef = doc(db, "projects", id);
-         const updateData = {
-            ...updates,
-            updatedAt: Timestamp.fromDate(new Date()),
-         };
-         await updateDoc(projectRef, updateData);
-         setProjects(projects.map(project =>
-            project.id === id ? { ...project, ...updateData } : project
-         ));
+        const projectRef = doc(db, "projects", id);
+        
+        const updatesToProject = {
+          ...updates,
+          updatedAt: Timestamp.fromDate(new Date()),
+        };
+    
+        await updateDoc(projectRef, updatesToProject);
+    
+        setProjects(projects.map(project => 
+          project.id === id ? { 
+            ...project, 
+            ...updatesToProject
+          } : project
+        ));
+    
       } catch (error) {
-         console.error("Error updating project:", error);
+        console.error("Error updating project:", error);
       }
-   };
+    };
 
    const addTaskToProject = async (projectId: string, taskId: string) => {
+
       try {
          const projectRef = doc(db, "projects", projectId);
+         const taskRef = doc(db, "tasks", taskId);
+
          await updateDoc(projectRef, {
+            // adds the task id to the project tasks array
             tasks: arrayUnion(taskId),
+            // updates the project updated at timestamp
             updatedAt: Timestamp.fromDate(new Date()),
          });
+
+         await updateDoc(taskRef, {
+            // rewferences to task that you want to add to a project and  set the project accoding to the matcghing project id
+            projectId: projectId,
+            status: "pending", // set to pending by default
+         })
+
          setProjects(projects.map(project =>
             project.id === projectId ? {
                ...project,
@@ -149,10 +173,19 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
    const removeTaskFromProject = async (projectId: string, taskId: string) => {
       try {
          const projectRef = doc(db, "projects", projectId);
+         const taskRef = doc(db, "tasks", taskId);
+
          await updateDoc(projectRef, {
+            // removes the task id from the project tasks array
             tasks: arrayRemove(taskId),
+            // updates the project updated at timestamp
             updatedAt: Timestamp.fromDate(new Date()),
          });
+
+         await updateDoc(taskRef, {
+            projectId: "", // removes the project id from the task
+         })
+
          setProjects(projects.map(project =>
             project.id === projectId ? {
                ...project,
@@ -167,7 +200,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
 
    return (
       <ProjectsContext.Provider
-         value={{
+         value={ {
             projects,
             fetchProjects,
             createProject,
@@ -175,9 +208,9 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             updateProject,
             addTaskToProject,
             removeTaskFromProject
-         }}
+         } }
       >
-         {children}
+         { children }
       </ProjectsContext.Provider>
    );
 };
