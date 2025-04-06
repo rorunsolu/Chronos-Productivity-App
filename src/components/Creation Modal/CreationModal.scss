@@ -1,60 +1,50 @@
 .modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    //background: rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     z-index: 1000;
-}
-
-.modal p {
-    margin-top: 0;
-}
-
-.modal button {
-    margin-top: 10px;
-}
-
-@media (min-width: 768px) {
-    .modal {
-        width: 70%;
-    }
-}
-
-@media (min-width: 1024px) {
-    .modal {
-        width: 50%;
-    }
+    overflow: hidden; // Prevent scrollbars during animation
 }
 
 .modal {
-    position: relative;
+    //position: relative; // Changed from absolute
 
     border: var(--primary-border);
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 8px 8px 0 0;
+    padding: 16px;
 
-    max-width: 500px;
+    width: 100%;
+    max-width: 800px;
 
     background: white;
-    box-shadow: var(--shadow);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.modal--open {
+        transform: translateY(0);
+    }
 
     &__title {
         font-size: 1.15rem;
         margin-bottom: 1rem;
+        text-align: center;
     }
 
     &__form {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        justify-content: space-between;
 
-        &:focus {
-            border: 1px #a0d3bb solid;
+        height: 100%;
+
+        &-group {
+            position: relative;
         }
     }
 
@@ -65,23 +55,51 @@
     }
 
     &__input,
-    &__textarea,
-    select {
+    &__textarea {
         border: var(--primary-border);
         border-radius: 6px;
-        padding: 5px 10px;
+        padding: 7.5px 10px;
 
         box-shadow: var(--shadow);
 
         &:focus {
-            border: 1px black solid;
+            //border: 1px black solid;
             outline: none;
         }
+    }
+    &__textarea {
+        min-height: 72px;
+
+        resize: none;
+    }
+
+    &__option-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        margin-top: 8px;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 5px 6px;
+    }
+
+    &__info-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
     &__button-wrapper {
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+        gap: 8px;
+
+        margin-top: 20px;
     }
 
     &__button {
@@ -93,11 +111,22 @@
 
         box-shadow: var(--shadow);
 
-        transition: 0.2s ease-in-out;
+        transition: var(--primary-transition);
+        cursor: pointer;
 
-        &:hover {
-            cursor: pointer;
-            background: #fafafa;
+        &--create {
+            &:hover {
+                background: whitesmoke;
+            }
+        }
+
+        &--cancel {
+            background: hsl(0, 72%, 47%);
+            color: hsl(0, 0%, 100%);
+
+            &:hover {
+                background: hsl(0, 72%, 60%);
+            }
         }
     }
 }
