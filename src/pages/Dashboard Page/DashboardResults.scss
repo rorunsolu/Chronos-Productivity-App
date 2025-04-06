@@ -1,0 +1,35 @@
+.dashboard-results {
+    border: var(--primary-border);
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    max-height: 430px;
+
+    box-shadow: var(--shadow);
+
+    &__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding-right: 20px;
+
+        background-color: var(--white);
+    }
+
+    &__title {
+        font-size: 20px;
+        font-weight: 600;
+
+        color: #181d27;
+    }
+
+    &__list {
+        border-top: var(--primary-border);
+
+        overflow-y: scroll;
+
+        height: 100%;
+    }
+}
