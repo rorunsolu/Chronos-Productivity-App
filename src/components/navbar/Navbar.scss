@@ -2,19 +2,111 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    width: 100vw;
-    margin-bottom: 5rem;
+
+    height: 70px;
+    height: 64px;
 
     border: var(--primary-border);
+    border-left: 0;
+    padding: 0 20px;
 
-    box-shadow: var(--shadow);
+    &__account {
+        position: relative;
+
+        display: flex;
+        gap: 16px;
+
+        height: 44px;
+
+        &-avatar-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 44px;
+            height: 44px;
+
+            border: var(--primary-border);
+            border-radius: 100%;
+            overflow: hidden;
+
+            box-shadow: var(--shadow);
+
+            transition: var(--primary-transition);
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        &-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+
+            position: absolute;
+            top: 112.5%;
+            left: -45px;
+
+            width: 100px;
+            height: 100%;
+
+            border: var(--primary-border);
+            border-radius: 8px;
+
+            background: white;
+            box-shadow: var(--shadow);
+
+            overflow: hidden;
+        }
+
+        &-link {
+            width: 100%;
+            height: 100%;
+
+            padding: 10px 16px;
+
+            transition: var(--primary-transition);
+
+            &:hover {
+                background: var(--primary-hover-bg);
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__theme-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 44px;
+        height: 44px;
+
+        border: var(--primary-border);
+        border-radius: 100%;
+        overflow: hidden;
+
+        box-shadow: var(--shadow);
+
+        cursor: pointer;
+        transition: var(--primary-transition);
+    }
+
+    &__links {
+        display: flex;
+        align-items: center;
+
+        display: none;
+    }
 
     &__inner {
         display: flex;
         justify-content: space-between;
 
-        width: 1280px;
+        //width: 1280px;
+        width: 100%;
 
         margin: 0 auto;
     }
@@ -29,6 +121,12 @@
         justify-content: center;
         align-items: center;
         gap: 10px;
+
+        height: 44px;
+
+        padding: 0 10px;
+
+        display: none;
     }
     &__brand {
         font-size: 20px;
@@ -37,7 +135,7 @@
     }
     &__list {
         display: flex;
-        gap: 2px;
+        gap: 10px;
     }
 
     &__item {
@@ -126,7 +224,7 @@
             color: #85888e;
             background: var(--main-bg);
 
-            transition: 0.2s ease-in-out;
+            transition: var(--primary-transition);
 
             &:hover {
                 color: #414651;
@@ -142,7 +240,7 @@
             path {
                 stroke: #85888e;
 
-                transition: 0.2s ease-in-out;
+                transition: var(--primary-transition);
             }
 
             // &:hover path {
@@ -169,7 +267,7 @@
             width: 35px;
             height: 35px;
 
-            transition: 0.2s ease-in-out;
+            transition: var(--primary-transition);
 
             &:hover {
                 filter: brightness(0.9);

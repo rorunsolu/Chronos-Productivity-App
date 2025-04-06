@@ -1,0 +1,26 @@
+.navbar-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    height: 44px;
+
+    border-radius: 8px;
+    padding: 0 16px;
+
+    text-transform: capitalize;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    word-wrap: break-word;
+
+    color: var(--primary-text);
+    background: var(--primary-background);
+
+    transition: var(--primary-transition);
+
+    &:hover {
+        background: var(--primary-hover-bg);
+    }
+}
