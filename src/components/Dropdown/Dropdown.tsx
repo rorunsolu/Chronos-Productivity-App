@@ -3,7 +3,7 @@ import "@/components/Dropdown/Dropdown.scss";
 
 interface DropdownProps {
         value: string;
-        onChange: (value: string ) => void;
+        onChange: (value: string) => void;
         options: string[];
         placeholder: string;
 }
@@ -39,25 +39,25 @@ const Dropdown: React.FC<DropdownProps> = ({ value, onChange, options, placehold
         }, []);
 
         return (
-                <div className="dropdown" ref={dropdownRef}>
+                <div className="dropdown" ref={ dropdownRef }>
 
-                        <div className="dropdown__selection" onClick={toggleDropdown}>
-                                {value || placeholder}
+                        <div className="dropdown__selection" onClick={ toggleDropdown }>
+                                { value || placeholder }
                         </div>
 
-                        {isOpen && (
+                        { isOpen && (
                                 <div className="dropdown__options">
-                                        {options.map((option) => (
+                                        { options.map((option) => (
                                                 <div
-                                                        className={`dropdown__option ${value === option ? "selected-option" : ""}`}
-                                                        key={option}
-                                                        onClick={() => handleOptionSelection(option)}
+                                                        className={ `dropdown__option ${value === option ? "selected-option" : ""}` }
+                                                        key={ option }
+                                                        onClick={ () => handleOptionSelection(option) }
                                                 >
-                                                        {option}
+                                                        { option }
                                                 </div>
-                                        ))}
+                                        )) }
                                 </div>
-                        )}
+                        ) }
 
                 </div>
         )

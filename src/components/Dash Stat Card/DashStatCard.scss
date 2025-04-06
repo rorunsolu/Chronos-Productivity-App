@@ -1,0 +1,39 @@
+.dash-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    border: var(--primary-border);
+    border-radius: 8px;
+    padding: 16px;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 10px;
+
+        width: fit-content;
+
+        border: var(--primary-border);
+        border-radius: 6px;
+        margin-bottom: 20px;
+
+        box-shadow: var(--shadow);
+    }
+
+    &__title {
+        font-size: 16px;
+        font-weight: 500;
+
+        color: hsla(220, 8%, 35%, 1);
+    }
+
+    &__value {
+        font-size: 30px;
+        font-weight: 600;
+
+        color: #181d27;
+    }
+}

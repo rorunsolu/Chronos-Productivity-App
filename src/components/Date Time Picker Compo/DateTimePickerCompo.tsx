@@ -11,7 +11,7 @@ const DateTimePickerCompo = ({ value, onChange }: DateTimePickerCompoProps) => {
 		<>
 			<DatePicker
 				dateFormat="YYYY-MM-DD"
-				placeholder="2021-06-10"
+				placeholder="YYYY-MM-DD"
 				parseInputValue={ (date: string) => parseISO(date) }
 				id="datepicker-format"
 				clearControlLabel="Clear due date"
@@ -24,7 +24,7 @@ const DateTimePickerCompo = ({ value, onChange }: DateTimePickerCompoProps) => {
 				} }
 			/>
 		</>
-	)
-}
+	);
+};
 
-export default DateTimePickerCompo
+export default DateTimePickerCompo;

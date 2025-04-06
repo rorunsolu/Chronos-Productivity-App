@@ -7,25 +7,20 @@
     }
 
     &__selection {
-        // border: var(--primary-border);
-        // border-radius: 4px;
-        // padding: 10px;
-
-        
-        cursor: pointer;
         border: var(--primary-border);
         border-radius: 6px;
         padding: 5px 10px;
-    
+
         background: white;
-        color: #7f7f7f;
+        color: #181d27;
         box-shadow: var(--shadow);
 
+        cursor: pointer;
     }
 
     &__options {
         position: absolute;
-        top: 100%;
+        bottom: -38px;
         left: 0;
         z-index: 10;
 
@@ -36,26 +31,18 @@
         width: 100%;
 
         border: var(--primary-border);
-        border-radius: 4px;
-        padding: 4px;
+        border-radius: 6px;
 
         background: white;
-
-        
-
         box-shadow: var(--shadow);
+
+        overflow: hidden;
     }
 
     &__option {
-        padding: 10px;
-
-        cursor: pointer;
-        border: var(--primary-border);
-        border-radius: 6px;
         padding: 5px 10px;
-    
+
         background: white;
-        box-shadow: var(--shadow);
 
         cursor: pointer;
         transition: background 0.2s ease;
@@ -65,7 +52,7 @@
         }
 
         &.selected-option {
-            background: #e0e0e0;
+            background: whitesmoke;
             color: #181d27;
         }
     }

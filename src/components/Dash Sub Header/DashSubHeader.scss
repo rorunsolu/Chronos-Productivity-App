@@ -1,0 +1,39 @@
+.dash-sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: sticky;
+    top: 0;
+
+    height: 60px;
+
+    padding: 0 20px;
+
+    background: white;
+
+    cursor: pointer;
+
+    &__title {
+        font-size: 20px;
+        font-weight: 600;
+
+        color: #181d27;
+    }
+    &__count {
+        display: grid;
+        place-items: center;
+
+        width: 30px;
+        height: 30px;
+
+        border: var(--primary-border);
+        border-radius: 8px;
+
+        font-size: 16px;
+        font-weight: 500;
+
+        color: hsla(220, 8%, 35%, 1);
+        box-shadow: var(--shadow);
+    }
+}
