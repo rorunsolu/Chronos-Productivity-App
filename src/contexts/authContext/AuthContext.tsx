@@ -1,13 +1,13 @@
-import { useContext, createContext, useEffect, useState } from "react";
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
-import { UserCredential } from "firebase/auth";
-import { ReactNode } from 'react';
+import { auth } from "@/firebase/firebase";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, signOut, User, UserCredential } from "firebase/auth";
+import { createContext, useContext, useEffect, useState } from "react";
+import { ReactNode } from "react";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [isGuest, setIsGuest] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const googleSignIn = () => {
@@ -24,15 +24,26 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         return createUserWithEmailAndPassword(auth, email, password);
     };
 
+    const signInAsGuest = async () => {
+        const credential = await signInAnonymously(auth);
+        setUser(credential.user);
+        setIsGuest(true);
+        return credential;
+    };
+
     const logOut = () => {
+        //console.log(`Logging out... (UID: ${user?.uid})`);
+        setUser(null);
+        setIsGuest(false);
         return signOut(auth);
     };
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+            setIsGuest(currentUser?.isAnonymous || false);
             setLoading(false);
-            console.log("Current user i think?", currentUser);
+            console.log("Current user?", currentUser);
         });
 
         return () => {
@@ -41,8 +52,8 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     }, []);
 
     return (
-        <AuthContext.Provider value={{ googleSignIn, emailSignIn, emailSignUp, logOut, user }}>
-            {!loading && children}
+        <AuthContext.Provider value={ { googleSignIn, emailSignIn, emailSignUp, signInAsGuest, logOut, user, isGuest } }>
+            { !loading && children }
         </AuthContext.Provider>
     );
 };
@@ -56,16 +67,16 @@ export const UserAuth = (): AuthContextType => {
     return context;
 };
 
-// types
-
 interface AuthContextType {
-   googleSignIn: () => Promise<UserCredential>;
-   emailSignIn: (email: string, password: string) => Promise<UserCredential>;
-   emailSignUp: (email: string, password: string) => Promise<UserCredential>;
-   logOut: () => void;
-   user: User | null;
+    googleSignIn: () => Promise<UserCredential>;
+    emailSignIn: (email: string, password: string) => Promise<UserCredential>;
+    emailSignUp: (email: string, password: string) => Promise<UserCredential>;
+    signInAsGuest: () => Promise<UserCredential>;
+    logOut: () => void;
+    user: User | null;
+    isGuest: boolean;
 }
 
 interface AuthContextProviderProps {
-   children: ReactNode;
+    children: ReactNode;
 }

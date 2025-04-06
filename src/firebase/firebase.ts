@@ -15,21 +15,4 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-console.log("Firestore DB:", db);
-
-// const checkIfUserIsStillLoggedIn = () =>
-//     onAuthStateChanged(auth, user =>
-//         console.log(user ? `User is signed in: ${user.uid}` : "User is signed out")
-//     );
-
-// checkIfUserIsStillLoggedIn();
-
-
-// const loginAnonymously = async () => {
-//     try {
-//         const userCredential = await signInAnonymously(auth);
-//         console.log("User logged in anonymously:", userCredential.user);
-//     } catch (error) {
-//         console.error("Could not login user", error);
-//     }
-// };
+//console.log("Firestore DB:", db);
