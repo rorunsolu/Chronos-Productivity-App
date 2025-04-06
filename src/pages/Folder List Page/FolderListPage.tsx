@@ -4,23 +4,29 @@ import { UseFolders } from "@/features/Folders/context/FolderContext";
 import "@/pages/Folder List Page/FolderListPage.scss";
 import FolderListCard from "@/features/Folders/Folder List Card/FolderListCard";
 import {
-  EllipsisVertical,
-  ListFilter,
   Plus,
   Search,
 } from "lucide-react";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
 
 const FolderListPage = () => {
+  const { user } = UserAuth();
+
   const { folders, fetchFolders, createFolder, deleteFolder } = UseFolders();
   const [noteName, setNoteName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
 
   const handleCreateFolder = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    createFolder(noteName);
+
+    if (!user) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    createFolder(noteName, user.uid);
     setNoteName("");
 
     setIsModalOpen(false);
@@ -30,15 +36,14 @@ const FolderListPage = () => {
     fetchFolders();
   }, [fetchFolders]);
 
-  const filteredFolders = folders.filter((folder) => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      folder.name.toLowerCase().includes(searchLower)
-    );
-  });
+  const filteredFolders = folders
+    .filter((folder) => {
+      const searchLower = searchQuery.toLowerCase();
+      return folder.name.toLowerCase().includes(searchLower);
+    });
 
   return (
-    <div className="flex w-full h-full justify-center items-center mt-16">
+    <div className="page-wrapper">
 
       <div className="folder-list-page">
 
@@ -53,16 +58,8 @@ const FolderListPage = () => {
             <input className="folder-list-page__form-input" type="text" placeholder="Search folders" onChange={ (e) => setSearchQuery(e.target.value) } />
           </form>
 
-          <button className="folder-list-page__button" onClick={ () => console.log("Filter button clicked") }>
-            <ListFilter />
-          </button>
-
           <button className="folder-list-page__button" onClick={ openModal }>
             <Plus />
-          </button>
-
-          <button className="folder-list-page__button">
-            <EllipsisVertical />
           </button>
 
         </div>
@@ -81,9 +78,10 @@ const FolderListPage = () => {
           isOpen={ isModalOpen }
           onRequestClose={ () => setIsModalOpen(false) }
           contentLabel="Create a new folder"
-          className="modal"
+          className={ `modal ${isModalOpen ? "modal--open" : ""}` }
           overlayClassName="modal-overlay"
-          appElement={ document.getElementById('root') || undefined }>
+          appElement={ document.getElementById('root') || undefined }
+        >
 
           <p className="modal__title">Create a new folder</p>
           <form className="modal__form" onSubmit={ handleCreateFolder }>
@@ -97,12 +95,12 @@ const FolderListPage = () => {
             />
 
             <div className="modal__button-wrapper">
-              <button className="modal__button" disabled={ !noteName } type="submit">
+              <button className="modal__button modal__button--create" disabled={ !noteName } type="submit">
                 Create folder
               </button>
 
               <button
-                className="modal__button"
+                className="modal__button modal__button--cancel"
                 onClick={ () => setIsModalOpen(false) }
                 type="button"
               >
@@ -116,7 +114,7 @@ const FolderListPage = () => {
       </div>
 
     </div>
-  )
-}
+  );
+};
 
-export default FolderListPage
+export default FolderListPage;

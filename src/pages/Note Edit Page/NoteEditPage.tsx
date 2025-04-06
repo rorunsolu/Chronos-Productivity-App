@@ -2,14 +2,15 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { db } from "@/firebase/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { NoteData } from "@/features/Notes/context/NoteContext";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { UseFolders } from "@/features/Folders/context/FolderContext";
 import { useParams } from "react-router-dom";
 import "@/pages/Note Edit Page/NoteEditPage.scss";
-import { NotepadText, Tag } from 'lucide-react';
-import { set } from "date-fns";
+import { Folder } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
-// Todo: deelting a folder doesn't update the state of notes folder when vieiwing on the note list page
+// Todo: Need to add a removal options for the dropdowns
 
 const NoteEditPage = () => {
     const { id } = useParams<{ id: string; }>();
@@ -17,14 +18,15 @@ const NoteEditPage = () => {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const [note, setNote] = useState<NoteData>();
-    const [noteTitle, setNoteTitle] = useState("");
     const [noteContent, setNoteContent] = useState("");
     const [noteFolder, setNoteFolder] = useState("");
 
-    const { folders, fetchFolders, addNoteToFolder, removeNoteFromFolder, updateFolder } = UseFolders();
-    const folderOptions = folders.map(folder => folder.name);
+    const { folders, fetchFolders, addNoteToFolder, removeNoteFromFolder } = UseFolders();
+    const folderOptions = useMemo(
+        () => folders.map(folder => ({ folderID: folder.id, folderName: folder.name })),
+        [folders]
+    );
 
-    // runs only if the something changes in the folders
     useEffect(() => {
         fetchFolders();
     }, [fetchFolders]);
@@ -51,7 +53,6 @@ const NoteEditPage = () => {
 
             const noteObjectData = noteSnapshot.data();
 
-            setNoteTitle(noteObjectData.title || "");
             setNoteContent(noteObjectData.content || "");
             setNoteFolder(noteObjectData.folder || "");
             setNote(noteObjectData as NoteData);
@@ -61,7 +62,7 @@ const NoteEditPage = () => {
         fetchNote();
     }, [id, isInitialLoad]);
 
-    const updateNoteInFirebase = useCallback(async (newTitle: string, newContent: string, newFolder?: string) => {
+    const updateNoteInFirebase = useCallback(async (newContent: string) => {
         try {
 
             if (!id) return;
@@ -69,26 +70,49 @@ const NoteEditPage = () => {
             const note = doc(db, "notes", id);
             await setDoc(note,
                 {
-                    title: newTitle,
                     content: newContent,
-                    folder: newFolder
                 }, { merge: true });
 
         } catch (error) {
-            console.error("Error updating note:", error);
+            console.error("Error updating something other than the assigned folder:", error);
         } finally {
             setIsLoading(false);
             console.log("Note updated");
         }
     }, [id]);
 
+    const handleFolderChange = async (newFolderID: string) => {
+
+        if (!id) return;
+
+        const oldFolderID = note?.folder;
+
+        if (oldFolderID === newFolderID) return;
+
+        if (oldFolderID) {
+            removeNoteFromFolder(oldFolderID, id);
+            setNote(prevNoteData => prevNoteData ? { ...prevNoteData, folder: "" } : prevNoteData);
+        }
+
+        if (newFolderID) {
+            addNoteToFolder(newFolderID, id);
+            setNote(prevNoteData => prevNoteData ? { ...prevNoteData, folder: newFolderID } : prevNoteData);
+            console.log("Note folder updated");
+        }
+
+        // Explanation for both: Now that the folder assigment has changed in Firebase, I also need to update the state locally (on my screen in the browser)
+        // How: prevNoteData refers to the state/info of the note right before the folder was changed in firebase.
+        // I check if the prevNoteData and if it does I then "spread" or rather pull apart the prevNoteData, grab the folder property/data and then either set it to an empty string or to the newFolderID (well the name of the folder tbh)
+    };
+
     useEffect(() => {
-        console.log("checking if note has changed, finna wait 1 second before updating in firebase");
+        // const hasChanged = (
+        //     noteContent !== note?.content
+        // );
 
         const hasChanged = (
-            noteTitle !== note?.title ||
-            noteContent !== note?.content ||
-            noteFolder !== note?.folder
+            noteContent.trim() !== "" &&
+            noteContent !== note?.content
         );
 
         if (!hasChanged) return;
@@ -96,45 +120,62 @@ const NoteEditPage = () => {
         setIsLoading(true);
 
         const getNoteData = setTimeout(() => {
-            console.log("updating note in firebase");
-            updateNoteInFirebase(noteTitle, noteContent, noteFolder);
-        }, 2000);
+            updateNoteInFirebase(noteContent);
+        }, 1000);
 
         return () => clearTimeout(getNoteData);
 
-    }, [noteTitle, noteContent, noteFolder, note?.title, note?.content, note?.folder, updateNoteInFirebase]);
+    }, [note, noteContent, updateNoteInFirebase]);
+
+    useEffect(() => {
+        if (noteFolder === note?.folder) return;
+
+        const getNoteFolder = setTimeout(() => {
+            handleFolderChange(noteFolder);
+        }, 1000);
+
+        return () => clearTimeout(getNoteFolder);
+
+    }, [note?.folder, noteFolder]);
 
     return (
-        <div className="flex w-full h-full justify-center items-center">
+        <div className="page-wrapper">
+
             <div className="note-edit-page">
 
-                { isLoading && <p>Saving...</p> }
+                <div className="note-edit-page__dropdown-wrapper">
 
-                <div className="note-edit-page__dropdowns">
                     <div className="note-edit-page__dropdown">
+                        <label className="note-edit-page__dropdown-label"><Folder size={ 20 } /></label>
                         <Dropdown
-                            options={ folderOptions }
-                            value={ noteFolder }
-                            onChange={ setNoteFolder }
-                            placeholder="Select Folder"
+                            placeholder="Select a folder"
+                            options={ folderOptions.map(option => option.folderName) }
+                            value={ folderOptions.find(option => option.folderID === noteFolder)?.folderName || "" }
+                            onChange={ (folderID: string) => {
+                                const selectedFolder = folders.find(folder => folder.name === folderID);
+                                setNoteFolder(selectedFolder?.id || "");
+                            } }
                         />
                     </div>
 
                 </div>
 
+                <div className="note-edit-page__main">
 
+                    { isLoading && <div className="loading-overlay">Saving...</div> }
 
-                <header className="note-edit-page__header">
-                    <input className="note-edit-page__header-title"
-                        onChange={ (e) => setNoteTitle(e.target.value) }
-                        value={ noteTitle } type="text" placeholder="Title" />
-                </header>
+                    <div className="note-edit-page__main">
 
+                        <ReactQuill
+                            theme="snow"
+                            value={ noteContent }
+                            onChange={ (value) => setNoteContent(value) }
+                        />
 
-                <textarea className="note-edit-page__description"
-                    onChange={ (e) => setNoteContent(e.target.value) }
-                    value={ noteContent }
-                    placeholder="Description" />
+                    </div>
+
+                </div>
+
             </div>
 
         </div>

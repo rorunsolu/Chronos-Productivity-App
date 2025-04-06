@@ -1,6 +1,5 @@
 .folder-list-page {
-    display: flex;
-    flex-direction: column;
+    margin: 0 auto;
 
     max-width: 1000px;
     width: 100%;
@@ -40,7 +39,7 @@
         background: var(--main-bg);
         box-shadow: var(--shadow);
 
-        transition: 0.2s ease-in-out;
+        transition: var(--primary-transition);
 
         &:hover {
             cursor: pointer;
@@ -96,8 +95,4 @@
         line-height: 32px;
         word-wrap: break-word;
     }
-}
-
-.w100 {
-    flex: 1;
 }
