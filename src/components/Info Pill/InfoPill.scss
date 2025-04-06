@@ -1,0 +1,15 @@
+.info-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    border: var(--primary-border);
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+
+    text-transform: capitalize;
+    font-size: 12px;
+    font-weight: 500;
+
+    box-shadow: var(--shadow);
+}
