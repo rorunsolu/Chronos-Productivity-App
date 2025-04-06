@@ -1,0 +1,60 @@
+.dash-project-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: var(--primary-border);
+    padding: 8px 16px;
+    padding: 12px 32px;
+
+    cursor: pointer;
+
+    transition: var(--primary-transition);
+
+    &:hover {
+        background: whitesmoke;
+    }
+
+    &:last-child {
+        border-bottom: none;
+        border-bottom: 1px solid transparent;
+    }
+
+    &__dot {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: hsl(217, 100%, 51%);
+    }
+
+    &__details {
+        display: flex;
+        gap: 16px;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        height: 24px;
+    }
+
+    &__text {
+        display: flex;
+        align-items: center;
+
+        font-size: 14px;
+        font-weight: 500;
+
+        color: #181d27;
+    }
+
+    &__end {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}

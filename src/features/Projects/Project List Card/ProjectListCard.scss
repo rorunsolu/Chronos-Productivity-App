@@ -1,3 +1,32 @@
+.progress-bar {
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+
+    &__fill {
+        height: 100%;
+        background-color: #4caf50;
+        border-radius: 4px;
+        transition: width 0.3s ease-in-out;
+    }
+}
+
+.project-list-card__progress-text {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.project-list-card__progress-count {
+    font-size: 0.75rem;
+    color: #999;
+}
+
 .project-list-card {
     border: var(--primary-border);
     border-radius: 8px;
@@ -5,34 +34,47 @@
 
     box-shadow: var(--shadow);
 
+    &__delete-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        gap: 8px;
+
+        width: 32px;
+        height: 32px;
+
+        border: var(--primary-border);
+        border-radius: 6px;
+        padding: 2px 6px;
+
+        color: #181d27;
+        background: var(--main-bg);
+        box-shadow: var(--shadow);
+
+        cursor: pointer;
+
+        transition: var(--primary-transition);
+
+        &:hover {
+            background: whitesmoke;
+        }
+    }
+
+    &__progress {
+        margin: 1rem 0;
+    }
+
     &__header {
         display: flex;
+        justify-content: space-between;
         gap: 10px;
 
-        margin-bottom: 14px;
+        margin-bottom: 18px;
 
-        &-item {
+        &-items {
             display: flex;
-            align-items: center;
-            gap: 6px;
-
-            border: var(--primary-border);
-            border-radius: 6px;
-            padding: 2px 6px;
-
-            height: 24px;
-
-            box-shadow: var(--shadow);
-        }
-
-        &-icon {
-        }
-
-        &-value {
-            font-size: 14px;
-            font-weight: 400;
-
-            color: #535862;
+            gap: 10px;
         }
     }
     &__title {
@@ -62,7 +104,6 @@
     &__icon {
     }
     &__value {
-  
     }
     &__task-title {
     }
@@ -73,7 +114,7 @@
     &__button {
         border-radius: 8px;
         border: var(--primary-border);
-        margin-top: 16px;
+        margin-top: 10px;
 
         padding: 10px 14px;
         width: 100%;
@@ -82,7 +123,7 @@
         background: var(--main-bg);
         box-shadow: var(--shadow);
 
-        transition: 0.2s ease-in-out;
+        transition: var(--primary-transition);
 
         &:hover {
             cursor: pointer;

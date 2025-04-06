@@ -1,0 +1,41 @@
+.dash-note-block {
+    border: var(--primary-border);
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow);
+
+    &__bottom {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__list {
+        border-top: var(--primary-border);
+
+        overflow-y: scroll;
+
+        max-height: 540px;
+    }
+
+    &__button {
+        text-align: right;
+
+        width: 100%;
+        height: 44px;
+
+        border-top: var(--primary-border);
+        padding: 0 14px;
+
+        color: #181d27;
+
+        cursor: pointer;
+        transition: var(--primary-transition);
+
+        &:hover {
+            background: whitesmoke;
+        }
+    }
+}
