@@ -1,0 +1,160 @@
+.page-wrapper--dashboard {
+  max-width: 100%;
+}
+
+.page-wrapper--home {
+  margin-top: 0 !important;
+}
+
+.app-layout {
+  display: grid;
+  grid-template-areas:
+    "sidebar navbar"
+    "sidebar main";
+
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+
+  height: 100vh;
+}
+
+.app-layout__sidebar {
+  grid-area: sidebar;
+
+  height: 100%;
+
+  background: white;
+}
+
+.app-layout__navbar {
+  grid-area: navbar;
+
+  width: 100%;
+
+  background: white;
+}
+
+.app-layout__main {
+  grid-area: main;
+
+  overflow-y: scroll;
+}
+
+.page-wrapper {
+  margin: 30px auto;
+
+  width: 90%;
+  max-width: 1440px;
+
+  //height: 100%;
+
+  @media (width < 400px) {
+    width: 95%;
+  }
+}
+
+.section {
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  max-width: 1440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.text-sm-regular {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #535862;
+}
+
+.display-xs-semibold {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #181d27;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+.ql-editor {
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+  font-size: 16px !important;
+}
+
+.ql-snow .ql-picker-label {
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+
+  padding-left: 0 !important;
+
+  // svg:hover {
+  //   color: black !important;
+  // }
+
+  // &:hover {
+  //   color: black !important;
+  // }
+}
+
+.modal .css-1o7nse5-container {
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+}
+
+.modal .css-bxfvr9 {
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+}
+
+.modal #datepicker-format {
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+}
+
+.ql-toolbar.ql-snow {
+  border: none !important;
+  padding: 12px 15px !important;
+
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+}
+.ql-container.ql-snow {
+  border: none !important;
+
+  font-family: "Inter", serif !important;
+  font-optical-sizing: auto !important;
+
+  font-size: 16px !important;
+  color: #181d27 !important;
+}
