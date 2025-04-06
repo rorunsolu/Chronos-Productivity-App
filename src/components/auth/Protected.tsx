@@ -1,10 +1,17 @@
 import { Navigate } from "react-router-dom";
-import { UserAuth } from "../../contexts/authContext/AuthContext";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { ReactNode } from "react";
 
-const Protected = ({ children }) => {
+const Protected: React.FC<ProtectedProps> = ({ children, allowGuest = false }) => {
     const { user } = UserAuth();
 
-    if (!user) {
+    // if (!user) {
+    //     return <Navigate to="/" />;
+    // }
+
+    const hasAccess = user && (allowGuest || !user.isAnonymous);
+
+    if (!hasAccess) {
         return <Navigate to="/" />;
     }
 
@@ -12,3 +19,9 @@ const Protected = ({ children }) => {
 };
 
 export default Protected;
+
+
+interface ProtectedProps {
+    children: ReactNode;
+    allowGuest?: boolean;
+}
