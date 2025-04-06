@@ -1,14 +1,14 @@
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
-import { db } from "@/firebase/firebase";
+import Dropdown from "@/components/Dropdown/Dropdown";
+import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { TaskData } from "@/features/Tasks/context/TaskContext";
-import { useEffect, useState, useCallback } from "react";
+import { TaskStatus } from "@/features/Tasks/context/TaskContext";
+import { db } from "@/firebase/firebase";
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { Calendar, NotepadText, Tag } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import "@/pages/Task Edit Page/TaskEditPage.scss";
-import { NotepadText, Calendar, Tag } from 'lucide-react';
-import Dropdown from "@/components/Dropdown/Dropdown";
 import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
-import { TaskStatus } from "@/features/Tasks/context/TaskContext";
-import { UseProjects } from "@/features/Projects/context/ProjectContext";
 
 const TaskEditPage = () => {
 
@@ -19,14 +19,19 @@ const TaskEditPage = () => {
     const [taskContent, setTaskContent] = useState("");
     const [taskDueDate, setTaskDueDate] = useState<Date | null>(null);
     const [taskLabel, setTaskLabel] = useState("");
-    const [TaskStatus, setTaskStatus] = useState<TaskStatus>("pending");
+    const [taskStatus, setTaskStatus] = useState<TaskStatus>("pending");
     const [taskProjectAssignment, setTaskProjectAssignment] = useState<string>("");
 
-    const { projects, fetchProjects } = UseProjects();
+    const { projects, fetchProjects, addTaskToProject, removeTaskFromProject, updateProject } = UseProjects();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const projectOptions = projects.map(project => project.name);
+    const projectOptions = useMemo(
+        () => projects.map((project) => ({ value: project.id, label: project.name })),
+        [projects]
+    );
+
     const labelOptions = ["Personal", "Work", "School"];
     const statusOptions = ["pending", "ongoing", "completed"];
 
@@ -35,23 +40,20 @@ const TaskEditPage = () => {
     }, [fetchProjects]);
 
     useEffect(() => {
-        //set laoding to true each time the page loads when the ID exists
-        setIsLoading(true);
+
+        if (isInitialLoad) {
+            setIsInitialLoad(false);
+            return;
+        }
 
         const fetchTask = async () => {
-
-            // if the ID doesn't exist end the function
 
             if (!id) {
                 return;
             }
 
-            // retrieve the task from firebase by accessign the tasks collection and selecting the task based on the ID inside the URL
             const task = doc(db, "tasks", id);
-            // the taskSnapshot refers to an image or rather "snapshot" of the task at the time of the request
             const taskSnapshot = await getDoc(task);
-
-            //if the task snapshot doesnt exisst then the function is stopped and loading is set to false
 
             if (!taskSnapshot.exists()) {
                 console.log("Task does not exist");
@@ -59,73 +61,107 @@ const TaskEditPage = () => {
                 return;
             }
 
-            // now I will create the functionality of setting the values of the tasks variuos details/data
-            // this will be used for displaying the currently stored data in the fields of the page
-
             const taskObjectdata = taskSnapshot.data();
             setTaskTitle(taskObjectdata.title);
             setTaskContent(taskObjectdata.content);
             setTaskProjectAssignment(taskObjectdata.projectId);
             setTaskStatus(taskObjectdata.status);
-            setTaskDueDate(taskObjectdata.dueDate?.toDate() || null); // Convert Timestamp to Date
+            setTaskDueDate(taskObjectdata.dueDate?.toDate() || null);
             setTaskLabel(taskObjectdata.label);
             setTask(taskObjectdata as TaskData);
-        }
+
+            setIsLoading(false);
+        };
 
         fetchTask();
 
-    }, [id]);
+    }, [id, isInitialLoad]);
 
-    const updateTaskInFirebase = useCallback(async (newTitle: string, newContent: string, newProjectAssignment?: string, newDueDate?: Date | null, newLabel?: string, newStatus?: TaskStatus) => {
-        try {
-            if (!id) {
-                return;
+    const updateTaskFields = useCallback(
+        async (newTitle: string, newContent?: string, newDueDate?: Date | null, newLabel?: string, newStatus?: TaskStatus) => {
+
+            if (!id) return;
+
+            const taskRef = doc(db, "tasks", id);
+
+            await setDoc(
+                taskRef,
+                {
+                    title: newTitle,
+                    content: newContent || "",
+                    label: newLabel || "",
+                    dueDate: newDueDate ? Timestamp.fromDate(newDueDate) : null,
+                    status: newStatus || "pending",
+                },
+                { merge: true }
+            );
+        },
+        [id]
+    );
+
+    const handleProjectChange = useCallback(
+        async (newProjectId: string) => {
+
+            if (!id) return;
+
+            const oldProjectId = task?.projectId;
+
+            if (oldProjectId === newProjectId) return;
+
+            if (oldProjectId) {
+                removeTaskFromProject(oldProjectId, id);
+                setTask(prev => prev ? { ...prev, projectId: "" } : prev);
             }
 
-            const task = doc(db, "tasks", id);
-            await setDoc(task, {
-                title: newTitle,
-                content: newContent,
-                projectId: newProjectAssignment,
-                label: newLabel,
-                dueDate: newDueDate ? Timestamp.fromDate(newDueDate) : null,
-                status: newStatus
-            }, { merge: true });
+            if (newProjectId) {
+                addTaskToProject(newProjectId, id);
+                setTask(prev => prev ? { ...prev, projectId: newProjectId } : prev);
 
-        } catch (error) {
-            console.error("Error updating task:", error);
-        } finally {
-            setIsLoading(false);
-            console.log("Task updated successfully");
-        }
-    }, [id]);
+                const project = projects.find(project => project.id === newProjectId);
+                if (project) {
+                    updateProject(newProjectId, { updatedAt: Timestamp.fromDate(new Date()) });
+                }
+            }
+        },
+        [id, task?.projectId, addTaskToProject, removeTaskFromProject, projects, updateProject]
+    );
 
     useEffect(() => {
-        console.log("checking if task has changed, finna wait 1 second before updating in firebase");
 
-        const hasChanged = (
+        console.log("checking if task has changed");
+
+        const hasFieldChanged = (
             taskTitle !== task?.title ||
             taskContent !== task?.content ||
-            taskProjectAssignment !== task?.projectId ||
-            TaskStatus !== task?.status ||
+            taskStatus !== task?.status ||
             taskLabel !== task?.label ||
             (taskDueDate?.getTime() !== (task?.dueDate instanceof Timestamp ? task.dueDate.toDate().getTime() : task?.dueDate?.getTime()))
         );
 
-        if (!hasChanged) return;
+        if (!hasFieldChanged) return;
 
-        setIsLoading(true);
-
-        const getTaskData = setTimeout(() => {
+        const timeout = setTimeout(() => {
             console.log("updating task in firebase");
-            updateTaskInFirebase(taskTitle, taskContent, taskProjectAssignment, taskDueDate, taskLabel, TaskStatus);
-        }, 2000);
+            updateTaskFields(taskTitle, taskContent, taskDueDate, taskLabel, taskStatus);
+        }, 1000);
 
-        return () => clearTimeout(getTaskData);
-    }, [taskTitle, taskContent, taskProjectAssignment, taskDueDate, taskLabel, TaskStatus, task?.title, task?.content, task?.projectId, task?.dueDate, task?.label, task?.status, updateTaskInFirebase]);
+        return () => clearTimeout(timeout);
+
+    }, [taskTitle, taskContent, taskDueDate, taskLabel, taskStatus, updateTaskFields, task]);
+
+    useEffect(() => {
+        if (taskProjectAssignment === task?.projectId) return;
+
+        const timeout = setTimeout(() => {
+            handleProjectChange(taskProjectAssignment);
+            console.log("updating project assignment in firebase");
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+    }, [taskProjectAssignment, task?.projectId]); // IGNORE THIS ERROR
 
     return (
-        <div className="flex w-full h-full justify-center items-center mt-16">
+        <div className="page-wrapper">
             <div className="task-edit-page">
 
                 { isLoading && <p>Saving...</p> }
@@ -167,12 +203,16 @@ const TaskEditPage = () => {
                             <Calendar size={ 20 } />
                             <label className="task-edit-page__form-label">Due Date</label>
                         </div>
-
-                        <DateTimePickerCompo
-                            value={ taskDueDate }
-                            onChange={ (date) => setTaskDueDate(date) }
-                        />
+                        {/* Do i even need this? */ }
+                        <div className="relative">
+                            <DateTimePickerCompo
+                                value={ taskDueDate }
+                                onChange={ (date) => setTaskDueDate(date) }
+                            />
+                        </div>
                     </div>
+
+
 
                     <div className="task-edit-page__form-group">
                         <div className="task-edit-page__form-header">
@@ -181,7 +221,7 @@ const TaskEditPage = () => {
                         </div>
                         <Dropdown
                             options={ statusOptions }
-                            value={ TaskStatus }
+                            value={ taskStatus }
                             onChange={ (value: string) => setTaskStatus(value as TaskStatus) }
                             placeholder="Select a status"
                         />
@@ -194,10 +234,14 @@ const TaskEditPage = () => {
                             <label className="task-edit-page__form-label">Assigned project</label>
                         </div>
                         <Dropdown
-                            options={ projectOptions }
-                            value={ taskProjectAssignment }
-                            onChange={ setTaskProjectAssignment }
                             placeholder="Select a project"
+                            options={ projectOptions.map(opt => opt.label) }
+                            value={ projectOptions.find(opt => opt.value === taskProjectAssignment)?.label || "" }
+                            onChange={ (value: string) => {
+                                // Match by LABEL (display name), not ID
+                                const selectedProject = projects.find(project => project.name === value);
+                                setTaskProjectAssignment(selectedProject?.id || "");
+                            } }
                         />
                     </div>
 
@@ -206,6 +250,6 @@ const TaskEditPage = () => {
             </div>
         </div>
     );
-}
+};
 
 export default TaskEditPage;
