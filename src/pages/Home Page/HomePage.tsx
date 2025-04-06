@@ -1,33 +1,57 @@
-import "./HomePage.scss";
+import "@/pages/Home Page/HomePage.scss";
 import { Link } from "react-router-dom";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { signInAsGuest, user } = UserAuth();
+  const [error, setError] = useState("");
+
+  const handleGuestAccess = async () => {
+    try {
+      await signInAsGuest();
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Guest access failed:", error);
+      setError("Failed to sign in as guest. Please try again.");
+    }
+  };
+
   return (
-    <div className="flex w-full h-full justify-center items-center mt-16">
+    <div className="page-wrapper page-wrapper--home">
 
       <div className="homepage">
 
-        <div className="homepage__actions">
+        <header className="homepage__header">
 
-          {/* <div className="homepage__actions-primary">
+          <img className="homepage__logo" src="/chronos-logo.svg" alt="Chronos Logo" />
 
-            <button className="homepage__social-btn" type="button">Start without an account</button>
+          <div className="homepage__header-content">
+            <h1 className="homepage__title">Welcome to Chronos</h1>
+            <p className="homepage__subtitle">Your time management companion</p>
+          </div>
 
-          </div> */}
+        </header>
 
-        </div>
+        { !user && (
+          <div className="homepage__actions">
 
-        <div className="homepage__nav">
+            <div className="homepage__button-wrapper">
+              <Link to="/SignIn">
+                <button className="homepage__button">Sign in to your account</button>
+              </Link>
+              <Link to="/SignUp">
+                <button className="homepage__button">Create an account</button>
+              </Link>
+              <button className="homepage__button homepage__button--secondary" onClick={ handleGuestAccess }>Start without an account</button>
+            </div>
 
-          {/* <Link to="/SignIn">
-            <button className="homepage__nav-btn">Sign in</button>
-          </Link>
+          </div>
+        ) }
 
-          <Link to="/SignUp">
-            <button className="homepage__nav-btn">Sign up</button>
-          </Link> */}
-
-        </div>
+        { error && <p className="signuppage__error">{ error }</p> }
 
       </div>
     </div>
