@@ -1,8 +1,6 @@
-.task-card {
+.dash-task-card {
     display: flex;
     flex-direction: column;
-    //justify-content: space-between;
-    //gap: 8px;
 
     border-bottom: var(--primary-border);
     padding: 8px 20px;
@@ -11,7 +9,7 @@
 
     cursor: pointer;
 
-    transition: 0.2s ease-in-out;
+    transition: var(--primary-transition);
 
     &:hover {
         background: whitesmoke;
@@ -34,46 +32,21 @@
         align-items: center;
 
         height: 21px;
-        //width: 110px;
 
         overflow: hidden;
-
-        //margin-bottom: 10px;
 
         font-size: 14px;
         font-weight: 500;
 
-        //color: #535862;
         color: #181d27;
-
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
     }
 
     &__date {
-        //width: fit-content;
- 
         font-size: 12px;
         font-weight: 500;
 
         color: #535862;
     }
-
-    // &__date {
-    //     width: fit-content;
-
-    //     border: var(--primary-border);
-    //     border-radius: 6px;
-    //     padding: 2px 6px;
-
-    //     font-size: 12px;
-    //     font-weight: 500;
-
-    //     color: #535862;
-    //     box-shadow: var(--shadow);
-    // }
 
     &__end {
         display: flex;

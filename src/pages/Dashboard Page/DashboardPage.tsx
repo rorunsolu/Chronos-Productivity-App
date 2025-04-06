@@ -11,7 +11,7 @@ import "@/components/Creation Modal/CreationModal.scss";
 import "@/pages/Dashboard Page/DashboardTasks.scss";
 import "@/pages/Dashboard Page/DashboardResults.scss";
 import "@/pages/Dashboard Page/DashboardSummary.scss";
-import TaskCard from "@/features/Tasks/Task Card/TaskCard";
+import TaskCard from "@/features/Tasks/Task Card/DashTaskCard";
 import DashSubHeader from "@/components/Dash Sub Header/DashSubHeader";
 import DashChartBlock from "@/components/Dash Chart Block/DashChartBlock";
 import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";

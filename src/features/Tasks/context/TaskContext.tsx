@@ -18,10 +18,6 @@ export interface TaskData {
     userId?: string;
 }
 
-export interface TaskCardProps {
-    task: TaskData;
-}
-
 interface TasksContextType {
     tasks: TaskData[];
     fetchTasks: () => void;
