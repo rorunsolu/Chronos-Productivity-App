@@ -1,13 +1,12 @@
-import { ChevronFirst, ChevronLast } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import "@/components/Sidebar/Sidebar.scss";
+import { Layers, FolderOpen, ChartColumnDecreasing, Notebook, SquareCheckBig, Calendar } from 'lucide-react';
 
-const Sidebar = () => {
-   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+const Sidebar: React.FC<SidebarProps> = ({ className, isSidebarExpanded }) => {
    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-   const [activeMenuItem, setActiveMenuItem] = useState("Dashboard");
+   const [activeMenuItem, setActiveMenuItem] = useState("Home");
 
    const { user, logOut } = UserAuth();
 
@@ -21,33 +20,35 @@ const Sidebar = () => {
 
    return (
 
-      <aside className={ `sidebar ${isSidebarExpanded ? "w-66 transition-all" : "w-16 transition-all"} ${user ? "" : "hidden"} ` }>
+      <aside
+         className={ `
+                sidebar 
+                ${isSidebarExpanded ? "w-66 transition-all" : "w-16 transition-all"} 
+                ${user ? "" : "hidden"} 
+                ${className || ""}
+            `}
+      >
          <nav className="sidebar__nav">
 
-            <div className="sidebar__header">
-               <div className={ `sidebar__logo-container overflow-hidden ${isSidebarExpanded ? "w-52" : "w-0"}` }>
-                  <img className={ `sidebar__logo w-8 ${isSidebarExpanded ? "" : " "}` } src="chronos-logo.svg" />
-                  <p className={ `sidebar__logo-text ${isSidebarExpanded ? " " : ""} ` }>Chronos</p>
-               </div>
-
-               <button className="sidebar__toggle" onClick={ () => setIsSidebarExpanded(prevState => !prevState) }>
-                  { isSidebarExpanded ? <ChevronFirst /> : <ChevronLast /> }
-               </button>
-
+            <div className={ `sidebar__header ${isSidebarExpanded ? "justify-start" : ""}` }>
+               <img className={ `sidebar__logo` } src="chronos-logo.svg" />
+               <p className={ `sidebar__logo-text ${isSidebarExpanded ? "" : "hidden"} ` }>Chronos</p>
             </div>
 
             <ul className="sidebar__list">
                { sidebarItemList.map(({ name, icon }) => (
-                  <Link to={ `/${name}` } key={ name }>
+                  <Link className="" to={ `/${name}` } key={ name }>
                      <li
                         className={ `sidebar-item group
                         ${activeMenuItem === name ? "sidebar-item--active" : ""}
-                        ${isSidebarExpanded ? "pl-3" : "pl-0"}` }
+                        ${isSidebarExpanded ? "" : ""}` }
                         onClick={ () => setActiveMenuItem(name) }
                      >
-                        { icon }
+                        <span className={ `sidebar-item__icon ${isSidebarExpanded ? "ml-1.25" : "ml-1.25"}` }>
+                           { icon }
+                        </span>
 
-                        <span className={ `sidebar-item__text overflow-hidden capitalize ${isSidebarExpanded ? "w-52 ml-3" : "w-0 hidden"}` }>
+                        <span className={ `sidebar-item__text overflow-hidden capitalize ${isSidebarExpanded ? "" : "hidden"}` }>
                            { name }
                         </span>
 
@@ -106,9 +107,15 @@ const Sidebar = () => {
 export default Sidebar;
 
 const sidebarItemList = [
-   { name: "Dashboard", icon: <i className="ri-dashboard-line"></i> },
-   { name: "Tasks", icon: <i className="ri-task-line"></i> },
-   { name: "Notes", icon: <i className="ri-booklet-line"></i> },
-   { name: "Projects", hasSubMenu: true, icon: <i className="ri-briefcase-line"></i> },
-   { name: "Folders", icon: <i className="ri-folder-line"></i> },
+   { name: "Dashboard", icon: <ChartColumnDecreasing /> },
+   { name: "Tasks", icon: <SquareCheckBig /> },
+   { name: "Notes", icon: <Notebook /> },
+   { name: "Projects", hasSubMenu: true, icon: <Layers /> },
+   { name: "Folders", icon: <FolderOpen /> },
+   { name: "Calendar", icon: <Calendar /> }
 ];
+
+interface SidebarProps {
+   className?: string;
+   isSidebarExpanded: boolean;
+}
