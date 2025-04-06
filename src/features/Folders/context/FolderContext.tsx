@@ -1,22 +1,23 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Timestamp, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase/firebase";
+import { Timestamp, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, updateDoc, query, where } from "firebase/firestore";
+import { db, auth } from "@/firebase/firebase";
 
 export interface FolderData {
     id: string;
     name: string;
-    notes: string[] // array of note ID's
+    notes: string[]; // array of note ID's
     createdAt: Timestamp;
+    userId?: string;
 }
 
 interface FoldersContextType {
     folders: FolderData[];
     fetchFolders: () => void;
-    createFolder: (name: string) => void;
+    createFolder: (name: string, userId?: string) => void;
     deleteFolder: (id: string) => void;
     updateFolder: (id: string, updates: Partial<FolderData>) => void;
-    addNoteToFolder: (parentFolderId: string, childNoteId: string) => void;
-    removeNoteFromFolder: (parentFolderId: string, childNoteId: string) => void;
+    addNoteToFolder: (folderID: string, childNoteID: string) => void;
+    removeNoteFromFolder: (folderID: string, childNoteID: string) => void;
 }
 
 const FolderContext = createContext<FoldersContextType | undefined>(undefined);
@@ -34,25 +35,28 @@ export const FolderProvider = ({ children }: { children: ReactNode; }) => {
 
     const fetchFolders = async () => {
         const foldersCollection = collection(db, "folders");
-        const folderSnapshot = await getDocs(foldersCollection);
+        const folderQuery = query(foldersCollection, where("userId", "==", auth.currentUser?.uid));
+        const folderSnapshot = await getDocs(folderQuery);
 
         const folderList = folderSnapshot.docs.map((doc) => ({
             id: doc.id,
             name: doc.data().name,
             notes: doc.data().notes || [],
-            createdAt: doc.data().createdAt
+            createdAt: doc.data().createdAt,
+            userId: doc.data().userId,
         }));
 
         setFolders(folderList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()));
-    }
+    };
 
-    const createFolder = async (name: string) => {
+    const createFolder = async (name: string, userId?: string) => {
 
         const newDate = Timestamp.fromDate(new Date());
 
         try {
             const folderData = {
                 name,
+                userId: userId || "",
                 notes: [],
                 createdAt: newDate
             };
@@ -67,56 +71,63 @@ export const FolderProvider = ({ children }: { children: ReactNode; }) => {
                 ...folders
             ]);
 
+            console.log("Folder created with ID: ", folderDocRef.id);
+
 
         } catch (error) {
             console.error("Error adding folder to firestore: ", error);
         }
     };
 
-    const addNoteToFolder = async (parentFolderId: string, childNoteId: string) => {
+    const addNoteToFolder = async (folderID: string, childNoteID: string) => {
         try {
-            const folderRef = doc(db, "folders", parentFolderId);
-            const noteRef = doc(db, "notes", childNoteId);
+            const userIdTiedToFolder = folders.find(folder => folder.id === folderID)?.userId;
+            if (!userIdTiedToFolder) {
+                console.error("Folder not found in firestore: ", folderID);
+                return;
+            }
+            const folderRef = doc(db, "folders", folderID);
+            const noteRef = doc(db, "notes", childNoteID);
 
             await updateDoc(folderRef, {
-                notes: arrayUnion(noteRef)
+                notes: arrayUnion(childNoteID)
             });
 
             await updateDoc(noteRef, {
-                parentFolder: folderRef
+                folder: folderID
             });
 
             setFolders(folders.map(folder =>
-                folder.id === parentFolderId ? {
+                folder.id === folderID ? {
                     ...folder,
-                    notes: [...folder.notes, childNoteId],
+                    notes: [...folder.notes, childNoteID],
                 } : folder
             ));
 
         } catch (error) {
             console.error("Error adding note to folder in firestore: ", error);
         }
-    }
+    };
 
-    const removeNoteFromFolder = async (parentFolderId: string, childNoteId: string) => {
-        const folderRef = doc(db, "folders", parentFolderId);
-        const noteRef = doc(db, "notes", childNoteId);
+    const removeNoteFromFolder = async (folderID: string, childNoteID: string) => {
+        const folderRef = doc(db, "folders", folderID);
+        const noteRef = doc(db, "notes", childNoteID);
 
         await updateDoc(folderRef, {
             notes: arrayRemove(noteRef)
         });
 
         await updateDoc(noteRef, {
-            parentFolder: folderRef
+            folder: ""
         });
 
         setFolders(folders.map(folder =>
-            folder.id === parentFolderId ? {
+            folder.id === folderID ? {
                 ...folder,
-                notes: folder.notes.filter(noteId => noteId !== childNoteId),
+                notes: folder.notes.filter(noteId => noteId !== childNoteID),
             } : folder
         ));
-    }
+    };
 
     const deleteFolder = async (id: string) => {
         try {
@@ -125,8 +136,9 @@ export const FolderProvider = ({ children }: { children: ReactNode; }) => {
         } catch (error) {
             console.error("Error deleting folder from firestore: ", error);
         }
-    }
+    };
 
+    //! I need to keep (updateFolder) this incase I need to add functionality to thencga ehte name of the folder
     const updateFolder = async (id: string, updates: Partial<FolderData>) => {
         try {
             const folderRef = doc(db, "folders", id);
@@ -134,11 +146,11 @@ export const FolderProvider = ({ children }: { children: ReactNode; }) => {
         } catch (error) {
             console.error("Error updating folder in firestore: ", error);
         }
-    }
+    };
 
     return (
         <FolderContext.Provider value={ { folders, fetchFolders, createFolder, deleteFolder, updateFolder, addNoteToFolder, removeNoteFromFolder } }>
             { children }
         </FolderContext.Provider>
     );
-}
+};

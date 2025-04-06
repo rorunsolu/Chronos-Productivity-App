@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { db } from "../../../firebase/firebase";
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, updateDoc, arrayUnion, arrayRemove, query, where } from "firebase/firestore";
+import { db, auth } from "@/firebase/firebase";
 
 export type ProjectStatus = "pending" | "ongoing" | "completed";
 
@@ -13,19 +13,20 @@ export interface ProjectData {
    status: ProjectStatus;
    createdAt: Timestamp;
    updatedAt?: Timestamp;
+   userId?: string;
 }
 
 interface ProjectsContextType {
    projects: ProjectData[];
    fetchProjects: () => void;
-   createProject: (name: string, description?: string, label?: string) => void;
+   createProject: (name: string, description?: string, label?: string, userId?: string) => void;
    deleteProject: (id: string) => void;
    updateProject: (id: string, updates: Partial<ProjectData>) => void;
    addTaskToProject: (projectId: string, taskId: string) => void;
    removeTaskFromProject: (projectId: string, taskId: string) => void;
 }
 
-export interface ProjectCardProps {
+export interface DashProjectCardProps {
    project: ProjectData;
 }
 
@@ -44,8 +45,11 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
 
    const fetchProjects = async () => {
       try {
+
          const projectsCollection = collection(db, "projects");
-         const projectSnapshot = await getDocs(projectsCollection);
+         const projectsQuery = query(projectsCollection, where("userId", "==", auth.currentUser?.uid));
+         const projectSnapshot = await getDocs(projectsQuery);
+
          const projectList = projectSnapshot.docs.map((doc) => ({
             id: doc.id,
             name: doc.data().name,
@@ -64,7 +68,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
       }
    };
 
-   const createProject = async (name: string, description?: string, label?: string) => {
+   const createProject = async (name: string, description?: string, label?: string, userId?: string) => {
       const newDate = Timestamp.fromDate(new Date());
       try {
          const docRef = await addDoc(collection(db, "projects"), {
@@ -72,6 +76,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             description: description || "",
             tasks: [],
             label: label || "",
+            userId: userId || "",
             status: "pending" as ProjectStatus,
             createdAt: newDate,
             updatedAt: newDate,
@@ -82,6 +87,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             description: description || "",
             tasks: [],
             label: label || "",
+            userId: userId || "",
             status: "pending" as ProjectStatus,
             createdAt: newDate,
             updatedAt: newDate,
@@ -95,49 +101,34 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
       try {
          await deleteDoc(doc(db, "projects", id));
          setProjects(projects.filter(project => project.id !== id));
+         console.log("Project deleted successfully:", id);
       } catch (error) {
          console.error("Error deleting project:", error);
       }
    };
 
-   // const updateProject = async (id: string, updates: Partial<ProjectData>) => {
-   //    try {
-   //       const projectRef = doc(db, "projects", id);
-   //       const updateData = {
-   //          ...updates,
-   //          updatedAt: Timestamp.fromDate(new Date()),
-   //       };
-   //       await updateDoc(projectRef, updateData);
-   //       setProjects(projects.map(project =>
-   //          project.id === id ? { ...project, ...updateData } : project
-   //       ));
-   //    } catch (error) {
-   //       console.error("Error updating project:", error);
-   //    }
-   // };
-
    const updateProject = async (id: string, updates: Partial<ProjectData>) => {
       try {
-        const projectRef = doc(db, "projects", id);
-        
-        const updatesToProject = {
-          ...updates,
-          updatedAt: Timestamp.fromDate(new Date()),
-        };
-    
-        await updateDoc(projectRef, updatesToProject);
-    
-        setProjects(projects.map(project => 
-          project.id === id ? { 
-            ...project, 
-            ...updatesToProject
-          } : project
-        ));
-    
+         const projectRef = doc(db, "projects", id);
+
+         const updatesToProject = {
+            ...updates,
+            updatedAt: Timestamp.fromDate(new Date()),
+         };
+
+         await updateDoc(projectRef, updatesToProject);
+
+         setProjects(projects.map(project =>
+            project.id === id ? {
+               ...project,
+               ...updatesToProject
+            } : project
+         ));
+
       } catch (error) {
-        console.error("Error updating project:", error);
+         console.error("Error updating project:", error);
       }
-    };
+   };
 
    const addTaskToProject = async (projectId: string, taskId: string) => {
 
@@ -156,7 +147,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             // rewferences to task that you want to add to a project and  set the project accoding to the matcghing project id
             projectId: projectId,
             status: "pending", // set to pending by default
-         })
+         });
 
          setProjects(projects.map(project =>
             project.id === projectId ? {
@@ -184,7 +175,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
 
          await updateDoc(taskRef, {
             projectId: "", // removes the project id from the task
-         })
+         });
 
          setProjects(projects.map(project =>
             project.id === projectId ? {

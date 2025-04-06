@@ -1,24 +1,22 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import { db } from "../../../firebase/firebase";
-// import { query, where } from 'firebase/firestore';
-// import { auth } from "../../../firebase/firebase";
+import { addDoc, collection, deleteDoc, doc, getDocs, Timestamp, query, where } from "firebase/firestore";
+import { db, auth } from "@/firebase/firebase";
+import { useEffect } from "react";
 
 export interface NoteData {
     id: string;
-    title: string;
     content: string;
     folder?: string;
+    label?: string;
     createdAt: Timestamp;
+    userId?: string;
 }
 
 interface NotesContextType {
     notes: NoteData[];
     fetchNotes: () => void;
     deleteNote: (id: string) => void;
-    createNote: (title: string, content: string) => void;
-
-    //updateNote: (id: string, title: string, content: string) => void;
+    createNote: (content: string, folder?: string, label?: string, userId?: string) => Promise<string>;
 }
 
 const NoteContext = createContext<NotesContextType | undefined>(undefined);
@@ -35,49 +33,47 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
     const [notes, setNotes] = useState<NoteData[]>([]);
 
     const fetchNotes = async () => {
-        // Go back and add the auth match check so that a user can only see notes associated with their own account (unique id)
-
         const notesCollection = collection(db, "notes");
-        // const notesQuery = query(notesCollection, where("userId", "==", auth.currentUser.uid)) ignore this for now
-        const noteSnapshot = await getDocs(notesCollection);
+        const notesQuery = query(notesCollection, where("userId", "==", auth.currentUser?.uid));
+        const noteSnapshot = await getDocs(notesQuery);
 
         const noteList = noteSnapshot.docs.map((doc) => ({
             id: doc.id,
-            title: doc.data().title,
             content: doc.data().content,
             folder: doc.data().folder,
-            createdAt: doc.data().createdAt
+            label: doc.data().label,
+            createdAt: doc.data().createdAt,
+            userId: doc.data().userId,
         }));
 
         setNotes(noteList.sort((a, b) => b.createdAt - a.createdAt));
     };
 
-    const createNote = async (title: string, content: string) => {
-        //if (!auth.currentUser) return;
+    useEffect(() => {
+        fetchNotes();
+    }, []);
 
+    const createNote = async (content: string, folder?: string, label?: string, userId?: string): Promise<string> => {
         const newDate = Timestamp.fromDate(new Date());
 
         try {
-            const docRef = await addDoc(collection(db, "notes"), {
-                title,
+            const noteData = {
                 content,
-                folder: "",
+                folder: folder || "",
+                label: label || "",
+                userId: userId || "",
                 createdAt: newDate,
-                //userId: auth.currentUser.uid
-            });
+            };
 
-            setNotes([
-                {
-                    id: docRef.id,
-                    title,
-                    content,
-                    folder: "",
-                    createdAt: newDate
-                }, ...notes
-            ]);
+            const docRef = await addDoc(collection(db, "notes"), noteData);
+
+            setNotes([{ id: docRef.id, ...noteData }, ...notes]);
+            console.log("note created");
+            return docRef.id;
 
         } catch (error) {
             console.error("Error creating note:", error);
+            throw error;
         }
     };
 
@@ -91,8 +87,8 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
     };
 
     return (
-        <NoteContext.Provider value={{ notes, fetchNotes, createNote, deleteNote }}>
-            {children}
+        <NoteContext.Provider value={ { notes, fetchNotes, createNote, deleteNote } }>
+            { children }
         </NoteContext.Provider>
     );
 };
