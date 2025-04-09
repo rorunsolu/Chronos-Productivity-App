@@ -9,49 +9,11 @@
 
     box-shadow: var(--shadow);
 
+    cursor: pointer;
+
     &__information {
         display: flex;
         gap: 6px;
-    }
-
-    &__info {
-        &-pill {
-            // display: flex;
-            // align-items: center;
-            // gap: 5px;
-
-            // border: var(--primary-border);
-            // border-radius: 6px;
-
-            // padding: 2px 6px;
-
-            // box-shadow: var(--shadow);
-
-            display: flex;
-            align-items: center;
-            gap: 5px;
-
-            border: var(--primary-border);
-            border-radius: 6px;
-            padding: 0.2rem 0.5rem;
-
-            text-transform: capitalize;
-            font-size: 12px;
-            font-weight: 500;
-
-            box-shadow: var(--shadow);
-        }
-
-        &-icon {
-        }
-
-        &-text {
-            // font-size: 14px;
-            // font-weight: 400;
-            // line-height: 20px;
-            // word-wrap: break-word;
-            // color: #535862;
-        }
     }
 
     &__left {
@@ -125,7 +87,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 8px;
 
         width: 32px;
         height: 32px;
@@ -133,11 +94,6 @@
         border-radius: 6px;
         border: var(--primary-border);
         padding: 2px 6px;
-
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 20px;
-        word-wrap: break-word;
 
         color: #181d27;
         background: var(--main-bg);

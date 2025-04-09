@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskData } from "@/features/Tasks/context/TaskContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { useEffect } from "react";
-import { Check, Layers, Tag, Timer, Trash } from "lucide-react";
-import { format } from "date-fns";
+import { Check, Layers, Tag, Trash } from "lucide-react";
 import "@/features/Tasks/Task List Card/TaskListCard.scss";
 import InfoPill from "@/components/Info Pill/InfoPill";
 
@@ -16,7 +15,7 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ task, deleteTask, completio
 
     useEffect(() => {
         fetchProjects();
-    }, [fetchProjects]);
+    }, []);
 
     return (
         <li className="task-list-card" key={ task.id } onClick={ () => navigate(`/tasks/${task.id}`) } >
@@ -43,10 +42,6 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ task, deleteTask, completio
                     <InfoPill icon={ <Tag size={ 13 } /> } value={ task.label } />
                 }
 
-                { task.createdAt &&
-                    <InfoPill icon={ <Timer size={ 13 } /> } value={ format(task.createdAt.toDate(), 'dd/MM/yyyy') } />
-                }
-
                 { projectName &&
                     <InfoPill icon={ <Layers size={ 13 } /> } value={ projectName } />
                 }
@@ -62,11 +57,10 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ task, deleteTask, completio
             </div>
 
         </li>
-    )
-}
+    );
+};
 
 export default TaskListCard;
-
 
 interface TaskListCardProps {
     task: TaskData;
