@@ -1,23 +1,30 @@
-import Dropdown from "@/components/Dropdown/Dropdown";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
+import { ArrowDownUp, ArrowUpDown, Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import TextareaAutosize from "react-textarea-autosize";
 import "@/pages/Project List Page/ProjectListPage.scss";
 import ProjectListCard from "@/features/Projects/Project List Card/ProjectListCard";
-import { ArrowDownUp, ArrowUpDown, Search, Plus } from "lucide-react";
 
 const ProjectPage = () => {
    const { user } = UserAuth();
-   const { projects, fetchProjects, createProject, deleteProject } = UseProjects();
-   const [isModalOpen, setIsModalOpen] = useState(false);
    const openModal = () => setIsModalOpen(true);
+   const { projects, fetchProjects, createProject, deleteProject } = UseProjects();
+
    const [projectTitle, setProjectTitle] = useState("");
-   const [projectDescription, setProjectDescription] = useState("");
    const [projectLabel, setProjectLabel] = useState("");
-   const labelOptions = ["Work", "Personal", "Urgent"];
-   const [isNewestFirst, setIsNewestFirst] = useState(true);
+   const [projectDescription, setProjectDescription] = useState("");
+
    const [searchQuery, setSearchQuery] = useState("");
+   const [isNewestFirst, setIsNewestFirst] = useState(true);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+
+   // const labelOptions = ["Work", "Personal", "Urgent"];
+
+   useEffect(() => {
+      fetchProjects();
+   }, []);
 
    const handleCreateProject = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -27,17 +34,13 @@ const ProjectPage = () => {
          return;
       }
 
-      createProject(projectTitle, projectDescription, projectLabel, user.uid);
+      createProject(projectTitle, projectDescription, projectLabel);
       setProjectTitle("");
       setProjectDescription("");
       setProjectLabel("");
 
       setIsModalOpen(false);
    };
-
-   useEffect(() => {
-      fetchProjects();
-   }, [fetchProjects]);
 
    const filteredProjects = projects
       .filter(project => {
@@ -85,15 +88,11 @@ const ProjectPage = () => {
 
             </div>
 
-            <div>
-               <ul className="project-list-page__project-list">
-
-                  { filteredProjects.map((project) => (
-                     <ProjectListCard project={ project } key={ project.id } deleteProject={ deleteProject } />
-                  )) }
-
-               </ul>
-            </div>
+            <ul className="project-list-page__list">
+               { filteredProjects.map((project) => (
+                  <ProjectListCard project={ project } key={ project.id } deleteProject={ deleteProject } />
+               )) }
+            </ul>
 
             <Modal
                isOpen={ isModalOpen }
@@ -105,26 +104,38 @@ const ProjectPage = () => {
             >
 
                <p className="modal__title">Create a new project</p>
+
                <form className="modal__form" onSubmit={ handleCreateProject }>
 
-                  <input
-                     className="modal__input"
-                     onChange={ (e) => setProjectTitle(e.target.value) }
-                     value={ projectTitle }
-                     type="text"
-                     placeholder="Title"
-                  />
-                  <textarea
-                     className="modal__textarea"
-                     onChange={ (e) => setProjectDescription(e.target.value) }
-                     value={ projectDescription }
-                     placeholder="Description"
-                  />
+                  <div className="modal__info-wrapper">
 
-                  <Dropdown value={ projectLabel } onChange={ setProjectLabel } options={ labelOptions } placeholder="Select a label" />
+                     <div className="modal__input-group">
+                        <input
+                           className="modal__input"
+                           onChange={ (e) => setProjectTitle(e.target.value) }
+                           value={ projectTitle }
+                           type="text"
+                           placeholder="Title"
+                        />
+                     </div>
+
+                     <div className="modal__input-group">
+                        <TextareaAutosize
+                           className="modal__textarea"
+                           onChange={ (e) => setProjectDescription(e.target.value) }
+                           value={ projectDescription }
+                           placeholder="Description"
+                        />
+                     </div>
+
+                     {/* <div className="modal__input-group">
+                      <Dropdown value={ projectLabel } onChange={ setProjectLabel } options={ labelOptions } placeholder="Select a label" />
+                    </div> */}
+
+                  </div>
 
                   <div className="modal__button-wrapper">
-                     <button className="modal__button modal__button--create" disabled={ !projectTitle || !projectDescription } type="submit">
+                     <button className="modal__button modal__button--create" disabled={ !projectTitle } type="submit">
                         Create project
                      </button>
 

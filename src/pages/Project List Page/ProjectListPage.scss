@@ -4,14 +4,10 @@
 
     margin: 0 auto;
 
-    &__project-list {
+    &__list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 16px;
-    }
-
-    &__header {
-        text-align: left;
     }
 
     &__actions {
