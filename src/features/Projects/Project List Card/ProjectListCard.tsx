@@ -21,7 +21,7 @@ const ProjectListCard: React.FC<ProjectListCardProps> = ({ project, deleteProjec
 
     useEffect(() => {
         fetchTasks();
-    }, [fetchTasks]);
+    }, []);
 
     return (
         <li className="project-list-card">
@@ -87,8 +87,8 @@ const ProjectListCard: React.FC<ProjectListCardProps> = ({ project, deleteProjec
             <button className="project-list-card__button" onClick={ () => navigate(`/projects/${project.id}`) }>View Project</button>
 
         </li>
-    )
-}
+    );
+};
 
 export default ProjectListCard;
 
