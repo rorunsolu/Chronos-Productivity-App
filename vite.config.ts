@@ -1,20 +1,21 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
-import tailwindcss from '@tailwindcss/vite';
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
+// const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(),],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "./src"), // Use the defined __dirname
     },
   },
   server: {
     proxy: {
       "/__/auth": {
         target: "https://${env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com",
-        // target: `https://${process.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`, // Ensure env variable is correctly set
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/__\/auth/, "/__/auth"),
       },
