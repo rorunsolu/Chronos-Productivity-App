@@ -10,19 +10,17 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const { googleSignIn, emailSignIn, signInAsGuest, user } = UserAuth();
+  const { googleSignIn, emailSignIn, user } = UserAuth();
 
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
-
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
-
     event.preventDefault();
     if (!email || !password) {
       setError("Email and password are required.");
@@ -37,22 +35,6 @@ const SignIn = () => {
     }
   };
 
-  // const handleGuestAccess = async () => {
-  //   try {
-  //     await signInAsGuest();
-  //     navigate("/dashboard");
-  //   } catch (error) {
-  //     console.error("Guest access failed:", error);
-  //     setError("Failed to sign in as guest. Please try again.");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (user != null) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [user, navigate]);
-
   useEffect(() => {
     if (user != null && !user.isAnonymous) {
       navigate("/dashboard");
@@ -61,47 +43,69 @@ const SignIn = () => {
 
   return (
     <div className="flex w-full h-full justify-center items-center pt-6 ">
-
       <div className="signuppage">
-
-        <form className="login-form">
-
+        <form onSubmit={handleEmailSignIn}>
           <div className="login-form__header">
             <h2 className="login-form__title">Login</h2>
-            <p className="login-form__subtitle">Enter your email below to login to your account</p>
+            <p className="login-form__subtitle">
+              Enter your email below to login to your account
+            </p>
           </div>
 
           <div className="login-form__group">
             <label htmlFor="email">Email</label>
-            <input type="email" placeholder="m@example.com" value={ email } onChange={ (event) => setEmail(event.target.value) } />
-            <a href="#" className="login-form__forgot">Forgot your email?</a>
+            <input
+              type="email"
+              placeholder="m@example.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <a href="#" className="login-form__forgot">
+              Forgot your email?
+            </a>
           </div>
 
           <div className="login-form__group">
             <label htmlFor="password">Password</label>
-            <input type="password" placeholder="Password" value={ password } onChange={ (event) => setPassword(event.target.value) } />
-            <a href="#" className="login-form__forgot">Forgot your password?</a>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            <a href="#" className="login-form__forgot">
+              Forgot your password?
+            </a>
           </div>
 
-          { !user && (
+          {!user && (
             <>
               <div className="login-form__buttons">
-                <button className="login-form__button" type="submit" onClick={ handleEmailSignIn }>Login</button>
-                <button className="login-form__google" type="button" onClick={ handleGoogleSignIn }>Login with Google</button>
-                {/* <button className="login-form__google" onClick={ handleGuestAccess }>Start without an account</button> */ }
+                <button className="login-form__button" type="submit">
+                  Login
+                </button>
+                <button
+                  className="login-form__google"
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                >
+                  Login with Google
+                </button>
               </div>
 
-              <p className="login-form__signup">Don't have an account?<Link to="/signup">Sign up</Link></p>
-              <p className="login-form__signup">Don't want to create an account?<Link to="/">Go back to home</Link></p>
+              <p className="login-form__signup">
+                Don't have an account?<Link to="/signup">Sign up</Link>
+              </p>
+              <p className="login-form__signup">
+                Don't want to create an account?
+                <Link to="/">Go back to home</Link>
+              </p>
             </>
-          ) }
-
+          )}
         </form>
 
-        { error && <p className="signuppage__error">{ error }</p> }
-
+        {error && <p className="signuppage__error">{error}</p>}
       </div>
-
     </div>
   );
 };
