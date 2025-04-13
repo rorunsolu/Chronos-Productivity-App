@@ -18,6 +18,7 @@ const NoteListPage = () => {
    const [isModalOpen, setIsModalOpen] = useState(false);
    const openModal = () => setIsModalOpen(true);
 
+   const [noteTitle, setNoteTitle] = useState("");
    const [noteContent, setNoteContent] = useState("");
    const [noteFolder, setNoteFolder] = useState("");
    const [noteLabel, setNoteLabel] = useState("");
@@ -30,6 +31,7 @@ const NoteListPage = () => {
       .filter(note => {
          const searchLower = searchQuery.toLowerCase();
          return (
+            note.title?.toLowerCase().includes(searchLower),
             note.content?.toLowerCase().includes(searchLower)
          );
       })
@@ -49,7 +51,8 @@ const NoteListPage = () => {
          return;
       }
 
-      createNote(noteContent, noteFolder, noteLabel, user.uid);
+      createNote(noteTitle, noteContent, noteFolder, noteLabel);
+      setNoteTitle("");
       setNoteContent("");
       setNoteFolder("");
       setNoteLabel("");
@@ -58,7 +61,7 @@ const NoteListPage = () => {
 
    useEffect(() => {
       fetchNotes();
-   }, [fetchNotes]);
+   }, []);
 
    //todo: Clicking a note should open a modal with the task details and options to edit or delete the task.
    //todo: Add tooltips for the buttons
@@ -113,6 +116,17 @@ const NoteListPage = () => {
 
                <form className="modal__form" onSubmit={ handleCreateNote }>
 
+                  <div className="modal__input-wrapper">
+                     <label htmlFor="noteTitle" className="modal__label">Title</label>
+                     <input
+                        className="modal__input"
+                        type="text"
+                        placeholder="Enter title"
+                        onChange={ (e) => setNoteTitle(e.target.value) }
+                        value={ noteTitle }
+                     />
+                  </div>
+
                   <TextareaAutosize
                      className="modal__textarea"
                      onChange={ (e) => setNoteContent(e.target.value) }
@@ -135,7 +149,7 @@ const NoteListPage = () => {
 
                   <div className="modal__button-wrapper">
 
-                     <button className="modal__button modal__button--create" disabled={ !noteContent } type="submit">
+                     <button className="modal__button modal__button--create" disabled={ !noteTitle || !noteContent } type="submit">
                         Create note
                      </button>
 

@@ -9,7 +9,7 @@ const DashNoteBlock = () => {
 
     useEffect(() => {
         fetchNotes();
-    }, [fetchNotes]);
+    }, []);
 
     return (
         <div className="dash-note-block">

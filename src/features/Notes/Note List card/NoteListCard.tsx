@@ -1,10 +1,10 @@
+import { UseFolders } from "@/features/Folders/context/FolderContext";
 import { NoteData } from "@/features/Notes/context/NoteContext";
+import DOMPurify from "dompurify";
+import { Folder, Tag, Trash } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/features/Notes/Note List card/NoteListCard.scss";
-import { Trash, Folder, Tag } from "lucide-react";
-import DOMPurify from "dompurify";
-import { useEffect } from "react";
-import { UseFolders } from "@/features/Folders/context/FolderContext";
 import InfoPill from "@/components/Info Pill/InfoPill";
 
 const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
@@ -13,7 +13,7 @@ const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
 
     useEffect(() => {
         fetchFolders();
-    }, [fetchFolders]);
+    }, []);
 
     const navigate = useNavigate();
 
@@ -24,6 +24,7 @@ const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
     };
 
     const plainContent = htmlToPlainText(note.content);
+    const plainTitle = htmlToPlainText(note.title);
     const folderName = folders.find(folder => folder.id === note.folder)?.name;
 
     return (
@@ -54,6 +55,10 @@ const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
             </div>
 
             <div className="note-list-card__content">
+
+                <p className="note-list-card__content-title line-clamp-1">
+                    { plainTitle }
+                </p>
                 <p className="note-list-card__content-description line-clamp-3">
                     { plainContent }
                 </p>

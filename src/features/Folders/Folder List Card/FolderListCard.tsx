@@ -13,7 +13,7 @@ const FolderListCard: React.FC<FolderListCardProps> = ({ folder, deleteFolder })
 
   useEffect(() => {
     fetchNotes();
-  }, [fetchNotes]);
+  }, []);
 
   return (
     <li className="folder-list-card" onClick={ () => navigate(`/folders/${folder.id}`) }>
@@ -30,8 +30,8 @@ const FolderListCard: React.FC<FolderListCardProps> = ({ folder, deleteFolder })
       </div>
 
     </li>
-  )
-}
+  );
+};
 
 export default FolderListCard;
 

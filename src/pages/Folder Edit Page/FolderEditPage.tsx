@@ -52,7 +52,7 @@ const FolderEditPage = () => {
     useEffect(() => {
         fetchFolders();
         fetchNotes();
-    }, [fetchFolders, fetchNotes]);
+    }, []);
 
     useEffect(() => {
         if (currentFolder) {

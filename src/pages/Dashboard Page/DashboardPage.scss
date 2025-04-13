@@ -22,7 +22,7 @@
         "Top Top Top Top Top"
         "Middle Middle Middle Middle Activity"
         "Bottom Bottom Bottom Bottom Activity";
-    gap: 10px;
+    gap: 20px;
 
     height: 100%;
 
@@ -44,6 +44,7 @@
     &__2 {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        grid-template-rows: repeat(auto-fit, minmax(500px, 1fr));
         grid-area: Middle;
         gap: 10px;
 
@@ -52,6 +53,7 @@
 
     &__3 {
         display: grid;
+        grid-template-rows: repeat(auto-fit, minmax(500px, 940px));
         grid-area: Activity;
 
         background: white;
@@ -64,6 +66,10 @@
         grid-area: Bottom;
         gap: 10px;
 
+        border: var(--primary-border);
+        border-radius: 8px;
+
         background: white;
+        box-shadow: var(--shadow);
     }
 }

@@ -1,13 +1,10 @@
-import Modal from "react-modal";
-import React, { useEffect, useState } from "react";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseFolders } from "@/features/Folders/context/FolderContext";
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
 import "@/pages/Folder List Page/FolderListPage.scss";
 import FolderListCard from "@/features/Folders/Folder List Card/FolderListCard";
-import {
-  Plus,
-  Search,
-} from "lucide-react";
-import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { Plus, Search, } from "lucide-react";
 
 const FolderListPage = () => {
   const { user } = UserAuth();
@@ -26,15 +23,15 @@ const FolderListPage = () => {
       return;
     }
 
-    createFolder(noteName, user.uid);
+    createFolder(noteName);
     setNoteName("");
-
     setIsModalOpen(false);
   };
 
   useEffect(() => {
     fetchFolders();
-  }, [fetchFolders]);
+    console.log("Folders have been fetched.");
+  }, []);
 
   const filteredFolders = folders
     .filter((folder) => {

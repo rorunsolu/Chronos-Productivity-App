@@ -17,6 +17,7 @@
 
     &:last-child {
         border-bottom: none;
+        border-bottom: var(--primary-border);
     }
 
     &__item {

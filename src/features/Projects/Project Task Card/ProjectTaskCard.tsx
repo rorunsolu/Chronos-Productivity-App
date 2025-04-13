@@ -1,8 +1,8 @@
 import { TaskData } from "@/features/Tasks/context/TaskContext";
-import "@/features/Projects/Project Task Card/ProjectTaskCard.scss";
-import { Tag, CalendarClock, ChartNoAxesColumnDecreasing } from 'lucide-react';
 import { format } from "date-fns";
+import { CalendarClock, ChartNoAxesColumnDecreasing, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import "@/features/Projects/Project Task Card/ProjectTaskCard.scss";
 import InfoPill from "@/components/Info Pill/InfoPill";
 
 const ProjectTaskCard: React.FC<ProjectTaskCardProps> = ({ task }) => {
@@ -26,8 +26,8 @@ const ProjectTaskCard: React.FC<ProjectTaskCardProps> = ({ task }) => {
 
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ProjectTaskCard;
 

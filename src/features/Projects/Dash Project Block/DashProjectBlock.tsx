@@ -10,7 +10,7 @@ const DashProjectBlock = () => {
 
     useEffect(() => {
         fetchProjects();
-    }, [fetchProjects]);
+    }, []);
 
     return (
         <div className="dash-project-block">

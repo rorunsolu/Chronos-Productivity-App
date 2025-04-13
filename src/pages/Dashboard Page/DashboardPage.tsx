@@ -34,7 +34,7 @@ const Dashboard = () => {
       fetchProjects();
       fetchTasks();
       fetchNotes();
-   }, [fetchProjects, fetchTasks, fetchNotes]);
+   }, []);
 
    const summaryData = [
       { icon: <Layers />, title: 'Projects', value: projects.length },
@@ -57,7 +57,7 @@ const Dashboard = () => {
    });
 
    return (
-      <div className="page-wrapper  page-wrapper--dashboard">
+      <div className="page-wrapper--dashboard">
 
          <div className="dashboard">
 
@@ -67,7 +67,7 @@ const Dashboard = () => {
 
                   <div className="dashboard__header">
                      <h1 className="dashboard__title">Dashboard</h1>
-                     { user && <p className="dashboard__subtitle">Welcome back, { user.displayName }</p> }
+                     { user?.displayName && <p className="dashboard__subtitle">Welcome back, { user.displayName }</p> }
                   </div>
 
                   <div className="dashboard-summary">

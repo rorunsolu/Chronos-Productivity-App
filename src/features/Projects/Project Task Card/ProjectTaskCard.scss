@@ -7,7 +7,10 @@
     border-radius: 6px;
     padding: 1rem;
 
+    background: white;
     box-shadow: var(--shadow);
+    transition: var(--primary-transition);
+    cursor: pointer;
 
     &__title {
         margin-bottom: 4px;
