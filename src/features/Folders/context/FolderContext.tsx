@@ -5,7 +5,7 @@ import { db, auth } from "@/firebase/firebase";
 export interface FolderData {
     id: string;
     name: string;
-    notes: string[]; // array of note ID's
+    notes: string[];
     createdAt: Timestamp;
     userId?: string;
 }
@@ -13,7 +13,7 @@ export interface FolderData {
 interface FoldersContextType {
     folders: FolderData[];
     fetchFolders: () => void;
-    createFolder: (name: string, userId?: string) => void;
+    createFolder: (name: string) => void;
     deleteFolder: (id: string) => void;
     updateFolder: (id: string, updates: Partial<FolderData>) => void;
     addNoteToFolder: (folderID: string, childNoteID: string) => void;
@@ -33,9 +33,16 @@ export const UseFolders = () => {
 export const FolderProvider = ({ children }: { children: ReactNode; }) => {
     const [folders, setFolders] = useState<FolderData[]>([]);
 
+    const user = auth.currentUser;
+    if (!user) return;
+
     const fetchFolders = async () => {
-        const foldersCollection = collection(db, "folders");
-        const folderQuery = query(foldersCollection, where("userId", "==", auth.currentUser?.uid));
+
+        const folderQuery = query(
+            collection(db, "folders"),
+            where("userId", "==", auth.currentUser?.uid)
+        );
+
         const folderSnapshot = await getDocs(folderQuery);
 
         const folderList = folderSnapshot.docs.map((doc) => ({
@@ -43,20 +50,26 @@ export const FolderProvider = ({ children }: { children: ReactNode; }) => {
             name: doc.data().name,
             notes: doc.data().notes || [],
             createdAt: doc.data().createdAt,
-            userId: doc.data().userId,
+            userId: doc.data().userId // Added this to try and fix the "You don't own the selected folder" error
         }));
 
         setFolders(folderList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()));
     };
 
-    const createFolder = async (name: string, userId?: string) => {
+    const createFolder = async (name: string) => {
 
         const newDate = Timestamp.fromDate(new Date());
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("Authentication required");
+            throw new Error("User is not authenticated");
+        }
 
         try {
             const folderData = {
                 name,
-                userId: userId || "",
+                userId: user.uid,
                 notes: [],
                 createdAt: newDate
             };

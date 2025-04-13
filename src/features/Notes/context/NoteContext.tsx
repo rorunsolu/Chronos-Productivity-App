@@ -9,6 +9,7 @@ export interface NoteData {
     folder?: string;
     label?: string;
     createdAt: Timestamp;
+    title: string;
     userId?: string;
 }
 
@@ -16,7 +17,7 @@ interface NotesContextType {
     notes: NoteData[];
     fetchNotes: () => void;
     deleteNote: (id: string) => void;
-    createNote: (content: string, folder?: string, label?: string, userId?: string) => Promise<string>;
+    createNote: (title: string, content: string, folder?: string, label?: string) => Promise<string>;
 }
 
 const NoteContext = createContext<NotesContextType | undefined>(undefined);
@@ -32,6 +33,9 @@ export const UseNotes = () => {
 export const NoteProvider = ({ children }: { children: ReactNode; }) => {
     const [notes, setNotes] = useState<NoteData[]>([]);
 
+    const user = auth.currentUser;
+    if (!user) return;
+
     const fetchNotes = async () => {
         const notesCollection = collection(db, "notes");
         const notesQuery = query(notesCollection, where("userId", "==", auth.currentUser?.uid));
@@ -43,26 +47,32 @@ export const NoteProvider = ({ children }: { children: ReactNode; }) => {
             folder: doc.data().folder,
             label: doc.data().label,
             createdAt: doc.data().createdAt,
-            userId: doc.data().userId,
+            title: doc.data().title,
+            userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
         }));
 
         setNotes(noteList.sort((a, b) => b.createdAt - a.createdAt));
     };
 
-    useEffect(() => {
-        fetchNotes();
-    }, []);
-
-    const createNote = async (content: string, folder?: string, label?: string, userId?: string): Promise<string> => {
+    const createNote = async (title: string, content: string, folder?: string, label?: string): Promise<string> => {
         const newDate = Timestamp.fromDate(new Date());
+
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("Authentication required");
+            throw new Error("User is not authenticated");
+        }
 
         try {
             const noteData = {
+                title,
                 content,
                 folder: folder || "",
                 label: label || "",
-                userId: userId || "",
+                userId: user.uid,
                 createdAt: newDate,
+
             };
 
             const docRef = await addDoc(collection(db, "notes"), noteData);

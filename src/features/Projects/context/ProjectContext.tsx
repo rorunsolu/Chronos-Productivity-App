@@ -8,7 +8,7 @@ export interface ProjectData {
    id: string;
    name: string;
    description?: string;
-   tasks: string[]; // Array of task IDs
+   tasks: string[];
    label?: string;
    status: ProjectStatus;
    createdAt: Timestamp;
@@ -19,7 +19,7 @@ export interface ProjectData {
 interface ProjectsContextType {
    projects: ProjectData[];
    fetchProjects: () => void;
-   createProject: (name: string, description?: string, label?: string, userId?: string) => void;
+   createProject: (name: string, description?: string, label?: string) => void;
    deleteProject: (id: string) => void;
    updateProject: (id: string, updates: Partial<ProjectData>) => void;
    addTaskToProject: (projectId: string, taskId: string) => void;
@@ -43,11 +43,16 @@ export const UseProjects = () => {
 export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
    const [projects, setProjects] = useState<ProjectData[]>([]);
 
+   const user = auth.currentUser;
+   if (!user) return;
+
    const fetchProjects = async () => {
       try {
 
-         const projectsCollection = collection(db, "projects");
-         const projectsQuery = query(projectsCollection, where("userId", "==", auth.currentUser?.uid));
+         const projectsQuery = query(
+            collection(db, "projects"),
+            where("userId", "==", auth.currentUser?.uid)
+         );
          const projectSnapshot = await getDocs(projectsQuery);
 
          const projectList = projectSnapshot.docs.map((doc) => ({
@@ -59,36 +64,43 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
             status: doc.data().status as ProjectStatus,
             createdAt: doc.data().createdAt,
             updatedAt: doc.data().updatedAt,
+            userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
          }));
 
          setProjects(projectList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()));
+         console.log("Projects fetched with fetchProjects hook");
 
       } catch (error) {
          console.error("Error fetching projects:", error);
       }
    };
 
-   const createProject = async (name: string, description?: string, label?: string, userId?: string) => {
+   const createProject = async (name: string, description?: string, label?: string) => {
       const newDate = Timestamp.fromDate(new Date());
+      const user = auth.currentUser;
+
+      if (!user) {
+         alert("Authentication required");
+         return;
+      }
+
       try {
-         const docRef = await addDoc(collection(db, "projects"), {
+         const projectData = {
             name,
             description: description || "",
             tasks: [],
             label: label || "",
-            userId: userId || "",
+            userId: user.uid,
             status: "pending" as ProjectStatus,
             createdAt: newDate,
             updatedAt: newDate,
-         });
+         };
+
+         const docRef = await addDoc(collection(db, "projects"), projectData);
+
          setProjects([{
             id: docRef.id,
-            name,
-            description: description || "",
-            tasks: [],
-            label: label || "",
-            userId: userId || "",
-            status: "pending" as ProjectStatus,
+            ...projectData,
             createdAt: newDate,
             updatedAt: newDate,
          }, ...projects]);
@@ -98,6 +110,14 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
    };
 
    const deleteProject = async (id: string) => {
+
+      const user = auth.currentUser;
+
+      if (!user) {
+         alert("Authentication required");
+         return;
+      }
+
       try {
          await deleteDoc(doc(db, "projects", id));
          setProjects(projects.filter(project => project.id !== id));
@@ -108,6 +128,15 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
    };
 
    const updateProject = async (id: string, updates: Partial<ProjectData>) => {
+
+
+      const user = auth.currentUser;
+
+      if (!user) {
+         alert("Authentication required");
+         return;
+      }
+
       try {
          const projectRef = doc(db, "projects", id);
 
@@ -132,21 +161,25 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
 
    const addTaskToProject = async (projectId: string, taskId: string) => {
 
+      const user = auth.currentUser;
+
+      if (!user) {
+         alert("Authentication required");
+         return;
+      }
+
       try {
          const projectRef = doc(db, "projects", projectId);
          const taskRef = doc(db, "tasks", taskId);
 
          await updateDoc(projectRef, {
-            // adds the task id to the project tasks array
             tasks: arrayUnion(taskId),
-            // updates the project updated at timestamp
             updatedAt: Timestamp.fromDate(new Date()),
          });
 
          await updateDoc(taskRef, {
-            // rewferences to task that you want to add to a project and  set the project accoding to the matcghing project id
             projectId: projectId,
-            status: "pending", // set to pending by default
+            status: "pending"
          });
 
          setProjects(projects.map(project =>
@@ -156,6 +189,9 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
                updatedAt: Timestamp.fromDate(new Date())
             } : project
          ));
+
+         console.log(`Task with ID ${taskId} has been added to project with ID ${projectId}`);
+
       } catch (error) {
          console.error("Error adding task to project:", error);
       }
@@ -167,14 +203,12 @@ export const ProjectsProvider = ({ children }: { children: ReactNode; }) => {
          const taskRef = doc(db, "tasks", taskId);
 
          await updateDoc(projectRef, {
-            // removes the task id from the project tasks array
             tasks: arrayRemove(taskId),
-            // updates the project updated at timestamp
             updatedAt: Timestamp.fromDate(new Date()),
          });
 
          await updateDoc(taskRef, {
-            projectId: "", // removes the project id from the task
+            projectId: "",
          });
 
          setProjects(projects.map(project =>

@@ -1,5 +1,4 @@
 import { db, auth } from "@/firebase/firebase";
-import { format } from "date-fns";
 import { addDoc, arrayUnion, collection, deleteDoc, doc, getDocs, Timestamp, updateDoc, query, where } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useState } from "react";
 
@@ -29,7 +28,6 @@ interface TasksContextType {
         label?: string,
         status?: TaskStatus,
         projectId?: string,
-        userId?: string
 
     ) => void;
     toggleTaskCompletion: (id: string) => void;
@@ -48,10 +46,15 @@ export const UseTasks = () => {
 export const TaskProvider = ({ children }: { children: ReactNode; }) => {
     const [tasks, setTasks] = useState<TaskData[]>([]);
 
+    const user = auth.currentUser;
+    if (!user) return;
+
     const fetchTasks = async () => {
 
-        const tasksCollection = collection(db, "tasks");
-        const tasksQuery = query(tasksCollection, where("userId", "==", auth.currentUser?.uid));
+        const tasksQuery = query(
+            collection(db, "tasks"),
+            where("userId", "==", auth.currentUser?.uid)
+        );
         const taskSnapshot = await getDocs(tasksQuery);
 
         const taskList = taskSnapshot.docs.map((doc) => ({
@@ -63,14 +66,23 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
             completion: doc.data().completion,
             dueDate: doc.data().dueDate,
             status: doc.data().status as TaskStatus,
-            createdAt: doc.data().createdAt
+            createdAt: doc.data().createdAt,
+            userId: doc.data().userId // Added this to try and fix the "You don't own the selected folder" error
         }));
 
         setTasks(taskList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()));
+
+        console.log("Tasks fetched with fetchTasks hook");
     };
 
-    const createTask = async (title: string, content?: string, dueDate?: Date | null, label?: string, status?: TaskStatus, projectId?: string, userId?: string) => {
+    const createTask = async (title: string, content?: string, dueDate?: Date | null, label?: string, status?: TaskStatus, projectId?: string) => {
         const newDate = Timestamp.fromDate(new Date());
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("Authentication required");
+            throw new Error("User is not authenticated");
+        }
 
         try {
             const taskData = {
@@ -81,11 +93,9 @@ export const TaskProvider = ({ children }: { children: ReactNode; }) => {
                 label: label || "",
                 status: status || "pending",
                 projectId: projectId || "",
-                userId: userId || "",
+                userId: user.uid,
                 completion: false
             };
-
-            console.log("Due Date:", dueDate ? format(dueDate, 'yyyy-MM-dd') : "No due date");
 
             const docRef = await addDoc(collection(db, "tasks"), taskData);
 
