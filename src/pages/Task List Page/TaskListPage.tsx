@@ -171,7 +171,7 @@ const TaskListPage = () => {
 
               <div className="modal__input-group">
                 <DateTimePickerCompo
-                  value={taskDueDate}
+                  selected={taskDueDate}
                   onChange={(date) => setTaskDueDate(date)}
                 />
               </div>
