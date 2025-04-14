@@ -1,13 +1,13 @@
 import "@/App.css";
-import "@/Style.scss";
 import Protected from "@/components/auth/Protected";
-import Navbar from "@/components/Navbar/Navbar";
+// import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
 import { FolderProvider } from "@/features/Folders/context/FolderContext";
 import { NoteProvider } from "@/features/Notes/context/NoteContext";
 import { ProjectsProvider } from "@/features/Projects/context/ProjectContext";
 import { TaskProvider } from "@/features/Tasks/context/TaskContext";
+import "@/Style.scss";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "@/pages/Sign In Page/SignInPage";
@@ -22,7 +22,6 @@ import ProjectsPage from "@/pages/Project List Page/ProjectListPage";
 import ProjectEditPage from "@/pages/Project Edit Page/ProjectEditPage";
 import FolderEditPage from "@/pages/Folder Edit Page/FolderEditPage";
 import FolderListPage from "@/pages/Folder List Page/FolderListPage";
-// import CalendarPage from "@/pages/Calendar Page/CalendarPage";
 import MobileSidebar from "@/components/Mobile Sidebar/MobileSidebar";
 
 function App() {
@@ -40,13 +39,13 @@ function App() {
           isMobileSidebarExpanded={isMobileSidebarExpanded}
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
         />
-        <Navbar
+        {/* <Navbar
           className="app-layout__navbar"
           isSidebarExpanded={isSidebarExpanded}
           setIsSidebarExpanded={setIsSidebarExpanded}
           isMobileSidebarExpanded={isMobileSidebarExpanded}
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
-        />
+        /> */}
         <main className="app-layout__main">
           <FolderProvider>
             <ProjectsProvider>
@@ -128,14 +127,6 @@ function App() {
                         </Protected>
                       }
                     />
-                    {/* <Route
-                      path="/calendar"
-                      element={
-                        <Protected allowGuest>
-                          <CalendarPage />
-                        </Protected>
-                      }
-                    /> */}
                   </Routes>
                 </TaskProvider>
               </NoteProvider>
