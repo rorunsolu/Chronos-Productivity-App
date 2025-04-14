@@ -1,6 +1,6 @@
 import "@/App.css";
 import Protected from "@/components/auth/Protected";
-// import Navbar from "@/components/Navbar/Navbar";
+import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
 import { FolderProvider } from "@/features/Folders/context/FolderContext";
@@ -25,7 +25,7 @@ import FolderListPage from "@/pages/Folder List Page/FolderListPage";
 import MobileSidebar from "@/components/Mobile Sidebar/MobileSidebar";
 
 function App() {
-  const [isSidebarExpanded] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isMobileSidebarExpanded, setIsMobileSidebarExpanded] = useState(false);
 
   return (
@@ -39,13 +39,13 @@ function App() {
           isMobileSidebarExpanded={isMobileSidebarExpanded}
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
         />
-        {/* <Navbar
+        <Navbar
           className="app-layout__navbar"
           isSidebarExpanded={isSidebarExpanded}
           setIsSidebarExpanded={setIsSidebarExpanded}
           isMobileSidebarExpanded={isMobileSidebarExpanded}
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
-        /> */}
+        />
         <main className="app-layout__main">
           <FolderProvider>
             <ProjectsProvider>
