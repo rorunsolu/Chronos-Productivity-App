@@ -25,7 +25,7 @@ import FolderListPage from "@/pages/Folder List Page/FolderListPage";
 import MobileSidebar from "@/components/Mobile Sidebar/MobileSidebar";
 
 function App() {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarExpanded] = useState(false);
   const [isMobileSidebarExpanded, setIsMobileSidebarExpanded] = useState(false);
 
   return (
