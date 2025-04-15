@@ -1,11 +1,11 @@
-import "@/components/Navbar/Navbar.scss";
+import "@/components/Navigation Bar/NavigationBar.scss";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { Moon, PanelLeftClose, PanelLeftOpen, Sun } from "lucide-react";
 import { useState } from "react";
 import NavbarLink from "@/components/Navbar Link/NavbarLink";
 import NavbarMenu from "@/components/Navbar Menu/NavbarMenu";
 
-const Navbar: React.FC<NavbarProps> = ({
+const NavigationBar: React.FC<NavbarProps> = ({
   className,
   setIsSidebarExpanded,
   isMobileSidebarExpanded,
@@ -95,7 +95,7 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-export default Navbar;
+export default NavigationBar;
 
 const navLinks = ["dashboard", "projects", "tasks", "notes", "folders"];
 

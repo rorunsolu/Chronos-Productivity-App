@@ -1,6 +1,6 @@
 import "@/App.css";
 import Protected from "@/components/auth/Protected";
-import Navbar from "@/components/Navbar/Navbar";
+import NavigationBar from "@/components/Navigation Bar/NavigationBar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
 import { FolderProvider } from "@/features/Folders/context/FolderContext";
@@ -39,7 +39,7 @@ function App() {
           isMobileSidebarExpanded={isMobileSidebarExpanded}
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
         />
-        <Navbar
+        <NavigationBar
           className="app-layout__navbar"
           isSidebarExpanded={isSidebarExpanded}
           setIsSidebarExpanded={setIsSidebarExpanded}
