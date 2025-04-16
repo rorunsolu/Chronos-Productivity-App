@@ -6,7 +6,7 @@ import {
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
+  // signInWithRedirect,
   signOut,
   User,
   UserCredential,
@@ -23,12 +23,17 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // const googleSignIn = () => {
+  //   const provider = new GoogleAuthProvider();
+  //   const isDevelopment = process.env.NODE_ENV === "development";
+  //   return isDevelopment
+  //     ? signInWithPopup(auth, provider)
+  //     : signInWithRedirect(auth, provider);
+  // };
+
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
-    const isDevelopment = process.env.NODE_ENV === "development";
-    return isDevelopment
-      ? signInWithPopup(auth, provider)
-      : signInWithRedirect(auth, provider);
+    return signInWithPopup(auth, provider);
   };
 
   const emailSignIn = (email: string, password: string) => {
