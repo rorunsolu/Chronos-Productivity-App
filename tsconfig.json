@@ -1,35 +1,24 @@
 {
   "files": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    // "outDir": "./dist", // Set output directory to avoid conflicts
+    "rootDir": "src",
+    "outDir": "./dist",
     "composite": true,
     "noEmit": false,
-    "types": [
-      "react",
-      "vite/client"
-    ],
+    "types": ["react", "vite/client"],
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    // ShadCN config (https://ui.shadcn.com/docs/installation/vite)
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
