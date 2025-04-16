@@ -46,8 +46,8 @@ export const UseNotes = () => {
 export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<NoteData[]>([]);
 
-  const user = auth.currentUser;
-  if (!user) return;
+  // const user = auth.currentUser;
+  // if (!user) return;
 
   const fetchNotes = async () => {
     const notesCollection = collection(db, "notes");

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "@/pages/Sign In Page/SignInPage";
 import SignUp from "@/pages/Sign Up Page/SignUpPage";
-import Home from "@/pages/Home Page/HomePage";
+import Homepage from "@/pages/Home Page/HomePage";
 import Dashboard from "@/pages/Dashboard Page/DashboardPage";
 import TaskPage from "@/pages/Task List Page/TaskListPage";
 import NotesPage from "@/pages/Note List Page/NoteListPage";
@@ -52,7 +52,7 @@ function App() {
               <NoteProvider>
                 <TaskProvider>
                   <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Homepage />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route
