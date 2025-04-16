@@ -9,10 +9,11 @@
     "outDir": "./dist",
     "composite": true,
     "noEmit": false,
-    "types": ["react", "vite/client"],
+    "types": ["react", "vite/client", "node"],
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
+
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
