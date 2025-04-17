@@ -72,10 +72,10 @@ const DashChart = () => {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}
-          margin={{ top: 35, right: 60, left: 0, bottom: 75 }}
+          margin={{ top: 20, right: 30, left: -15, bottom: 60 }}
         >
-          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-          <YAxis />
+          <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+          <YAxis tick={{ fontSize: 11 }} />
           <Tooltip />
           <Line
             type="monotone"

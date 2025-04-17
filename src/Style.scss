@@ -3,6 +3,11 @@
 
   width: 92.5%;
   max-width: 3440px;
+
+  @media (max-width: 600px) {
+    margin: 20px auto;
+    width: 95%;
+  }
 }
 
 .page-wrapper--home {

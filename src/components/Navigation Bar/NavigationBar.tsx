@@ -1,7 +1,7 @@
-import "@/components/Navigation Bar/NavigationBar.scss";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { Moon, PanelLeftClose, PanelLeftOpen, Sun } from "lucide-react";
 import { useState } from "react";
+import "@/components/Navigation Bar/NavigationBar.scss";
 import NavbarLink from "@/components/Navbar Link/NavbarLink";
 import NavbarMenu from "@/components/Navbar Menu/NavbarMenu";
 

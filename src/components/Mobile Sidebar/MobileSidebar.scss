@@ -25,6 +25,12 @@
         height: 63px;
 
         padding: 0 20px;
+
+        @media (max-width: 600px) {
+            height: 45px;
+
+            padding: 10px 10px;
+        }
     }
 
     &__logo-container {

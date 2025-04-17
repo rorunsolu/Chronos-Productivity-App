@@ -13,9 +13,10 @@
         justify-content: space-between;
         align-items: center;
 
+        border-bottom: var(--primary-border);
         padding-right: 20px;
 
-        background-color: var(--white);
+        background: white;
     }
 
     &__title {
@@ -26,8 +27,6 @@
     }
 
     &__list {
-        border-top: var(--primary-border);
-
         overflow-y: scroll;
 
         height: 100%;

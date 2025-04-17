@@ -1,10 +1,12 @@
 .dashboard-chart {
-    //border: var(--primary-border);
+    border: var(--primary-border);
     border-radius: 8px;
 
-    //box-shadow: var(--shadow);
-
     height: 430px;
+
+    box-shadow: var(--shadow);
+
+    //display: none;
 
     &__header {
         display: flex;
@@ -25,5 +27,9 @@
         font-weight: 600;
 
         color: #181d27;
+    }
+
+    @media (width <= 600px) {
+        width: 100%;
     }
 }
