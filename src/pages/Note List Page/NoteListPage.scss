@@ -10,34 +10,18 @@
 
         padding: 24px 0;
 
-        &-button {
+        @media (max-width: 600px) {
+            flex-direction: column;
+        }
+
+        &-buttons {
             display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 8px;
+            gap: 12px;
 
-            border-radius: 8px;
-            border: var(--primary-border);
-
-            padding: 10px 14px;
-            height: 46px;
-            width: 100%;
-            max-width: fit-content;
-
-            color: #181d27;
-            background: var(--main-bg);
-            box-shadow: var(--shadow);
-
-            transition: var(--primary-transition);
-
-            &:hover {
-                cursor: pointer;
-                background: #fafafa;
+            @media (max-width: 600px) {
+                width: 100%;
             }
         }
-    }
-
-    &__header {
     }
 
     &__title {
@@ -48,171 +32,9 @@
         word-wrap: break-word;
     }
 
-    &__button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        min-width: fit-content;
-
-        border-radius: 8px;
-        padding: 10px 14px;
-
-        color: white;
-        background: var(--color-brand);
-        box-shadow: var(--shadow);
-
-        overflow: hidden;
-
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 20px;
-        word-wrap: break-word;
-    }
-
-    &__inputs {
-        display: flex;
-        gap: 12px;
-    }
-
-    &__form {
-        width: 50%;
-
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 8px;
-
-        border-radius: 8px;
-        border: var(--primary-border);
-
-        padding: 10px 14px;
-        width: 100%;
-        height: 46px;
-
-        color: #181d27;
-        background: var(--main-bg);
-        box-shadow: var(--shadow);
-
-        &:focus {
-            border: 1px #a0d3bb solid;
-        }
-
-        &::placeholder {
-            font-size: 16px;
-
-            font-weight: 400;
-            line-height: 24px;
-            word-wrap: break-word;
-
-            color: #717680;
-        }
-
-        &-input {
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 16px;
-            flex-grow: 1;
-        }
-
-        &-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            width: 40px;
-            height: 40px;
-
-            border-radius: 8px;
-            border: var(--primary-border);
-
-            &:hover {
-                cursor: pointer;
-                border: 1px #a0d3bb solid;
-            }
-
-            &:active {
-                background: #a0d3bb;
-                border: 2px #a0d3bb solid;
-            }
-        }
-    }
-
-    &__filter-button {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 8px;
-
-        border-radius: 8px;
-        border: var(--primary-border);
-
-        padding: 10px 14px;
-        height: 46px;
-
-        color: #181d27;
-        background: var(--main-bg);
-        box-shadow: var(--shadow);
-
-        &:hover {
-            cursor: pointer;
-            background: #fafafa;
-        }
-    }
-
     &__note-list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 16px;
-    }
-
-    &__options {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        border-radius: 8px;
-        border: var(--primary-border);
-
-        height: 46px;
-        width: 100px;
-
-        overflow: hidden;
-
-        color: #181d27;
-        background: var(--main-bg);
-        box-shadow: var(--shadow);
-
-        &:focus {
-            border: 1px #a0d3bb solid;
-        }
-
-        &::placeholder {
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
-            word-wrap: break-word;
-
-            color: #717680;
-        }
-
-        &-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            height: 100%;
-            width: 50%;
-
-            &:hover {
-                background: hsl(0, 0%, 95%);
-            }
-
-            path {
-                stroke-width: 2;
-                stroke: #414651;
-            }
-        }
     }
 }

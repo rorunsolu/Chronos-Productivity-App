@@ -1,12 +1,15 @@
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { TaskData, UseTasks } from "@/features/Tasks/context/TaskContext";
-import { ArrowDownUp, ArrowUpDown, Plus, Search } from "lucide-react";
+// import { ArrowDownUp, ArrowUpDown, Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "@/pages/Task List Page/TaskListPage.scss";
 import "@/components/Creation Modal/CreationModal.scss";
 import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 import TaskListCard from "@/features/Tasks/Task List Card/TaskListCard";
+import SearchBar from "@/components/Search Bar/SearchBar";
+import AddButton from "@/components/Add Button/AddButton";
+import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
 
 // Note: Removed the ability to add labels duriong task creation due to some missing logic neeeded to handle displaying a large amount of labels via a dropdown
 
@@ -88,33 +91,20 @@ const TaskListPage = () => {
         </>
 
         <div className="task-list-page__actions">
-          {/* Could turn this into a component */}
-          <form className="task-list-page__form">
-            <Search />
-            <input
-              className="task-list-page__form-input"
-              type="text"
-              placeholder="Search tasks"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+          <SearchBar
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search tasks"
+          />
+
+          <div className="task-list-page__actions-buttons">
+            <AddButton onClick={openModal} />
+
+            <SortToggleButton
+              isNewestFirst={isNewestFirst}
+              onToggle={() => setIsNewestFirst(!isNewestFirst)}
             />
-          </form>
-
-          <button
-            className="task-list-page__actions-button"
-            type="button"
-            onClick={openModal}
-          >
-            <Plus />
-          </button>
-
-          <button
-            className="task-list-page__actions-button"
-            onClick={() => setIsNewestFirst(!isNewestFirst)}
-          >
-            {/* Could turn this into a component */}
-            {isNewestFirst ? <ArrowDownUp /> : <ArrowUpDown />}
-          </button>
+          </div>
         </div>
 
         <div className="task-list-page__list">

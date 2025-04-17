@@ -1,0 +1,30 @@
+.add-button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 8px;
+    border: var(--primary-border);
+
+    padding: 10px 14px;
+    height: 46px;
+    width: 100%;
+    max-width: fit-content;
+
+    color: #181d27;
+    background: var(--main-bg);
+    box-shadow: var(--shadow);
+
+    transition: var(--primary-transition);
+
+    &:hover {
+        cursor: pointer;
+        background: #fafafa;
+    }
+
+    @media (max-width: 600px) {
+        justify-content: center;
+        max-width: 100%;
+    }
+}
