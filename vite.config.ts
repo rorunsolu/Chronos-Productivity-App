@@ -3,13 +3,11 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
-// const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"), // Use the defined __dirname
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {

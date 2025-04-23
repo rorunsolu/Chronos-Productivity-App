@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    // ShadCN config (https://ui.shadcn.com/docs/installation/vite)
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
