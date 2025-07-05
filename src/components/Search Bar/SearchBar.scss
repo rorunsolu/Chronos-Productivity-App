@@ -19,10 +19,6 @@
         stroke: var(--svg-color);
     }
 
-    &:focus {
-        border: 1px #a0d3bb solid;
-    }
-
     &::placeholder {
         font-size: 16px;
         font-weight: 400;
@@ -32,7 +28,7 @@
         color: var(--placeholder-color);
     }
 
-    &-input {
+    &__input {
         border: none;
         background: transparent;
         outline: none;
