@@ -15,7 +15,8 @@
         align-items: center;
         text-align: center;
 
-        &--content {
+        &-content {
+            margin-bottom: 20px;
         }
     }
 
@@ -44,6 +45,7 @@
 
     &__button-wrapper {
         display: flex;
+        align-items: center;
         flex-direction: column;
         gap: 10px;
 
@@ -76,13 +78,20 @@
         }
 
         &--secondary {
+            margin-top: 5px;
+
             border: none;
-            padding: 10px 0px;
+            padding: 5px 0px;
+
+            width: fit-content;
 
             position: relative;
 
             background: none;
             box-shadow: none;
+
+            font-size: 14px;
+            font-weight: 600;
 
             &::after {
                 content: "";
@@ -93,7 +102,7 @@
                 opacity: 0;
 
                 width: 100%;
-                height: 3px;
+                height: 2px;
 
                 background: black;
 
@@ -108,5 +117,18 @@
                 background: none;
             }
         }
+    }
+}
+
+.button--teal {
+    background: hsl(0, 0%, 0%);
+    color: white;
+
+    border: 0.1125rem transparent;
+
+    transition: var(--primary-transition);
+
+    &:hover {
+        background: hsl(0, 0%, 15%);
     }
 }

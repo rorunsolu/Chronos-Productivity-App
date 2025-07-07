@@ -8,6 +8,7 @@ import NavbarMenu from "@/components/Navbar Menu/NavbarMenu";
 const NavigationBar: React.FC<NavbarProps> = ({
   className,
   setIsSidebarExpanded,
+  isSidebarExpanded,
   isMobileSidebarExpanded,
   setIsMobileSidebarExpanded,
 }) => {
@@ -46,7 +47,7 @@ const NavigationBar: React.FC<NavbarProps> = ({
                 className="sidebar-toggler"
                 onClick={() => setIsSidebarExpanded((prevState) => !prevState)}
               >
-                <PanelLeftOpen />
+                {isSidebarExpanded ? <PanelLeftClose /> : <PanelLeftOpen />}
               </button>
 
               <button

@@ -1,0 +1,37 @@
+.button-reg {
+    border: var(--primary-border);
+    border-radius: 6px;
+    padding: 10px 20px;
+
+    width: 100%;
+
+    text-align: center;
+    font-weight: 600;
+
+    box-shadow: var(--shadow);
+
+    cursor: pointer;
+    transition: var(--primary-transition);
+
+    &--primary {
+        background: var(--primary-bg);
+        color: var(--primary-color);
+
+        transition: var(--primary-transition);
+
+        &:hover {
+            background: var(--primary-hover-bg);
+        }
+    }
+
+    &--secondary {
+        background: hsl(0, 0%, 0%);
+        color: white;
+
+        border: 0.1125rem transparent;
+
+        &:hover {
+            background: hsl(0, 0%, 15%);
+        }
+    }
+}
