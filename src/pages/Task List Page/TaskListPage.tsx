@@ -21,7 +21,7 @@ const TaskListPage = () => {
   const [taskTitle, setTaskTitle] = useState("");
   const [taskContent, setTaskContent] = useState("");
   const [taskLabel, setTaskLabel] = useState("");
-  const [taskDueDate, setTaskDueDate] = useState<Date | null>(null);
+  const [taskDueDate, setTaskDueDate] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +29,7 @@ const TaskListPage = () => {
 
   useEffect(() => {
     fetchTasks();
+    // eslint-disable-next-line
   }, []);
 
   const openModal = () => setIsModalOpen(true);
@@ -160,9 +161,10 @@ const TaskListPage = () => {
                      </div> */}
 
               <div className="modal__input-group">
-                <DateTimePickerCompo
-                  selected={taskDueDate}
-                  onChange={(date) => setTaskDueDate(date)}
+                <DatePickerInput
+                  placeholder="Pick date"
+                  value={taskDueDate}
+                  onChange={setTaskDueDate}
                 />
               </div>
 

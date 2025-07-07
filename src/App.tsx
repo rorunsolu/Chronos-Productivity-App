@@ -5,6 +5,7 @@ import "@/Style.scss";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/core/styles.layer.css";
+import "@mantine/dates/styles.css";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import NavigationBar from "@/components/Navigation Bar/NavigationBar";

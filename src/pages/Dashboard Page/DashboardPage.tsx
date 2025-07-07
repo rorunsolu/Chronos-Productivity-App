@@ -2,6 +2,7 @@ import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseNotes } from "@/features/Notes/context/NoteContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { UseTasks } from "@/features/Tasks/context/TaskContext";
+import { DatePickerInput } from "@mantine/dates";
 import { Timestamp } from "firebase/firestore";
 import { Layers, LayoutList, ListTodo, NotebookTabs } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,7 +22,9 @@ import DashStatCard from "@/components/Dash Stat Card/DashStatCard";
 
 const Dashboard = () => {
   const [selectedDateToFilterBy, setSelectedDateToFilterBy] =
-    useState<Date | null>(null);
+    useState<
+    string | null
+>(null);
 
   const { projects, fetchProjects } = UseProjects();
   const { tasks, fetchTasks } = UseTasks();
@@ -34,6 +37,7 @@ const Dashboard = () => {
     fetchProjects();
     fetchTasks();
     fetchNotes();
+    // eslint-disable-next-line
   }, []);
 
   const summaryData = [
@@ -50,11 +54,9 @@ const Dashboard = () => {
   const tasksDueOnDate = tasks.filter((task) => {
     if (!selectedDateToFilterBy || !task.dueDate) return false;
 
-    const taskDueDate =
-      task.dueDate instanceof Timestamp ? task.dueDate.toDate() : task.dueDate;
-
-    const taskDateStr = taskDueDate.toLocaleDateString("en-GB");
-    const selectedDateStr = selectedDateToFilterBy.toLocaleDateString("en-GB");
+    const taskDueDate = task.dueDate;
+    const taskDateStr = taskDueDate;
+    const selectedDateStr = selectedDateToFilterBy;
 
     return taskDateStr === selectedDateStr;
   });
@@ -89,13 +91,13 @@ const Dashboard = () => {
           <section className="dashboard-grid__3">
             <div className="dashboard-tasks">
               <div className="dashboard-tasks__top">
-                <DashSubHeader title="Activity" count={tasks.length} />
+                <DashSubHeader title="Activity" count={allActivity.length} />
               </div>
 
               <div className="dashboard-tasks__bottom">
                 <ul className="dashboard-tasks__list">
-                  {tasks.map((task) => (
-                    <TaskCard task={task} key={task.id} />
+                  {allActivity.map((activity) => (
+                    <DashActivityCard activity={activity} key={activity.id} />
                   ))}
                 </ul>
               </div>
@@ -106,9 +108,11 @@ const Dashboard = () => {
             <div className="dashboard-results">
               <div className="dashboard-results__top">
                 <DashSubHeader title="Tasks" />
-                <DateTimePickerCompo
-                  selected={selectedDateToFilterBy}
-                  onChange={(date) => setSelectedDateToFilterBy(date)}
+                <DatePickerInput
+                  label="Pick date"
+                  placeholder="Pick date"
+                  value={selectedDateToFilterBy}
+                  onChange={setSelectedDateToFilterBy}
                 />
               </div>
 
