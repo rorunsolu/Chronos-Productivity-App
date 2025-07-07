@@ -1,34 +1,12 @@
-// import { StrictMode } from "react";
-// import { createRoot } from "react-dom/client";
-// import { BrowserRouter } from "react-router-dom";
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import App from "@/App";
-
-// // createRoot(document.getElementById("root")!).render(
-// //   <StrictMode>
-// //     <BrowserRouter>
-// //       <App />
-// //     </BrowserRouter>
-// //   </StrictMode>
-// // );
-
-// const rootElement = document.querySelector("#root") as Element;
-// if (!rootElement.innerHTML) {
-//   const root = ReactDOM.createRoot(rootElement);
-//   root.render(
-//     <React.StrictMode>
-//       <BrowserRouter>
-//         <App />
-//       </BrowserRouter>
-//     </React.StrictMode>
-//   );
-// }
-
+import App from "@/App";
+import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
+import { FolderProvider } from "@/features/Folders/context/FolderContext";
+import { NoteProvider } from "@/features/Notes/context/NoteContext";
+import { ProjectsProvider } from "@/features/Projects/context/ProjectContext";
+import { TaskProvider } from "@/features/Tasks/context/TaskContext";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import App from "@/App";
 
 const rootElement = document.getElementById("root") as HTMLElement;
 
@@ -36,9 +14,19 @@ if (!rootElement.innerHTML) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AuthContextProvider>
+        <FolderProvider>
+          <NoteProvider>
+            <ProjectsProvider>
+              <TaskProvider>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </TaskProvider>
+            </ProjectsProvider>
+          </NoteProvider>
+        </FolderProvider>
+      </AuthContextProvider>
     </StrictMode>
   );
 }

@@ -1,15 +1,13 @@
 import "@/App.css";
 import Protected from "@/components/auth/Protected";
-import NavigationBar from "@/components/Navigation Bar/NavigationBar";
 import Sidebar from "@/components/Sidebar/Sidebar";
-import { AuthContextProvider } from "@/contexts/authContext/AuthContext";
-import { FolderProvider } from "@/features/Folders/context/FolderContext";
-import { NoteProvider } from "@/features/Notes/context/NoteContext";
-import { ProjectsProvider } from "@/features/Projects/context/ProjectContext";
-import { TaskProvider } from "@/features/Tasks/context/TaskContext";
 import "@/Style.scss";
+import { MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
+import "@mantine/core/styles.layer.css";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import NavigationBar from "@/components/Navigation Bar/NavigationBar";
 import SignIn from "@/pages/Sign In Page/SignInPage";
 import SignUp from "@/pages/Sign Up Page/SignUpPage";
 import Homepage from "@/pages/Home Page/HomePage";
@@ -29,7 +27,7 @@ function App() {
   const [isMobileSidebarExpanded, setIsMobileSidebarExpanded] = useState(false);
 
   return (
-    <AuthContextProvider>
+    <MantineProvider defaultColorScheme="light">
       <div className="app-layout">
         <Sidebar
           className="app-layout__sidebar"
@@ -47,94 +45,86 @@ function App() {
           setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
         />
         <main className="app-layout__main">
-          <FolderProvider>
-            <ProjectsProvider>
-              <NoteProvider>
-                <TaskProvider>
-                  <Routes>
-                    <Route path="/" element={<Homepage />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <Protected allowGuest>
-                          <Dashboard />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/tasks"
-                      element={
-                        <Protected allowGuest>
-                          <TaskPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/tasks/:id"
-                      element={
-                        <Protected allowGuest>
-                          <TaskEditPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/notes"
-                      element={
-                        <Protected allowGuest>
-                          <NotesPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/notes/:id"
-                      element={
-                        <Protected allowGuest>
-                          <NoteEditPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/projects"
-                      element={
-                        <Protected allowGuest>
-                          <ProjectsPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/projects/:id"
-                      element={
-                        <Protected allowGuest>
-                          <ProjectEditPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/folders"
-                      element={
-                        <Protected allowGuest>
-                          <FolderListPage />
-                        </Protected>
-                      }
-                    />
-                    <Route
-                      path="/folders/:id"
-                      element={
-                        <Protected allowGuest>
-                          <FolderEditPage />
-                        </Protected>
-                      }
-                    />
-                  </Routes>
-                </TaskProvider>
-              </NoteProvider>
-            </ProjectsProvider>
-          </FolderProvider>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route
+              path="/dashboard"
+              element={
+                <Protected allowGuest>
+                  <Dashboard />
+                </Protected>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <Protected allowGuest>
+                  <TaskPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/tasks/:id"
+              element={
+                <Protected allowGuest>
+                  <TaskEditPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/notes"
+              element={
+                <Protected allowGuest>
+                  <NotesPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/notes/:id"
+              element={
+                <Protected allowGuest>
+                  <NoteEditPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <Protected allowGuest>
+                  <ProjectsPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/projects/:id"
+              element={
+                <Protected allowGuest>
+                  <ProjectEditPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/folders"
+              element={
+                <Protected allowGuest>
+                  <FolderListPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/folders/:id"
+              element={
+                <Protected allowGuest>
+                  <FolderEditPage />
+                </Protected>
+              }
+            />
+          </Routes>
         </main>
       </div>
-    </AuthContextProvider>
+    </MantineProvider>
   );
 }
 
