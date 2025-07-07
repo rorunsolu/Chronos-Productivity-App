@@ -1,4 +1,5 @@
-import { db, auth } from "@/firebase/firebase";
+import { auth, db } from "@/firebase/firebase";
+import { createContext, ReactNode, useContext, useState } from "react";
 import {
   addDoc,
   arrayUnion,
@@ -11,7 +12,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { createContext, ReactNode, useContext, useState } from "react";
 
 export type TaskStatus = "pending" | "ongoing" | "completed";
 
@@ -23,7 +23,7 @@ export interface TaskData {
   content?: string;
   projectId?: string;
   status: TaskStatus;
-  dueDate?: Timestamp | Date | null;
+  dueDate?: string | null;
   createdAt: Timestamp;
   userId?: string;
 }
@@ -35,7 +35,7 @@ interface TasksContextType {
   createTask: (
     title: string,
     content?: string,
-    dueDate?: Date | null,
+    dueDate?: string | null,
     label?: string,
     status?: TaskStatus,
     projectId?: string
@@ -56,9 +56,6 @@ export const UseTasks = () => {
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<TaskData[]>([]);
 
-  // const user = auth.currentUser;
-  // if (!user) return;
-
   const fetchTasks = async () => {
     const tasksQuery = query(
       collection(db, "tasks"),
@@ -76,7 +73,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       dueDate: doc.data().dueDate,
       status: doc.data().status as TaskStatus,
       createdAt: doc.data().createdAt,
-      userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
+      userId: doc.data().userId,
     }));
 
     setTasks(
@@ -89,7 +86,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const createTask = async (
     title: string,
     content?: string,
-    dueDate?: Date | null,
+    dueDate?: string | null,
     label?: string,
     status?: TaskStatus,
     projectId?: string
@@ -106,7 +103,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       const taskData = {
         title,
         content,
-        dueDate: dueDate ? Timestamp.fromDate(dueDate) : null,
+        dueDate: dueDate || "",
         createdAt: Timestamp.now(),
         label: label || "",
         status: status || "pending",

@@ -1,18 +1,15 @@
-import Dropdown from "@/components/Dropdown/Dropdown";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { TaskData, TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
+import { Select } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { Calendar, NotepadText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import "@/pages/Task Edit Page/TaskEditPage.scss";
-import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 import TextareaAutosize from "react-textarea-autosize";
-
-//Todo: Use a loading animation library for loading state
-//Todo: Change field icons
+import "@/pages/Task Edit Page/TaskEditPage.scss";
 
 const TaskEditPage = () => {
   const { user } = UserAuth();
@@ -32,13 +29,14 @@ const TaskEditPage = () => {
   const [taskTitle, setTaskTitle] = useState("");
   const [taskContent, setTaskContent] = useState("");
   const [taskLabel, setTaskLabel] = useState("");
-  const [taskDueDate, setTaskDueDate] = useState<Date | null>(null);
+  const [taskDueDate, setTaskDueDate] = useState<string | null>(null);
   const [taskStatus, setTaskStatus] = useState<TaskStatus>("pending");
   const [taskProjectAssignment, setTaskProjectAssignment] =
     useState<string>("");
 
   useEffect(() => {
     fetchProjects();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -76,7 +74,7 @@ const TaskEditPage = () => {
       setTaskContent(taskObjectdata.content);
       setTaskProjectAssignment(taskObjectdata.projectId);
       setTaskStatus(taskObjectdata.status);
-      setTaskDueDate(taskObjectdata.dueDate?.toDate() || null);
+      setTaskDueDate(taskObjectdata.dueDate || null);
       setTaskLabel(taskObjectdata.label);
       setTask(taskObjectdata as TaskData);
 
@@ -86,8 +84,7 @@ const TaskEditPage = () => {
     fetchTask();
   }, [id, user, isInitialLoad]);
 
-  const statusOptions = ["pending", "ongoing", "completed"];
-  // const labelOptions = ["Personal", "Work", "School"];
+  const statusOptions = ["pending", "ongoing", "completed"] as TaskStatus[];
 
   const projectOptions = useMemo(
     () =>
@@ -99,7 +96,7 @@ const TaskEditPage = () => {
     async (
       newTitle: string,
       newContent?: string,
-      newDueDate?: Date | null,
+      newDueDate?: string | null,
       newLabel?: string,
       newStatus?: TaskStatus
     ) => {
@@ -111,7 +108,7 @@ const TaskEditPage = () => {
           title: newTitle,
           content: newContent || "",
           label: newLabel || "",
-          dueDate: newDueDate ? Timestamp.fromDate(newDueDate) : null,
+          dueDate: newDueDate || "",
           status: newStatus || "pending",
           userId: user.uid,
         },
@@ -181,10 +178,7 @@ const TaskEditPage = () => {
       taskContent !== task?.content ||
       taskStatus !== task?.status ||
       taskLabel !== task?.label ||
-      taskDueDate?.getTime() !==
-        (task?.dueDate instanceof Timestamp
-          ? task.dueDate.toDate().getTime()
-          : task?.dueDate?.getTime());
+      taskDueDate !== task?.dueDate;
 
     if (!hasFieldChanged) return;
 
@@ -219,6 +213,7 @@ const TaskEditPage = () => {
     }, 1000);
 
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line
   }, [taskProjectAssignment, task?.projectId]);
 
   return (
@@ -239,7 +234,7 @@ const TaskEditPage = () => {
         <form className="task-edit-page__form">
           <div className="task-edit-page__form-group">
             <div className="task-edit-page__form-header">
-              <NotepadText size={20} />
+              <NotepadText size={16} />
               <label className="task-edit-page__form-label">Description</label>
             </div>
             <TextareaAutosize
@@ -253,21 +248,19 @@ const TaskEditPage = () => {
 
           <div className="task-edit-page__form-group">
             <div className="task-edit-page__form-header">
-              <NotepadText size={20} />
+              <NotepadText size={16} />
               <label className="task-edit-page__form-label">Project</label>
             </div>
-            <Dropdown
+            <Select
               placeholder="Select a project"
-              options={projectOptions.map((opt) => opt.label)}
-              value={
-                projectOptions.find(
-                  (opt) => opt.value === taskProjectAssignment
-                )?.label || ""
-              }
-              onChange={(value: string) => {
-                // Match by LABEL (display name), not ID
+              data={projectOptions}
+              checkIconPosition="right"
+              value={taskProjectAssignment || ""}
+              clearable
+              onChange={(value) => {
+                // Match by VALUE (ID), not LABEL
                 const selectedProject = projects.find(
-                  (project) => project.name === value
+                  (project) => project.id === value
                 );
                 setTaskProjectAssignment(selectedProject?.id || "");
               }}
@@ -277,40 +270,30 @@ const TaskEditPage = () => {
           {taskProjectAssignment && (
             <div className="task-edit-page__form-group">
               <div className="task-edit-page__form-header">
-                <NotepadText size={20} />
+                <NotepadText size={16} />
                 <label className="task-edit-page__form-label">Status</label>
               </div>
-              <Dropdown
-                options={statusOptions}
+
+              <Select
+                data={statusOptions}
+                checkIconPosition="right"
                 value={taskStatus}
-                onChange={(value: string) => setTaskStatus(value as TaskStatus)}
-                placeholder="Select a status"
+                clearable
+                onChange={(value) => setTaskStatus(value as TaskStatus)}
               />
             </div>
           )}
           <div className="task-edit-page__form-group">
             <div className="task-edit-page__form-header">
-              <Calendar size={20} />
+              <Calendar size={16} />
               <label className="task-edit-page__form-label">Due Date</label>
             </div>
-            <DateTimePickerCompo
-              selected={taskDueDate}
-              onChange={(date) => setTaskDueDate(date)}
+            <DatePickerInput
+              placeholder="Pick date"
+              value={taskDueDate}
+              onChange={setTaskDueDate}
             />
           </div>
-
-          {/* <div className="task-edit-page__form-group">
-                        <div className="task-edit-page__form-header">
-                            <Tag size={ 20 } />
-                            <label className="task-edit-page__form-label">Label</label>
-                        </div>
-                        <Dropdown
-                            options={ labelOptions }
-                            value={ taskLabel }
-                            onChange={ setTaskLabel }
-                            placeholder="Select a label"
-                        />
-                    </div> */}
         </form>
       </div>
     </div>
