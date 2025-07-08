@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { auth, db } from "@/firebase/firebase";
+import { createContext, ReactNode, useContext, useState } from "react";
 import {
   addDoc,
   collection,
@@ -9,7 +10,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db, auth } from "@/firebase/firebase";
 
 export interface NoteData {
   id: string;
@@ -19,6 +19,7 @@ export interface NoteData {
   createdAt: Timestamp;
   title: string;
   userId?: string;
+  contentType: string;
 }
 
 interface NotesContextType {
@@ -46,9 +47,6 @@ export const UseNotes = () => {
 export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<NoteData[]>([]);
 
-  // const user = auth.currentUser;
-  // if (!user) return;
-
   const fetchNotes = async () => {
     const notesCollection = collection(db, "notes");
     const notesQuery = query(
@@ -64,10 +62,13 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
       label: doc.data().label,
       createdAt: doc.data().createdAt,
       title: doc.data().title,
-      userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
+      userId: doc.data().userId,
+      contentType: "Note",
     }));
 
-    setNotes(noteList.sort((a, b) => b.createdAt - a.createdAt));
+    setNotes(
+      noteList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+    );
   };
 
   const createNote = async (
@@ -93,6 +94,7 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
         label: label || "",
         userId: user.uid,
         createdAt: newDate,
+        contentType: "Note",
       };
 
       const docRef = await addDoc(collection(db, "notes"), noteData);

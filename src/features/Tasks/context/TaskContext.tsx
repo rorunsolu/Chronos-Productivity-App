@@ -13,7 +13,7 @@ import {
   where,
 } from "firebase/firestore";
 
-export type TaskStatus = "pending" | "ongoing" | "completed";
+export type TaskStatus = "Pending" | "Ongoing" | "Completed";
 
 export interface TaskData {
   id: string;
@@ -26,6 +26,7 @@ export interface TaskData {
   dueDate?: string | null;
   createdAt: Timestamp;
   userId?: string;
+  contentType: string;
 }
 
 interface TasksContextType {
@@ -74,6 +75,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       status: doc.data().status as TaskStatus,
       createdAt: doc.data().createdAt,
       userId: doc.data().userId,
+      contentType: doc.data().contentType,
     }));
 
     setTasks(
@@ -106,10 +108,11 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         dueDate: dueDate || "",
         createdAt: Timestamp.now(),
         label: label || "",
-        status: status || "pending",
+        status: status || "Pending",
         projectId: projectId || "",
         userId: user.uid,
         completion: false,
+        contentType: "Task",
       };
 
       const docRef = await addDoc(collection(db, "tasks"), taskData);

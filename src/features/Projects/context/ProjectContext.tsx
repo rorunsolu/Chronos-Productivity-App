@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { auth, db } from "@/firebase/firebase";
+import { createContext, ReactNode, useContext, useState } from "react";
 import {
   Timestamp,
   addDoc,
@@ -12,9 +13,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db, auth } from "@/firebase/firebase";
 
-export type ProjectStatus = "pending" | "ongoing" | "completed";
+export type ProjectStatus = "Pending" | "Ongoing" | "Completed";
 
 export interface ProjectData {
   id: string;
@@ -26,6 +26,7 @@ export interface ProjectData {
   createdAt: Timestamp;
   updatedAt?: Timestamp;
   userId?: string;
+  contentType: string;
 }
 
 interface ProjectsContextType {
@@ -36,10 +37,6 @@ interface ProjectsContextType {
   updateProject: (id: string, updates: Partial<ProjectData>) => void;
   addTaskToProject: (projectId: string, taskId: string) => void;
   removeTaskFromProject: (projectId: string, taskId: string) => void;
-}
-
-export interface DashProjectCardProps {
-  project: ProjectData;
 }
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(
@@ -56,9 +53,6 @@ export const UseProjects = () => {
 
 export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
   const [projects, setProjects] = useState<ProjectData[]>([]);
-
-  // const user = auth.currentUser;
-  // if (!user) return;
 
   const fetchProjects = async () => {
     try {
@@ -77,7 +71,8 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
         status: doc.data().status as ProjectStatus,
         createdAt: doc.data().createdAt,
         updatedAt: doc.data().updatedAt,
-        userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
+        userId: doc.data().userId,
+        contentType: doc.data().contentType,
       }));
 
       setProjects(
@@ -111,9 +106,10 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
         tasks: [],
         label: label || "",
         userId: user.uid,
-        status: "pending" as ProjectStatus,
+        status: "Pending" as ProjectStatus,
         createdAt: newDate,
         updatedAt: newDate,
+        contentType: "Project",
       };
 
       const docRef = await addDoc(collection(db, "projects"), projectData);
@@ -201,7 +197,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
 
       await updateDoc(taskRef, {
         projectId: projectId,
-        status: "pending",
+        status: "Pending",
       });
 
       setProjects(
