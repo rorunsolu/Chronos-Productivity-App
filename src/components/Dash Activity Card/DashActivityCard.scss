@@ -1,0 +1,75 @@
+.dash-activity-card {
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: var(--primary-border);
+    padding: 8px 20px;
+
+    overflow: hidden;
+
+    //cursor: pointer;
+
+    //transition: var(--primary-transition);
+
+    // &:hover {
+    //     background: whitesmoke;
+    // }
+
+    &:last-child {
+        border-bottom: none;
+        border-bottom: var(--primary-border);
+    }
+
+    &__title {
+        font-size: 16px;
+        font-weight: 500;
+
+        //color: #181d27;
+        margin-top: 10px;
+        margin-bottom: 4px;
+    }
+
+    &__dot {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 100%;
+
+        background: var(--color-brand);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        height: 24px;
+    }
+
+    &__text {
+        display: flex;
+        align-items: center;
+
+        height: 21px;
+
+        overflow: hidden;
+
+        font-size: 14px;
+        font-weight: 500;
+
+        color: #181d27;
+    }
+
+    &__date {
+        font-size: 12px;
+        font-weight: 500;
+
+        color: #535862;
+    }
+
+    &__end {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
