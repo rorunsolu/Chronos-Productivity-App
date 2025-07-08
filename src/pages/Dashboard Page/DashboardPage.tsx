@@ -7,6 +7,7 @@ import { Timestamp } from "firebase/firestore";
 import { Layers, LayoutList, ListTodo, NotebookTabs } from "lucide-react";
 import { useEffect, useState } from "react";
 import "react-day-picker/dist/style.css";
+import DashActivityCard from "@/components/Dash Activity Card/DashActivityCard";
 import "@/pages/Dashboard Page/DashboardPage.scss";
 import "@/components/Creation Modal/CreationModal.scss";
 import "@/pages/Dashboard Page/DashboardTasks.scss";
@@ -15,21 +16,47 @@ import "@/pages/Dashboard Page/DashboardSummary.scss";
 import TaskCard from "@/features/Tasks/Task Card/DashTaskCard";
 import DashSubHeader from "@/components/Dash Sub Header/DashSubHeader";
 import DashChartBlock from "@/components/Dash Chart Block/DashChartBlock";
-import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 import DashNoteBlock from "@/features/Notes/Dash Note Block/DashNoteBlock";
 import DashProjectBlock from "@/features/Projects/Dash Project Block/DashProjectBlock";
 import DashStatCard from "@/components/Dash Stat Card/DashStatCard";
 
+type Activity = {
+  id: string;
+  title: string;
+  creation: Timestamp;
+  type: "Project" | "Task" | "Note";
+};
+
 const Dashboard = () => {
-  const [selectedDateToFilterBy, setSelectedDateToFilterBy] =
-    useState<
+  const [selectedDateToFilterBy, setSelectedDateToFilterBy] = useState<
     string | null
->(null);
+  >(null);
 
   const { projects, fetchProjects } = UseProjects();
   const { tasks, fetchTasks } = UseTasks();
   const { notes, fetchNotes } = UseNotes();
   const { user } = UserAuth();
+
+  const allActivity: Activity[] = [
+    ...projects.map((project) => ({
+      id: project.id,
+      title: project.name,
+      creation: project.createdAt,
+      type: "Project" as const,
+    })),
+    ...tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      creation: task.createdAt,
+      type: "Task" as const,
+    })),
+    ...notes.map((note) => ({
+      id: note.id,
+      title: note.title,
+      creation: note.createdAt,
+      type: "Note" as const,
+    })),
+  ];
 
   const uncompletedTasks = tasks.filter((task) => !task.completion);
 
@@ -109,8 +136,7 @@ const Dashboard = () => {
               <div className="dashboard-results__top">
                 <DashSubHeader title="Tasks" />
                 <DatePickerInput
-                  label="Pick date"
-                  placeholder="Pick date"
+                  placeholder="Pick a date"
                   value={selectedDateToFilterBy}
                   onChange={setSelectedDateToFilterBy}
                 />

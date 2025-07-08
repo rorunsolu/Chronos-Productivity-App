@@ -23,10 +23,9 @@ const ProjectPage = () => {
   const [isNewestFirst, setIsNewestFirst] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const labelOptions = ["Work", "Personal", "Urgent"];
-
   useEffect(() => {
     fetchProjects();
+    // eslint-disable-next-line
   }, []);
 
   const handleCreateProject = async (
@@ -131,10 +130,6 @@ const ProjectPage = () => {
                   placeholder="Description"
                 />
               </div>
-
-              {/* <div className="modal__input-group">
-                      <Dropdown value={ projectLabel } onChange={ setProjectLabel } options={ labelOptions } placeholder="Select a label" />
-                    </div> */}
             </div>
 
             <div className="modal__button-wrapper">

@@ -62,6 +62,7 @@ const NoteListPage = () => {
 
   useEffect(() => {
     fetchNotes();
+    // eslint-disable-next-line
   }, []);
 
   //todo: Clicking a note should open a modal with the task details and options to edit or delete the task.

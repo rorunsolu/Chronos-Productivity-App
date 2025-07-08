@@ -2,13 +2,12 @@ import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { TaskData, TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
-import { Select } from "@mantine/core";
+import { Select, Textarea } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
-import { Calendar, NotepadText } from "lucide-react";
+import { Calendar, Layers, NotepadText, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import TextareaAutosize from "react-textarea-autosize";
 import "@/pages/Task Edit Page/TaskEditPage.scss";
 
 const TaskEditPage = () => {
@@ -30,7 +29,7 @@ const TaskEditPage = () => {
   const [taskContent, setTaskContent] = useState("");
   const [taskLabel, setTaskLabel] = useState("");
   const [taskDueDate, setTaskDueDate] = useState<string | null>(null);
-  const [taskStatus, setTaskStatus] = useState<TaskStatus>("pending");
+  const [taskStatus, setTaskStatus] = useState<TaskStatus>("Pending");
   const [taskProjectAssignment, setTaskProjectAssignment] =
     useState<string>("");
 
@@ -84,7 +83,7 @@ const TaskEditPage = () => {
     fetchTask();
   }, [id, user, isInitialLoad]);
 
-  const statusOptions = ["pending", "ongoing", "completed"] as TaskStatus[];
+  const statusOptions = ["Pending", "Ongoing", "Completed"] as TaskStatus[];
 
   const projectOptions = useMemo(
     () =>
@@ -237,18 +236,21 @@ const TaskEditPage = () => {
               <NotepadText size={16} />
               <label className="task-edit-page__form-label">Description</label>
             </div>
-            <TextareaAutosize
-              className="task-edit-page__form-textarea"
-              onChange={(e) => setTaskContent(e.target.value)}
-              value={taskContent}
-              placeholder="Description"
+            <Textarea
+              size="sm"
+              autosize
               minRows={2}
+              maxRows={8}
+              variant="default"
+              placeholder="Add notes here..."
+              value={taskContent}
+              onChange={(e) => setTaskContent(e.target.value)}
             />
           </div>
 
           <div className="task-edit-page__form-group">
             <div className="task-edit-page__form-header">
-              <NotepadText size={16} />
+              <Layers size={16} />
               <label className="task-edit-page__form-label">Project</label>
             </div>
             <Select
@@ -270,7 +272,7 @@ const TaskEditPage = () => {
           {taskProjectAssignment && (
             <div className="task-edit-page__form-group">
               <div className="task-edit-page__form-header">
-                <NotepadText size={16} />
+                <TrendingUp size={16} />
                 <label className="task-edit-page__form-label">Status</label>
               </div>
 
@@ -278,7 +280,6 @@ const TaskEditPage = () => {
                 data={statusOptions}
                 checkIconPosition="right"
                 value={taskStatus}
-                clearable
                 onChange={(value) => setTaskStatus(value as TaskStatus)}
               />
             </div>

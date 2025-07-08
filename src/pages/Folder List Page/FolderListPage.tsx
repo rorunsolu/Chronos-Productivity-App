@@ -34,6 +34,7 @@ const FolderListPage = () => {
   useEffect(() => {
     fetchFolders();
     console.log("Folders have been fetched.");
+    // eslint-disable-next-line
   }, []);
 
   const filteredFolders = folders.filter((folder) => {

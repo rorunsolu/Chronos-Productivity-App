@@ -1,17 +1,14 @@
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { TaskData, UseTasks } from "@/features/Tasks/context/TaskContext";
-// import { ArrowDownUp, ArrowUpDown, Plus, Search } from "lucide-react";
+import { DatePickerInput } from "@mantine/dates";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "@/pages/Task List Page/TaskListPage.scss";
 import "@/components/Creation Modal/CreationModal.scss";
-import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 import TaskListCard from "@/features/Tasks/Task List Card/TaskListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
 import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
-
-// Note: Removed the ability to add labels duriong task creation due to some missing logic neeeded to handle displaying a large amount of labels via a dropdown
 
 const TaskListPage = () => {
   const { user } = UserAuth();
@@ -41,7 +38,6 @@ const TaskListPage = () => {
         task.title.toLowerCase().includes(searchLower) ||
         task.content?.toLowerCase().includes(searchLower) ||
         task.status?.toLowerCase().includes(searchLower)
-        // task.label?.toLowerCase().includes(searchLower)
       );
     })
     .sort((a, b) => {
@@ -88,7 +84,6 @@ const TaskListPage = () => {
           <p className="task-list-page__subtitle">
             All your tasks in one place
           </p>
-          {/* Could turn this into a component */}
         </>
 
         <div className="task-list-page__actions">
@@ -149,16 +144,6 @@ const TaskListPage = () => {
                   placeholder="Description"
                 />
               </div>
-
-              {/* <div className="modal__input-group">
-                        <input
-                           className="modal__input"
-                           onChange={ (e) => setTaskLabel(e.target.value) }
-                           value={ taskLabel }
-                           type="text"
-                           placeholder="Label"
-                        />
-                     </div> */}
 
               <div className="modal__input-group">
                 <DatePickerInput

@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
 import { UserAuth } from "../../contexts/authContext/AuthContext";
+import ButtonReg from "@/components/Buttons/ButtonReg";
+import ErrorMsg from "@/components/ErrorMessage/ErrorMsg";
+import { Stack, TextInput } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./SignUpPage.scss";
+import "@/pages/Sign Up Page/SignUpPage.css";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -20,8 +23,7 @@ const SignUp = () => {
     }
   };
 
-  const handleEmailSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleEmailSignUp = async (email: string, password: string) => {
     if (!email || !password) {
       setError("Email and password are required.");
       return;
@@ -42,59 +44,62 @@ const SignUp = () => {
   }, [user, navigate]);
 
   return (
-    <div className="section">
-      <div className="signuppage">
-        <form className="signin-form" onSubmit={handleEmailSignUp}>
-          <div className="signin-form__header">
-            <h2 className="signin-form__title">Sign up</h2>
-            <p className="signin-form__subtitle">
+    <div className="flex w-full h-full justify-center items-center pt-6">
+      <Stack gap="5">
+        <form>
+          <Stack gap="5">
+            <h2 className="login-form__title">Sign up</h2>
+            <p className="login-form__subtitle">
               Enter your email below to sign up for an account
             </p>
-          </div>
+          </Stack>
 
-          <div className="signin-form__group">
+          <div className="login-form__group">
             <label htmlFor="email">Email</label>
-            <input
+            <TextInput
+              required
               type="email"
-              placeholder="m@example.com"
+              withAsterisk
               value={email}
+              placeholder="email@example.com"
               onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
-          <div className="signin-form__group">
+          <div className="login-form__group">
             <label htmlFor="password">Password</label>
-            <input
+            <TextInput
+              required
+              withAsterisk
               type="password"
-              placeholder="Password"
               value={password}
+              placeholder="Password"
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
 
-          <div className="signin-form__buttons">
-            <button className="signin-form__button" type="submit">
-              Sign up
-            </button>
-            <button
-              className="signin-form__google"
-              type="button"
+          <div className="login-form__buttons">
+            <ButtonReg
+              label="Sign up"
+              type="primary"
+              onClick={() => handleEmailSignUp(email, password)}
+            />
+            <ButtonReg
+              label="Sign up with Google"
+              type="secondary"
               onClick={handleGoogleSignUp}
-            >
-              Sign up with Google
-            </button>
+            />
           </div>
 
-          <p className="signin-form__signup">
-            Already have an account?<Link to="/signin">Sign in</Link>
-          </p>
-          <p className="signin-form__signup">
-            Don't want to sign in?<Link to="/">Go back to home</Link>
-          </p>
+          <div className="flex flex-col items-center justify-center gap-0 mt-5">
+            <p className="login-form__signup">
+              Already have an account?<Link to="/signin">Sign in</Link>
+            </p>
+          </div>
         </form>
 
-        {error && <p className="signuppage__error">{error}</p>}
-      </div>
+        {error && <ErrorMsg message={error} />}
+      </Stack>
     </div>
   );
 };

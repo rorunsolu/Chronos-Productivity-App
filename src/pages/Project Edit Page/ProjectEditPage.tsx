@@ -2,6 +2,7 @@ import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { UseTasks } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
+import { DatePickerInput } from "@mantine/dates";
 import { doc, setDoc } from "firebase/firestore";
 import { Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +16,6 @@ import {
 import "@/pages/Project Edit Page/ProjectEditPage.scss";
 import ProjectTaskCard from "@/features/Projects/Project Task Card/ProjectTaskCard";
 import "@/components/Kanban Column/KanbanColumn.scss";
-import DateTimePickerCompo from "@/components/Date Time Picker Compo/DateTimePickerCompo";
 
 const ProjectEditPage = () => {
   const { user } = UserAuth();
@@ -30,7 +30,7 @@ const ProjectEditPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskStatus, setTaskStatus] = useState<TaskStatus>();
   const [projectName, setProjectName] = useState<string>("");
-  const [taskDueDate, setTaskDueDate] = useState<Date | null>(null);
+  const [taskDueDate, setTaskDueDate] = useState<string | null>(null);
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [initialProject, setInitialProject] = useState<ProjectData | null>(
     null
@@ -42,6 +42,7 @@ const ProjectEditPage = () => {
   useEffect(() => {
     fetchProjects();
     fetchTasks();
+    // eslint-disable-next-line
   }, []);
 
   const currentProject = projects.find((project) => project.id === id);
@@ -165,7 +166,7 @@ const ProjectEditPage = () => {
         </div>
 
         <div className="project-edit-page__kanban">
-          {(["pending", "ongoing", "completed"] as TaskStatus[]).map(
+          {(["Pending", "Ongoing", "Completed"] as TaskStatus[]).map(
             (status) => (
               <div
                 key={status}
@@ -230,9 +231,10 @@ const ProjectEditPage = () => {
             </div>
 
             <div className="modal__input-group">
-              <DateTimePickerCompo
-                selected={taskDueDate}
-                onChange={(date) => setTaskDueDate(date)}
+              <DatePickerInput
+                placeholder="Pick date"
+                value={taskDueDate}
+                onChange={setTaskDueDate}
               />
             </div>
           </div>
