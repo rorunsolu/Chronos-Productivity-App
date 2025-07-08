@@ -14,7 +14,7 @@
   --border-radius-reg: 8px;
   --primary-hover-bg: #fafafa;
   --primary-hover-bg: whitesmoke;
-  --primary-transition: all 0.2s ease-in-out;
+  --primary-transition: all 0.1s ease-in-out;
 }
 
 * {
@@ -27,4 +27,8 @@
 body {
   font-family: "Inter", serif;
   font-optical-sizing: auto;
+}
+
+.mantine-InputWrapper-root {
+  box-shadow: var(--shadow) !important;
 }

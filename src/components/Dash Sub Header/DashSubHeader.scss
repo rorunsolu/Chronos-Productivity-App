@@ -12,13 +12,13 @@
 
     background: white;
 
-    cursor: pointer;
-
     &__title {
         font-size: 20px;
         font-weight: 600;
 
         color: #181d27;
+
+        cursor: pointer;
     }
     &__count {
         display: grid;

@@ -163,9 +163,6 @@
   }
 
   &__footer {
-    &-text {
-    }
-
     &-btn {
       margin-left: 8px;
 
@@ -189,7 +186,6 @@
   &__title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 10px;
   }
 
   &__subtitle {
@@ -203,15 +199,9 @@
 
     label {
       display: block;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 600;
       margin-bottom: 5px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
     }
   }
 
@@ -221,13 +211,12 @@
     color: #333;
   }
 
-  &__actions {
-  }
-
   &__buttons {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    margin-top: 25px;
   }
 
   &__button {
@@ -270,14 +259,14 @@
 
   &__signup {
     text-align: center;
-    margin-top: 15px;
     font-size: 14px;
 
     a {
       color: #000;
-      font-weight: bold;
+      font-weight: 600;
       text-decoration: none;
       margin-left: 8px;
+      font-size: 14px;
 
       &:hover {
         text-decoration: underline;

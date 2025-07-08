@@ -244,10 +244,6 @@
       color: black;
    }
 
-   &--active {
-      //background: var(--color-brand);
-   }
-
    &__icon {
       width: 32px;
       height: 32px;
@@ -267,6 +263,8 @@
       padding: 0.25rem 0.5rem;
 
       font-size: 0.875rem;
+      font-weight: 600;
+      color: #181d27;
 
       transition: all 0.2s;
 

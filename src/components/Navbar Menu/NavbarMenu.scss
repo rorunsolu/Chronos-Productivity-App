@@ -44,10 +44,11 @@
     }
 
     &__avatar {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
 
         border-radius: 100%;
+        box-shadow: var(--shadow);
     }
 
     &__details {
@@ -77,6 +78,9 @@
 
         width: 100%;
         height: fit-content;
+
+        overflow: hidden;
+        border-radius: 8px;
     }
 
     &__link {

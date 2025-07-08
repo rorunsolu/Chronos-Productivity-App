@@ -63,10 +63,6 @@
             box-shadow: var(--shadow);
 
             resize: none;
-
-            &:focus {
-                outline: 2px #a0d3bb solid;
-            }
         }
     }
 }
