@@ -5,12 +5,16 @@
 
     border: var(--primary-border);
     border-radius: 6px;
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
 
     background: white;
     box-shadow: var(--shadow);
     transition: var(--primary-transition);
     cursor: pointer;
+
+    &:hover {
+        background: var(--primary-hover-bg);
+    }
 
     &__title {
         margin-bottom: 4px;

@@ -9,18 +9,16 @@
     right: 0;
     bottom: 0;
     z-index: 1000;
-    overflow: hidden; // Prevent scrollbars during animation
+    overflow: hidden;
 }
 
 .modal {
-    //position: relative; // Changed from absolute
-
     border: var(--primary-border);
     border-radius: 8px 8px 0 0;
     padding: 16px;
 
     width: 100%;
-    max-width: 800px;
+    max-width: 500px;
 
     background: white;
     transform: translateY(100%);
@@ -33,7 +31,8 @@
     &__title {
         font-size: 1.15rem;
         margin-bottom: 1rem;
-        text-align: center;
+        text-align: left;
+        font-weight: 600;
     }
 
     &__form {
@@ -63,7 +62,6 @@
         box-shadow: var(--shadow);
 
         &:focus {
-            //border: 1px black solid;
             outline: none;
         }
     }
@@ -96,7 +94,7 @@
 
     &__button-wrapper {
         display: flex;
-        flex-direction: column;
+
         gap: 8px;
 
         margin-top: 20px;
@@ -113,6 +111,8 @@
 
         transition: var(--primary-transition);
         cursor: pointer;
+
+        font-weight: 600;
 
         &--create {
             &:hover {

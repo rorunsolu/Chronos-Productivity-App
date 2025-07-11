@@ -1,5 +1,6 @@
 import ButtonReg from "@/components/Buttons/ButtonReg";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { Stack, Text } from "@mantine/core";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/pages/Home Page/HomePage.scss";
@@ -35,30 +36,43 @@ const Home = () => {
           </div>
         </header>
 
-        {!user && (
-          <div className="homepage__actions">
-            <div className="homepage__button-wrapper">
-              <ButtonReg
-                label="Sign into your account"
-                type="primary"
-                onClick={() => navigate(`/SignIn`)}
-              />
-              <ButtonReg
-                label="Create an account"
-                type="secondary"
-                onClick={() => navigate(`/SignUp`)}
-              />
-              <button
-                className="homepage__button homepage__button--secondary"
-                onClick={handleGuestAccess}
-              >
-                Start without an account
-              </button>
+        {user != null ? (
+          <Stack gap="xs">
+            <ButtonReg
+              label="Continue to Dashboard"
+              onClick={() => navigate("/dashboard")}
+            ></ButtonReg>
+            {error && (
+              <Text c="red" fz="sm" ta="center">
+                {error}
+              </Text>
+            )}
+          </Stack>
+        ) : (
+          <>
+            <div className="homepage__actions">
+              <div className="homepage__button-wrapper">
+                <ButtonReg
+                  label="Sign into your account"
+                  type="primary"
+                  onClick={() => navigate(`/SignIn`)}
+                />
+                <ButtonReg
+                  label="Create an account"
+                  type="secondary"
+                  onClick={() => navigate(`/SignUp`)}
+                />
+                <button
+                  className="homepage__button homepage__button--secondary"
+                  onClick={handleGuestAccess}
+                >
+                  Start without an account
+                </button>
+              </div>
             </div>
-          </div>
+            {error && <p className="signuppage__error">{error}</p>}
+          </>
         )}
-
-        {error && <p className="signuppage__error">{error}</p>}
       </div>
     </div>
   );

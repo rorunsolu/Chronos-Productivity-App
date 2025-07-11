@@ -2,13 +2,14 @@ import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { TaskData, TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
-import { Select, Textarea } from "@mantine/core";
+import { Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { Calendar, Layers, NotepadText, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import "@/pages/Task Edit Page/TaskEditPage.scss";
+import InputHeader from "@/components/Input Header/InputHeader";
 
 const TaskEditPage = () => {
   const { user } = UserAuth();
@@ -221,38 +222,32 @@ const TaskEditPage = () => {
         {isLoading && <p>Saving...</p>}
 
         <header className="task-edit-page__header">
-          <input
-            className="task-edit-page__header-title"
-            onChange={(e) => setTaskTitle(e.target.value)}
-            value={taskTitle}
-            type="text"
+          <TextInput
             placeholder="Title"
+            variant="unstyled"
+            size="xl"
+            value={taskTitle}
+            onChange={(e) => setTaskTitle(e.target.value)}
           />
         </header>
 
-        <form className="task-edit-page__form">
-          <div className="task-edit-page__form-group">
-            <div className="task-edit-page__form-header">
-              <NotepadText size={16} />
-              <label className="task-edit-page__form-label">Description</label>
-            </div>
+        <Stack gap={16}>
+          <Stack gap={2}>
+            <InputHeader label="Description" icon={<NotepadText size={16} />} />
             <Textarea
               size="sm"
               autosize
               minRows={2}
               maxRows={8}
               variant="default"
-              placeholder="Add notes here..."
+              placeholder="Description"
               value={taskContent}
               onChange={(e) => setTaskContent(e.target.value)}
             />
-          </div>
+          </Stack>
 
-          <div className="task-edit-page__form-group">
-            <div className="task-edit-page__form-header">
-              <Layers size={16} />
-              <label className="task-edit-page__form-label">Project</label>
-            </div>
+          <Stack gap={2} w="fit-content">
+            <InputHeader label="Project" icon={<Layers size={16} />} />
             <Select
               placeholder="Select a project"
               data={projectOptions}
@@ -267,35 +262,30 @@ const TaskEditPage = () => {
                 setTaskProjectAssignment(selectedProject?.id || "");
               }}
             />
-          </div>
+          </Stack>
 
           {taskProjectAssignment && (
-            <div className="task-edit-page__form-group">
-              <div className="task-edit-page__form-header">
-                <TrendingUp size={16} />
-                <label className="task-edit-page__form-label">Status</label>
-              </div>
-
+            <Stack gap={2} w="fit-content">
+              <InputHeader label="Status" icon={<TrendingUp size={16} />} />
               <Select
                 data={statusOptions}
                 checkIconPosition="right"
                 value={taskStatus}
                 onChange={(value) => setTaskStatus(value as TaskStatus)}
               />
-            </div>
+            </Stack>
           )}
-          <div className="task-edit-page__form-group">
-            <div className="task-edit-page__form-header">
-              <Calendar size={16} />
-              <label className="task-edit-page__form-label">Due Date</label>
-            </div>
+
+          <Stack gap={2} w="fit-content">
+            <InputHeader label="Due Date" icon={<Calendar size={16} />} />
             <DatePickerInput
               placeholder="Pick date"
               value={taskDueDate}
               onChange={setTaskDueDate}
+              clearable
             />
-          </div>
-        </form>
+          </Stack>
+        </Stack>
       </div>
     </div>
   );

@@ -80,9 +80,8 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
           (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
         )
       );
-      console.log("Projects fetched with fetchProjects hook");
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      throw new Error(`Error fetching projects: ${error}`);
     }
   };
 
@@ -124,7 +123,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
         ...projects,
       ]);
     } catch (error) {
-      console.error("Error creating project:", error);
+      throw new Error(`Error creating project: ${error}`);
     }
   };
 
@@ -139,9 +138,8 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
     try {
       await deleteDoc(doc(db, "projects", id));
       setProjects(projects.filter((project) => project.id !== id));
-      console.log("Project deleted successfully:", id);
     } catch (error) {
-      console.error("Error deleting project:", error);
+      throw new Error(`Error deleting project: ${error}`);
     }
   };
 
@@ -149,7 +147,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      alert("Authentication required");
+      throw new Error("User is not authenticated");
       return;
     }
 
@@ -174,7 +172,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
         )
       );
     } catch (error) {
-      console.error("Error updating project:", error);
+      throw new Error(`Error updating project: ${error}`);
     }
   };
 
@@ -211,12 +209,8 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
             : project
         )
       );
-
-      console.log(
-        `Task with ID ${taskId} has been added to project with ID ${projectId}`
-      );
     } catch (error) {
-      console.error("Error adding task to project:", error);
+      throw new Error(`Error adding task to project: ${error}`);
     }
   };
 
@@ -246,7 +240,7 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
         )
       );
     } catch (error) {
-      console.error("Error removing task from project:", error);
+      throw new Error(`Error removing task from project: ${error}`);
     }
   };
 

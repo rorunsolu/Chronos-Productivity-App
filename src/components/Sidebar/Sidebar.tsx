@@ -1,14 +1,13 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { UserAuth } from "@/contexts/authContext/AuthContext";
 import "@/components/Sidebar/Sidebar.scss";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Layers,
   FolderOpen,
   ChartColumnDecreasing,
   Notebook,
   SquareCheckBig,
-  // Calendar,
 } from "lucide-react";
 
 const Sidebar: React.FC<SidebarProps> = ({ className, isSidebarExpanded }) => {
@@ -19,9 +18,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className, isSidebarExpanded }) => {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      logOut();
     } catch (error) {
-      console.log(error);
+      throw new Error(`Error signing out: ${error}`);
     }
   };
 

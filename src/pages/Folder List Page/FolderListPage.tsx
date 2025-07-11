@@ -1,15 +1,15 @@
-import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseFolders } from "@/features/Folders/context/FolderContext";
+import { Stack } from "@mantine/core";
+import { TextInput } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "@/pages/Folder List Page/FolderListPage.scss";
 import FolderListCard from "@/features/Folders/Folder List Card/FolderListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
+import InputHeader from "@/components/Input Header/InputHeader";
 
 const FolderListPage = () => {
-  const { user } = UserAuth();
-
   const { folders, fetchFolders, createFolder, deleteFolder } = UseFolders();
   const [noteName, setNoteName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,11 +20,6 @@ const FolderListPage = () => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-
-    if (!user) {
-      console.error("User is not authenticated.");
-      return;
-    }
 
     createFolder(noteName);
     setNoteName("");
@@ -83,32 +78,39 @@ const FolderListPage = () => {
           overlayClassName="modal-overlay"
           appElement={document.getElementById("root") || undefined}
         >
-          <p className="modal__title">Create a new folder</p>
+          <p className="modal__title">Create a folder</p>
+
           <form className="modal__form" onSubmit={handleCreateFolder}>
-            <input
-              className="modal__input"
-              onChange={(e) => setNoteName(e.target.value)}
-              value={noteName}
-              type="text"
-              placeholder="Name"
-            />
+            <div className="modal__info-wrapper">
+              <Stack gap="sm">
+                <Stack gap={2}>
+                  <InputHeader label="Name" />
+                  <TextInput
+                    withAsterisk
+                    placeholder="Folder Name"
+                    value={noteName}
+                    onChange={(e) => setNoteName(e.target.value)}
+                  />
+                </Stack>
+              </Stack>
 
-            <div className="modal__button-wrapper">
-              <button
-                className="modal__button modal__button--create"
-                disabled={!noteName}
-                type="submit"
-              >
-                Create folder
-              </button>
+              <div className="modal__button-wrapper">
+                <button
+                  className="modal__button modal__button--create"
+                  disabled={!noteName}
+                  type="submit"
+                >
+                  Create Folder
+                </button>
 
-              <button
-                className="modal__button modal__button--cancel"
-                onClick={() => setIsModalOpen(false)}
-                type="button"
-              >
-                Cancel
-              </button>
+                <button
+                  className="modal__button modal__button--cancel"
+                  onClick={() => setIsModalOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </form>
         </Modal>

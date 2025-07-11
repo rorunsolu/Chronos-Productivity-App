@@ -1,13 +1,14 @@
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
+import { Stack, TextInput } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import TextareaAutosize from "react-textarea-autosize";
 import "@/pages/Project List Page/ProjectListPage.scss";
 import ProjectListCard from "@/features/Projects/Project List Card/ProjectListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
 import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
+import InputHeader from "@/components/Input Header/InputHeader";
 
 const ProjectPage = () => {
   const { user } = UserAuth();
@@ -108,46 +109,48 @@ const ProjectPage = () => {
           overlayClassName="modal-overlay"
           appElement={document.getElementById("root") || undefined}
         >
-          <p className="modal__title">Create a new project</p>
+          <p className="modal__title">Create a project</p>
 
           <form className="modal__form" onSubmit={handleCreateProject}>
             <div className="modal__info-wrapper">
-              <div className="modal__input-group">
-                <input
-                  className="modal__input"
-                  onChange={(e) => setProjectTitle(e.target.value)}
-                  value={projectTitle}
-                  type="text"
-                  placeholder="Title"
-                />
+              <Stack gap="sm">
+                <Stack gap={2}>
+                  <InputHeader label="Title" />
+                  <TextInput
+                    withAsterisk
+                    placeholder="Title"
+                    value={projectTitle}
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                  />
+                </Stack>
+
+                <Stack gap={2}>
+                  <InputHeader label="Description" />
+                  <TextInput
+                    placeholder="Description"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                  />
+                </Stack>
+              </Stack>
+
+              <div className="modal__button-wrapper">
+                <button
+                  className="modal__button modal__button--create"
+                  disabled={!projectTitle}
+                  type="submit"
+                >
+                  Create Project
+                </button>
+
+                <button
+                  className="modal__button modal__button--cancel"
+                  onClick={() => setIsModalOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </button>
               </div>
-
-              <div className="modal__input-group">
-                <TextareaAutosize
-                  className="modal__textarea"
-                  onChange={(e) => setProjectDescription(e.target.value)}
-                  value={projectDescription}
-                  placeholder="Description"
-                />
-              </div>
-            </div>
-
-            <div className="modal__button-wrapper">
-              <button
-                className="modal__button modal__button--create"
-                disabled={!projectTitle}
-                type="submit"
-              >
-                Create project
-              </button>
-
-              <button
-                className="modal__button modal__button--cancel"
-                onClick={() => setIsModalOpen(false)}
-                type="button"
-              >
-                Cancel
-              </button>
             </div>
           </form>
         </Modal>

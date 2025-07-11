@@ -1,75 +1,74 @@
 import { UseFolders } from "@/features/Folders/context/FolderContext";
 import { NoteData } from "@/features/Notes/context/NoteContext";
 import DOMPurify from "dompurify";
-import { Folder, Tag, Trash } from "lucide-react";
+import { Folder, Tag } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import MenuToggle from "@/components/Menu Toggle/MenuToggle";
 import "@/features/Notes/Note List card/NoteListCard.scss";
 import InfoPill from "@/components/Info Pill/InfoPill";
 
 const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
+  const { folders, fetchFolders } = UseFolders();
 
-    const { folders, fetchFolders } = UseFolders();
+  useEffect(() => {
+    fetchFolders();
+    // eslint-disable-next-line
+  }, []);
 
-    useEffect(() => {
-        fetchFolders();
-    }, []);
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const htmlToPlainText = (html: string) => {
+    const cleanHtml = DOMPurify.sanitize(html);
+    const doc = new DOMParser().parseFromString(cleanHtml, "text/html");
+    return doc.body.textContent || "";
+  };
 
-    const htmlToPlainText = (html: string) => {
-        const cleanHtml = DOMPurify.sanitize(html);
-        const doc = new DOMParser().parseFromString(cleanHtml, "text/html");
-        return doc.body.textContent || "";
-    };
+  const plainContent = htmlToPlainText(note.content);
+  const plainTitle = htmlToPlainText(note.title);
+  const folderName = folders.find((folder) => folder.id === note.folder)?.name;
 
-    const plainContent = htmlToPlainText(note.content);
-    const plainTitle = htmlToPlainText(note.title);
-    const folderName = folders.find(folder => folder.id === note.folder)?.name;
+  return (
+    <li
+      className="note-list-card"
+      key={note.id}
+      onClick={() => navigate(`/notes/${note.id}`)}
+    >
+      <div className="note-list-card__header">
+        <div className="note-list-card__header-items">
+          {folderName && (
+            <InfoPill
+              size="sm"
+              icon={<Folder size={14} />}
+              value={folderName}
+            />
+          )}
 
-    return (
-        <li className="note-list-card" key={ note.id } onClick={ () => navigate(`/notes/${note.id}`) }>
+          {note.label && (
+            <InfoPill size="sm" icon={<Tag size={13} />} value={note.label} />
+          )}
+        </div>
 
-            <div className="note-list-card__header">
+        <div className="note-list-card__header-actions">
+          <MenuToggle onDelete={() => deleteNote(note.id)} />
+        </div>
+      </div>
 
-                <div className="note-list-card__header-items">
-
-                    { folderName && (
-                        <InfoPill icon={ <Folder size={ 13 } /> } value={ folderName } />
-                    ) }
-
-                    { note.label && (
-                        <InfoPill icon={ <Tag size={ 13 } /> } value={ note.label } />
-                    ) }
-
-                </div>
-
-                <div className="note-list-card__header-actions">
-
-                    <button className="note-list-card__header-button" onClick={ (e) => { e.stopPropagation(); deleteNote(note.id); } }>
-                        <Trash />
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div className="note-list-card__content">
-
-                <p className="note-list-card__content-title line-clamp-1">
-                    { plainTitle }
-                </p>
-                <p className="note-list-card__content-description line-clamp-3">
-                    { plainContent }
-                </p>
-            </div>
-        </li>
-    );
+      <div className="note-list-card__content">
+        <p className="note-list-card__content-title line-clamp-1">
+          {plainTitle}
+        </p>
+        <p className="note-list-card__content-description line-clamp-3">
+          {plainContent}
+        </p>
+      </div>
+    </li>
+  );
 };
 
 export default NoteListCard;
 
 interface NoteListCard {
-    note: NoteData;
-    deleteNote: (id: string) => void;
+  note: NoteData;
+  deleteNote: (id: string) => void;
 }

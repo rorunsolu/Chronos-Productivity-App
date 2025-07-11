@@ -1,15 +1,14 @@
-import Dropdown from "@/components/Dropdown/Dropdown";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseNotes } from "@/features/Notes/context/NoteContext";
-import { Tag } from "lucide-react";
+import { Select, Stack, Textarea, TextInput } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import TextareaAutosize from "react-textarea-autosize";
 import "@/pages/Note List Page/NoteListPage.scss";
 import NoteListCard from "@/features/Notes/Note List card/NoteListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
 import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
+import InputHeader from "@/components/Input Header/InputHeader";
 
 const NoteListPage = () => {
   const { user } = UserAuth();
@@ -22,11 +21,10 @@ const NoteListPage = () => {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [noteFolder, setNoteFolder] = useState("");
-  const [noteLabel, setNoteLabel] = useState("");
+  const [noteLabel, setNoteLabel] = useState<string | null>("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isNewestFirst, setIsNewestFirst] = useState(true);
-  const labelOptions = ["Personal", "Work", "School"];
 
   const filteredNotes = notes
     .filter((note) => {
@@ -52,7 +50,7 @@ const NoteListPage = () => {
       return;
     }
 
-    createNote(noteTitle, noteContent, noteFolder, noteLabel);
+    createNote(noteTitle, noteContent, noteFolder, noteLabel ?? undefined);
     setNoteTitle("");
     setNoteContent("");
     setNoteFolder("");
@@ -108,58 +106,67 @@ const NoteListPage = () => {
           overlayClassName="modal-overlay"
           appElement={document.getElementById("root") || undefined}
         >
-          <h3 className="modal__title">Create note</h3>
+          <p className="modal__title">Create a note</p>
 
           <form className="modal__form" onSubmit={handleCreateNote}>
-            <div className="modal__input-wrapper">
-              <label htmlFor="noteTitle" className="modal__label">
-                Title
-              </label>
-              <input
-                className="modal__input"
-                type="text"
-                placeholder="Enter title"
-                onChange={(e) => setNoteTitle(e.target.value)}
-                value={noteTitle}
-              />
-            </div>
+            <div className="modal__info-wrapper">
+              <Stack gap="sm">
+                <Stack gap={2}>
+                  <InputHeader label="Title" />
+                  <TextInput
+                    withAsterisk
+                    placeholder="Title"
+                    value={noteTitle}
+                    onChange={(e) => setNoteTitle(e.target.value)}
+                  />
+                </Stack>
 
-            <TextareaAutosize
-              className="modal__textarea"
-              onChange={(e) => setNoteContent(e.target.value)}
-              value={noteContent}
-            />
+                <Stack gap={2}>
+                  <InputHeader label="Content" />
+                  <Textarea
+                    size="sm"
+                    autosize
+                    minRows={2}
+                    maxRows={8}
+                    variant="default"
+                    placeholder="Content"
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                  />
+                </Stack>
 
-            <div className="modal__option-wrapper">
-              <div className="modal__option">
-                <label className="modal__label">
-                  <Tag size={20} />
-                </label>
-                <Dropdown
-                  options={labelOptions}
-                  value={noteLabel}
-                  onChange={(value: string) => setNoteLabel(value)}
-                  placeholder="Select a label"
-                />
+                <Stack gap={2}>
+                  <InputHeader label="Label" />
+                  <Select
+                    placeholder="Select a label"
+                    data={["Personal", "Work", "School"]}
+                    defaultValue={noteLabel}
+                    value={noteLabel}
+                    onChange={(value: string | null) => {
+                      setNoteLabel(value);
+                    }}
+                    checkIconPosition="right"
+                  />
+                </Stack>
+              </Stack>
+
+              <div className="modal__button-wrapper">
+                <button
+                  className="modal__button modal__button--create"
+                  disabled={!noteTitle || !noteContent}
+                  type="submit"
+                >
+                  Create Note
+                </button>
+
+                <button
+                  className="modal__button modal__button--cancel"
+                  onClick={() => setIsModalOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </button>
               </div>
-            </div>
-
-            <div className="modal__button-wrapper">
-              <button
-                className="modal__button modal__button--create"
-                disabled={!noteTitle || !noteContent}
-                type="submit"
-              >
-                Create note
-              </button>
-
-              <button
-                className="modal__button modal__button--cancel"
-                onClick={() => setIsModalOpen(false)}
-                type="button"
-              >
-                Cancel
-              </button>
             </div>
           </form>
         </Modal>

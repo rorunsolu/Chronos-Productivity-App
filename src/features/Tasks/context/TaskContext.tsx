@@ -81,8 +81,6 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks(
       taskList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
     );
-
-    console.log("Tasks fetched with fetchTasks hook");
   };
 
   const createTask = async (
@@ -97,7 +95,6 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      alert("Authentication required");
       throw new Error("User is not authenticated");
     }
 
@@ -133,7 +130,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         ...tasks,
       ]);
     } catch (error) {
-      console.error("Error creating task:", error);
+      throw new Error(`Error creating task: ${error}`);
     }
   };
 
@@ -141,9 +138,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     try {
       await deleteDoc(doc(db, "tasks", id));
       setTasks(tasks.filter((task) => task.id !== id));
-      console.log("Task deleted:", id);
     } catch (error) {
-      console.error("Error deleting task:", error);
+      throw new Error(`Error deleting task: ${error}`);
     }
   };
 
@@ -152,9 +148,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       await updateDoc(doc(db, "tasks", id), {
         completion: !tasks.find((task) => task.id === id)?.completion,
       });
-      console.log("Task completion toggled:", id);
     } catch (error) {
-      console.error("Error toggling task completion:", error);
+      throw new Error(`Error toggling task completion: ${error}`);
     }
   };
 

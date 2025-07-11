@@ -8,7 +8,6 @@ import {
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
-  //signInWithRedirect,
   signOut,
   User,
   UserCredential,
@@ -22,14 +21,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // const googleSignIn = () => {
-  //   const provider = new GoogleAuthProvider();
-  //   const isDevelopment = process.env.NODE_ENV === "development";
-  //   return isDevelopment
-  //     ? signInWithPopup(auth, provider)
-  //     : signInWithRedirect(auth, provider);
-  // };
 
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
@@ -52,7 +43,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   };
 
   const logOut = () => {
-    //console.log(`Logging out... (UID: ${user?.uid})`);
     setUser(null);
     setIsGuest(false);
     return signOut(auth);
@@ -63,7 +53,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       setUser(currentUser);
       setIsGuest(currentUser?.isAnonymous || false);
       setLoading(false);
-      console.log("Current user?", currentUser);
+      console.log("Current user:", currentUser);
     });
 
     return () => {

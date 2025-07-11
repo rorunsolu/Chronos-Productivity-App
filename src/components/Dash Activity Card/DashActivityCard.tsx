@@ -1,7 +1,8 @@
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { Avatar, Group, Stack } from "@mantine/core";
 import { formatDistanceToNow } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import React from "react";
-import InfoPill from "@/components/Info Pill/InfoPill";
 
 import "@/components/Dash Activity Card/DashActivityCard.scss";
 
@@ -14,19 +15,32 @@ type DashActivityCardProps = {
 };
 
 const DashActivityCard: React.FC<DashActivityCardProps> = ({ activity }) => {
+  const { user } = UserAuth();
+
   return (
     <div className="dash-activity-card">
-      <InfoPill
-        icon={<div className="dash-activity-card__dot "></div>}
-        value={activity.type}
+      <Avatar
+        size="30"
+        radius="xl"
+        src={user?.photoURL ? user.photoURL : "p.png"}
+        alt="User Avatar"
+        mr={10}
       />
-      <h3 className="dash-activity-card__title">{activity.title}</h3>
 
-      <p className="dash-activity-card__date">
-        {activity.creation
-          ? formatDistanceToNow(activity.creation.toDate(), { addSuffix: true })
-          : "Unknown Date"}
-      </p>
+      <Group align="center">
+        <Stack gap={0}>
+          <h3 className="dash-activity-card__title">{activity.title}</h3>
+
+          <p className="dash-activity-card__date">
+            Created a {activity.type.toLowerCase()}{" "}
+            {activity.creation
+              ? formatDistanceToNow(activity.creation.toDate(), {
+                  addSuffix: true,
+                })
+              : "Unknown Date"}
+          </p>
+        </Stack>
+      </Group>
     </div>
   );
 };

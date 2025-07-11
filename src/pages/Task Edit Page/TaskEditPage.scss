@@ -4,7 +4,7 @@
     margin: 0 auto;
 
     &__header {
-        margin-bottom: 24px;
+        margin-bottom: 5px;
 
         &-title {
             width: 100%;
@@ -37,7 +37,12 @@
 
             margin-bottom: 6px;
 
+            position: relative;
+
             svg {
+                position: relative;
+                top: 0.5px;
+
                 color: #535862;
             }
         }

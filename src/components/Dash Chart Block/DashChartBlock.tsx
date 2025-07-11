@@ -1,14 +1,7 @@
 import { TaskData, UseTasks } from "@/features/Tasks/context/TaskContext";
+import { AreaChart } from "@mantine/charts";
 import { useEffect } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { SizeMe } from "react-sizeme";
 import "@/components/Dash Chart Block/DashChartBlock.scss";
 
 const DashChart = () => {
@@ -18,15 +11,15 @@ const DashChart = () => {
     const completedTasks = tasks.filter((task) => task.completion);
     const currentDate = new Date();
 
-    const months = Array.from({ length: 12 }, (_, i) => {
+    const months = Array.from({ length: 8 }, (_, i) => {
       const date = new Date(currentDate);
       date.setMonth(date.getMonth() - i);
       return {
         year: date.getFullYear(),
         month: date.getMonth(),
-        label: date.toLocaleDateString("en-US", {
+        label: date.toLocaleDateString("en-UK", {
           month: "short",
-          year: "numeric",
+          year: "2-digit",
         }),
       };
     }).reverse();
@@ -36,9 +29,9 @@ const DashChart = () => {
 
     completedTasks.forEach((task) => {
       const taskDate = task.createdAt.toDate();
-      const taskLabel = taskDate.toLocaleDateString("en-US", {
+      const taskLabel = taskDate.toLocaleDateString("en-UK", {
         month: "short",
-        year: "numeric",
+        year: "2-digit",
       });
 
       if (monthCounts[taskLabel] !== undefined) {
@@ -56,37 +49,39 @@ const DashChart = () => {
 
   const chartData = tasksCompletedEachMonth.map((month) => ({
     name: month.label,
-    tasks: month.count,
+    Tasks: month.count,
   }));
 
   useEffect(() => {
     fetchTasks();
+    // eslint-disable-next-line
   }, []);
 
   return (
     <div className="dashboard-chart">
       <div className="dashboard-chart__header">
-        <h2 className="dashboard-chart__title">Task completed</h2>
+        <h2 className="dashboard-chart__title">Completed tasks</h2>
       </div>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chartData}
-          margin={{ top: 20, right: 30, left: -15, bottom: 60 }}
-        >
-          <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-          <YAxis tick={{ fontSize: 11 }} />
-          <Tooltip />
-          <Line
-            type="monotone"
-            dataKey="tasks"
-            stroke="#47df95"
-            strokeWidth={2}
-            activeDot={{ r: 6 }}
-          />
-          <CartesianGrid stroke="#eee" />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="flex justify-center items-center">
+        <SizeMe>
+          {({ size }) => (
+            <AreaChart
+              h={size.height || 325}
+              data={chartData}
+              dataKey="name"
+              series={[{ name: "Tasks", color: "teal.6" }]}
+              curveType="linear"
+              tickLine="xy"
+              gridAxis="xy"
+              ml={20}
+              mt={25}
+              mr={20}
+              withYAxis={false}
+            />
+          )}
+        </SizeMe>
+      </div>
     </div>
   );
 };

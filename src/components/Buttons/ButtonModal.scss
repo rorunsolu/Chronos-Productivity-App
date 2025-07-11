@@ -1,0 +1,38 @@
+.button-modal {
+    border: var(--primary-border);
+    border-radius: 8px;
+    padding: 5px 10px;
+
+    width: 100%;
+
+    box-shadow: var(--shadow);
+
+    transition: var(--primary-transition);
+    cursor: pointer;
+
+    font-weight: 600;
+
+    &:active {
+        box-shadow: inset var(--shadow);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+    &--create {
+        &:hover {
+            background: whitesmoke;
+        }
+    }
+
+    &--cancel {
+        background: hsl(0, 72%, 47%);
+        color: hsl(0, 0%, 100%);
+
+        &:hover {
+            background: hsl(0, 72%, 60%);
+        }
+    }
+}

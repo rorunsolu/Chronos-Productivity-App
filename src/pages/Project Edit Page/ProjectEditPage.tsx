@@ -1,14 +1,17 @@
+import ButtonModal from "@/components/Buttons/ButtonModal";
+import ButtonReg from "@/components/Buttons/ButtonReg";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { UseTasks } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
+import { Divider, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { doc, setDoc } from "firebase/firestore";
-import { Plus } from "lucide-react";
+import { NotepadText, Plus, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useParams } from "react-router-dom";
-import TextareaAutosize from "react-textarea-autosize";
+import InputHeader from "@/components/Input Header/InputHeader";
 import {
   ProjectData,
   UseProjects,
@@ -32,6 +35,7 @@ const ProjectEditPage = () => {
   const [projectName, setProjectName] = useState<string>("");
   const [taskDueDate, setTaskDueDate] = useState<string | null>(null);
   const [projectDescription, setProjectDescription] = useState<string>("");
+  const [projectStatus, setProjectStatus] = useState<string | null>("Pending");
   const [initialProject, setInitialProject] = useState<ProjectData | null>(
     null
   );
@@ -51,13 +55,18 @@ const ProjectEditPage = () => {
     if (currentProject) {
       setProjectName(currentProject.name || "");
       setProjectDescription(currentProject.description || "");
+      setProjectStatus(currentProject.status || "Pending");
       setTaskProjectAssignment(currentProject.id || "");
       setInitialProject(currentProject);
     }
   }, [currentProject]);
 
   const updateProjectInFirebase = useCallback(
-    async (newName: string, newDescription: string) => {
+    async (
+      newName: string,
+      newDescription: string,
+      newStatus?: string | null
+    ) => {
       try {
         if (!id || !user) return;
 
@@ -66,6 +75,7 @@ const ProjectEditPage = () => {
           {
             name: newName,
             description: newDescription,
+            status: newStatus,
             userId: user.uid,
           },
           { merge: true }
@@ -85,20 +95,22 @@ const ProjectEditPage = () => {
     const hasChanged =
       (projectName.trim() !== "" && projectName !== initialProject.name) ||
       (projectDescription.trim() !== "" &&
-        projectDescription !== initialProject.description);
+        projectDescription !== initialProject.description) ||
+      projectStatus !== initialProject.status;
 
     if (!hasChanged) return;
 
     setIsLoading(true);
 
     const saveTimeout = setTimeout(() => {
-      updateProjectInFirebase(projectName, projectDescription);
+      updateProjectInFirebase(projectName, projectDescription, projectStatus);
     }, 1000);
 
     return () => clearTimeout(saveTimeout);
   }, [
     projectName,
     projectDescription,
+    projectStatus,
     initialProject,
     updateProjectInFirebase,
   ]);
@@ -146,24 +158,48 @@ const ProjectEditPage = () => {
     <div className="page-wrapper">
       <div className="project-edit-page">
         <div className="project-edit-page__header">
-          <input
-            className="project-edit-page__title"
-            onChange={(e) => setProjectName(e.target.value)}
-            value={projectName}
-            type="text"
+          <TextInput
+            variant="unstyled"
+            size="xl"
             placeholder="Project Name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
           />
-          <TextareaAutosize
-            className="project-edit-page__description"
-            onChange={(e) => setProjectDescription(e.target.value)}
-            value={projectDescription}
-            placeholder="Description"
-            minRows={1}
-            maxRows={3}
-            style={{ resize: "none" }}
-          />
+
+          <Stack gap="xs" mt="sm">
+            <Stack gap={2}>
+              <InputHeader
+                label="Description"
+                icon={<NotepadText size={16} />}
+              />
+              <Textarea
+                value={projectDescription}
+                placeholder="Description"
+                onChange={(e) => setProjectDescription(e.target.value)}
+                minRows={1}
+                maxRows={3}
+              />
+            </Stack>
+
+            <Stack gap={2} w="fit-content">
+              <InputHeader label="Status" icon={<TrendingUp size={16} />} />
+              <Select
+                placeholder="Select status"
+                data={["Pending", "Ongoing", "Completed"]}
+                defaultValue={"Pending"}
+                value={projectStatus}
+                onChange={(value: string | null) => {
+                  setProjectStatus(value);
+                }}
+                checkIconPosition="right"
+              />
+            </Stack>
+          </Stack>
+
           {isLoading && <div className="loading-indicator">Saving...</div>}
         </div>
+
+        <Divider my="xl" />
 
         <div className="project-edit-page__kanban">
           {(["Pending", "Ongoing", "Completed"] as TaskStatus[]).map(
@@ -172,21 +208,36 @@ const ProjectEditPage = () => {
                 key={status}
                 className={`kanban-column kanban-column--${status}`}
               >
-                <div className="kanban-column__header">
-                  <h3 className="kanban-column__title">{status}</h3>
-
-                  <span className="kanban-column__count">
-                    {getTasksByStatus(status).length}
-                  </span>
-                </div>
-
-                <button
-                  className="kanban-column__add-task"
-                  onClick={() => openModal(status)}
-                  type="button"
+                <Stack
+                  gap={0}
+                  className="
+                  flex
+                  justify-between
+                  items-center
+                  border
+                  rounded-lg
+                  mb-5
+                  px-[14px]
+                  py-[10px]
+                  shadow
+                  "
+                  style={{
+                    border: "var(--primary-border)",
+                    boxShadow: "var(--shadow)",
+                  }}
                 >
-                  <Plus /> Add task
-                </button>
+                  <div className="kanban-column__header">
+                    <h3 className="kanban-column__title">{status}</h3>
+                    <span className="kanban-column__count">
+                      {getTasksByStatus(status).length}
+                    </span>
+                  </div>
+                  <ButtonReg
+                    type="secondary"
+                    onClick={() => openModal(status)}
+                    icon={<Plus />}
+                  />
+                </Stack>
 
                 <div className="kanban-column__list">
                   {getTasksByStatus(status).map((task) => (
@@ -211,49 +262,44 @@ const ProjectEditPage = () => {
 
         <form className="modal__form" onSubmit={handlecreateTask}>
           <div className="modal__info-wrapper">
-            <div className="modal__input-group">
-              <input
-                className="modal__input"
-                onChange={(e) => setTaskTitle(e.target.value)}
-                value={taskTitle}
-                type="text"
-                placeholder="Title"
+            <Stack gap="sm">
+              <Stack gap={2}>
+                <InputHeader label="Title" />
+                <TextInput
+                  withAsterisk
+                  placeholder="Title"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
+                />
+              </Stack>
+
+              <Stack gap={2}>
+                <InputHeader label="Description" />
+                <Textarea
+                  placeholder="Description"
+                  value={taskContent}
+                  onChange={(e) => setTaskContent(e.target.value)}
+                  minRows={2}
+                />
+              </Stack>
+
+              <Stack gap={2}>
+                <InputHeader label="Due Date" />
+                <DatePickerInput
+                  placeholder="Pick date"
+                  value={taskDueDate}
+                  onChange={setTaskDueDate}
+                />
+              </Stack>
+            </Stack>
+
+            <div className="modal__button-wrapper">
+              <ButtonModal disabledCondition={taskTitle} type="submit" />
+              <ButtonModal
+                type="button"
+                onClick={() => setIsModalOpen(false)}
               />
             </div>
-
-            <div className="modal__input-group">
-              <textarea
-                className="modal__textarea"
-                onChange={(e) => setTaskContent(e.target.value)}
-                value={taskContent}
-                placeholder="Description"
-              />
-            </div>
-
-            <div className="modal__input-group">
-              <DatePickerInput
-                placeholder="Pick date"
-                value={taskDueDate}
-                onChange={setTaskDueDate}
-              />
-            </div>
-          </div>
-
-          <div className="modal__button-wrapper">
-            <button
-              className="modal__button modal__button--create"
-              disabled={!taskTitle}
-              type="submit"
-            >
-              Create task
-            </button>
-            <button
-              className="modal__button modal__button--cancel"
-              onClick={() => setIsModalOpen(false)}
-              type="button"
-            >
-              Cancel
-            </button>
           </div>
         </form>
       </Modal>

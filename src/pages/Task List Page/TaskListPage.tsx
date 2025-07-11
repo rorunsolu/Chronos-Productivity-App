@@ -1,5 +1,6 @@
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { TaskData, UseTasks } from "@/features/Tasks/context/TaskContext";
+import { Stack, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
@@ -9,6 +10,7 @@ import TaskListCard from "@/features/Tasks/Task List Card/TaskListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
 import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
+import InputHeader from "@/components/Input Header/InputHeader";
 
 const TaskListPage = () => {
   const { user } = UserAuth();
@@ -126,32 +128,35 @@ const TaskListPage = () => {
 
           <form className="modal__form" onSubmit={handlecreateTask}>
             <div className="modal__info-wrapper">
-              <div className="modal__input-group">
-                <input
-                  className="modal__input"
-                  onChange={(e) => setTaskTitle(e.target.value)}
-                  value={taskTitle}
-                  type="text"
-                  placeholder="Title"
-                />
-              </div>
+              <Stack gap="sm">
+                <Stack gap={2}>
+                  <InputHeader label="Title" />
+                  <TextInput
+                    withAsterisk
+                    placeholder="Title"
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                  />
+                </Stack>
 
-              <div className="modal__input-group">
-                <textarea
-                  className="modal__textarea"
-                  onChange={(e) => setTaskContent(e.target.value)}
-                  value={taskContent}
-                  placeholder="Description"
-                />
-              </div>
+                <Stack gap={2}>
+                  <InputHeader label="Content" />
+                  <TextInput
+                    placeholder="Content"
+                    value={taskContent}
+                    onChange={(e) => setTaskContent(e.target.value)}
+                  />
+                </Stack>
 
-              <div className="modal__input-group">
-                <DatePickerInput
-                  placeholder="Pick date"
-                  value={taskDueDate}
-                  onChange={setTaskDueDate}
-                />
-              </div>
+                <Stack gap={2}>
+                  <InputHeader label="Due Date" />
+                  <DatePickerInput
+                    placeholder="Due Date"
+                    value={taskDueDate}
+                    onChange={setTaskDueDate}
+                  />
+                </Stack>
+              </Stack>
 
               <div className="modal__button-wrapper">
                 <button

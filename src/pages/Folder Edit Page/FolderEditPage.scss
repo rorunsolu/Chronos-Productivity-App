@@ -1,6 +1,7 @@
 .folder-edit-page {
     max-width: 1000px;
     width: 100%;
+    margin: 0 auto;
 
     &__actions {
         display: flex;
@@ -35,9 +36,6 @@
         }
     }
 
-    &__header {
-    }
-
     &__title {
         color: #181d27;
         font-size: 24px;
@@ -53,8 +51,6 @@
 
         min-width: fit-content;
 
-        // border: var(--primary-border);
-        // border: 2px white solid;
         border-radius: 8px;
         padding: 10px 14px;
 
@@ -93,7 +89,6 @@
         color: #181d27;
         background: var(--main-bg);
         box-shadow: var(--shadow);
-        //background: #0c0e12;
 
         &:focus {
             border: 1px #a0d3bb solid;

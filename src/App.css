@@ -2,7 +2,7 @@
 
 :root {
   --color-brand: #47df95;
-  --shadow: 0px 1px 2px rgba(10, 12.67, 18, 0.05);
+  --shadow: 0px 2px 2px rgba(10, 12.67, 18, 0.05);
   --main-bg: hsl(0, 0%, 100%);
   --main-bg-hover: #f5f5f5;
   --primary-color: #181d27;
@@ -29,6 +29,75 @@ body {
   font-optical-sizing: auto;
 }
 
+.menu-toggle-button {
+
+     display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+
+            position: relative;
+
+            width: 25px;
+            height: 32px;
+
+            border-radius: 6px;
+            border: var(--primary-border);
+           
+
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            word-wrap: break-word;
+
+            color: #181d27;
+            background: var(--main-bg);
+            box-shadow: var(--shadow);
+
+            transition: var(--primary-transition);
+
+            cursor: pointer;
+
+   svg {
+    position: relative;
+    left: 0.5px;
+   }
+}
+
+.menu-toggle-button:hover {
+  background: #f5f6f8;
+} 
+
 .mantine-InputWrapper-root {
   box-shadow: var(--shadow) !important;
+   border-radius: 8px !important;
+}
+
+.mantine-Input-wrapper {
+   border-radius: 8px !important;
+}
+
+.mantine-Input-input {
+  border-radius: 8px !important;
+}
+
+.mantine-TextInput-root {
+  box-shadow: none !important;
+}
+
+.mantine-Popover-dropdown{
+  z-index: 1200 !important;
+
+  border-radius: 8px !important;
+  box-shadow: var(--shadow) !important;
+              border: var(--primary-border) !important;
+}
+
+.mantine-Notification-root {
+  position: absolute !important;
+  border-radius: 8px !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  box-shadow: var(--shadow) !important;
+
 }

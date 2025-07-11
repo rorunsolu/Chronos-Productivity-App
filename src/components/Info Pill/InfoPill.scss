@@ -5,13 +5,22 @@
 
     border: var(--primary-border);
     border-radius: 6px;
-    padding: 0.2rem 0.5rem;
 
     width: fit-content;
 
     text-transform: capitalize;
-    font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
 
+    color: #181d27;
     box-shadow: var(--shadow);
+
+    &--sm {
+        font-size: 10px;
+        padding: 0.15rem 0.4rem;
+    }
+
+    &--md {
+        font-size: 12px;
+        padding: 0.2rem 0.5rem;
+    }
 }

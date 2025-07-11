@@ -5,31 +5,28 @@ import DashProjectCard from "@/features/Projects/Dash Project Card/DashProjectCa
 import "@/features/Projects/Dash Project Block/DashProjectBlock.scss";
 
 const DashProjectBlock = () => {
+  const { projects, fetchProjects } = UseProjects();
 
-    const { projects, fetchProjects } = UseProjects();
+  useEffect(() => {
+    fetchProjects();
+    // eslint-disable-next-line
+  }, []);
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+  return (
+    <div className="dash-project-block">
+      <div className="dash-project-block__top">
+        <DashSubHeader title="Projects" count={projects.length} />
+      </div>
 
-    return (
-        <div className="dash-project-block">
-
-            <div className="dash-project-block__top">
-                <DashSubHeader title="Projects" count={ projects.length } />
-            </div>
-
-            <div className="dash-project-block__bottom">
-                <ul className="dash-project-block__list">
-                    { projects.map((project) => (
-                        <DashProjectCard project={ project } key={ project.id } />
-                    )) }
-                </ul>
-
-            </div>
-
-        </div>
-    );
+      <div className="dash-project-block__bottom">
+        <ul className="dash-project-block__list">
+          {projects.map((project) => (
+            <DashProjectCard project={project} key={project.id} />
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 };
 
 export default DashProjectBlock;

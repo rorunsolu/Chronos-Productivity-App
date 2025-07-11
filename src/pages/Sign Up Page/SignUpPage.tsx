@@ -1,25 +1,27 @@
-import { UserAuth } from "../../contexts/authContext/AuthContext";
 import ButtonReg from "@/components/Buttons/ButtonReg";
 import ErrorMsg from "@/components/ErrorMessage/ErrorMsg";
-import { Stack, TextInput } from "@mantine/core";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
+import { Divider } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "@/pages/Sign Up Page/SignUpPage.css";
+import { PasswordInput, Stack, TextInput } from "@mantine/core";
+import "@/pages/Sign Up Page/SignUpPage.scss";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const { googleSignIn, emailSignUp, user } = UserAuth();
+  const navigate = useNavigate();
+  const { googleSignIn, emailSignUp, signInAsGuest, user } = UserAuth();
 
   const handleGoogleSignUp = async () => {
     try {
       await googleSignIn();
     } catch (error) {
-      console.log(error);
+      setError("Failed to sign up with Google. Please try again.");
+      throw new Error(`Error signing up with Google: ${error}`);
     }
   };
 
@@ -32,8 +34,17 @@ const SignUp = () => {
     try {
       await emailSignUp(email, password);
     } catch (error) {
-      console.log(error);
       setError("Failed to sign up. Please check your credentials.");
+      throw new Error(`Error signing up with email: ${error}`);
+    }
+  };
+
+  const handleGuestAccess = async () => {
+    try {
+      await signInAsGuest();
+    } catch (error) {
+      setError("Failed to sign in as guest. Please try again.");
+      throw new Error(`Error signing in as guest: ${error}`);
     }
   };
 
@@ -48,6 +59,11 @@ const SignUp = () => {
       <Stack gap="5">
         <form>
           <Stack gap="5">
+            <img
+              src="/chronos-logo.svg"
+              alt="Chronos Logo"
+              className="w-8 h-8"
+            />
             <h2 className="login-form__title">Sign up</h2>
             <p className="login-form__subtitle">
               Enter your email below to sign up for an account
@@ -68,10 +84,9 @@ const SignUp = () => {
 
           <div className="login-form__group">
             <label htmlFor="password">Password</label>
-            <TextInput
+            <PasswordInput
               required
               withAsterisk
-              type="password"
               value={password}
               placeholder="Password"
               onChange={(event) => setPassword(event.target.value)}
@@ -88,6 +103,21 @@ const SignUp = () => {
               label="Sign up with Google"
               type="secondary"
               onClick={handleGoogleSignUp}
+              icon={
+                <img
+                  src="/google-logo.svg"
+                  alt="Google Icon"
+                  className="w-5 h-5"
+                />
+              }
+            />
+
+            <Divider label="or" labelPosition="center" className="my-2" />
+
+            <ButtonReg
+              label="Continue as a Guest"
+              type="secondary"
+              onClick={handleGuestAccess}
             />
           </div>
 

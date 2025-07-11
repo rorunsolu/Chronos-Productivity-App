@@ -1,10 +1,11 @@
 import "@/components/Buttons/ButtonReg.scss";
 
 interface ButtonRegProps {
-  label: string;
+  label?: string;
   onClick?: () => void;
   type?: "primary" | "secondary";
   formSubmit?: boolean;
+  icon?: React.ReactNode;
 }
 
 const ButtonReg: React.FC<ButtonRegProps> = ({
@@ -12,14 +13,15 @@ const ButtonReg: React.FC<ButtonRegProps> = ({
   onClick,
   type = "primary",
   formSubmit = false,
+  icon,
 }) => {
   return (
-    // Set the button type based on the formSubmit prop
     <button
       type={formSubmit ? "submit" : "button"}
       className={`button-reg button-reg--${type}`}
       onClick={onClick}
     >
+      {icon}
       {label}
     </button>
   );

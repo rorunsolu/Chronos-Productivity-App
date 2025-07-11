@@ -14,7 +14,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   return (
     <form className="search-bar">
-      <Search />
+      <Search size={20} />
       <input
         className="search-bar__input"
         type="text"

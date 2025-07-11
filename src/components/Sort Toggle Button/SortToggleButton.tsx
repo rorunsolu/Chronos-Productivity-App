@@ -12,7 +12,7 @@ const SortToggleButton: React.FC<SortToggleButtonProps> = ({
 }) => {
   return (
     <button className="sort-toggle-button" type="button" onClick={onToggle}>
-      {isNewestFirst ? <ArrowDownUp /> : <ArrowUpDown />}
+      {isNewestFirst ? <ArrowDownUp size={20} /> : <ArrowUpDown size={20} />}
     </button>
   );
 };

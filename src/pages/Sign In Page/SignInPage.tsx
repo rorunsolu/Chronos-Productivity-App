@@ -2,7 +2,7 @@ import "./SignInPage.scss";
 import ButtonReg from "@/components/Buttons/ButtonReg";
 import ErrorMsg from "@/components/ErrorMessage/ErrorMsg";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
-import { Stack, TextInput } from "@mantine/core";
+import { Divider, Stack, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -13,13 +13,14 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const { googleSignIn, emailSignIn, user } = UserAuth();
+  const { googleSignIn, emailSignIn, signInAsGuest, user } = UserAuth();
 
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
     } catch (error) {
-      console.log(error);
+      setError("Failed to sign in with Google. Please try again.");
+      throw new Error(`Error signing in with Google: ${error}`);
     }
   };
 
@@ -32,8 +33,17 @@ const SignIn = () => {
     try {
       await emailSignIn(email, password);
     } catch (error) {
-      console.log(error);
       setError("Failed to sign in. Please check your credentials.");
+      throw new Error(`Error signing in: ${error}`);
+    }
+  };
+
+  const handleGuestAccess = async () => {
+    try {
+      await signInAsGuest();
+    } catch (error) {
+      setError("Failed to sign in as guest. Please try again.");
+      throw new Error(`Error signing in as guest: ${error}`);
     }
   };
 
@@ -45,9 +55,14 @@ const SignIn = () => {
 
   return (
     <div className="flex w-full h-full justify-center items-center pt-6 ">
-      <Stack>
+      <Stack gap="5">
         <form>
           <Stack gap="5">
+            <img
+              src="/chronos-logo.svg"
+              alt="Chronos Logo"
+              className="w-8 h-8"
+            />
             <h2 className="login-form__title">Login</h2>
             <p className="login-form__subtitle">
               Enter your email below to login to your account
@@ -98,7 +113,22 @@ const SignIn = () => {
                 <ButtonReg
                   label="Login with Google"
                   type="secondary"
+                  icon={
+                    <img
+                      src="/google-logo.svg"
+                      alt="Google Icon"
+                      className="w-5 h-5"
+                    />
+                  }
                   onClick={handleGoogleSignIn}
+                />
+
+                <Divider label="or" labelPosition="center" className="my-2" />
+
+                <ButtonReg
+                  label="Continue as a Guest"
+                  type="secondary"
+                  onClick={handleGuestAccess}
                 />
               </div>
 

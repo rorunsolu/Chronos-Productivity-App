@@ -8,7 +8,7 @@ interface AddButtonProps {
 const AddButton: React.FC<AddButtonProps> = ({ onClick }) => {
   return (
     <button className="add-button" type="button" onClick={onClick}>
-      <Plus />
+      <Plus size={20} />
     </button>
   );
 };

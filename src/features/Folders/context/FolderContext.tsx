@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { auth, db } from "@/firebase/firebase";
+import { createContext, ReactNode, useContext, useState } from "react";
 import {
   Timestamp,
   addDoc,
@@ -12,7 +13,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db, auth } from "@/firebase/firebase";
 
 export interface FolderData {
   id: string;
@@ -27,7 +27,6 @@ interface FoldersContextType {
   fetchFolders: () => void;
   createFolder: (name: string) => void;
   deleteFolder: (id: string) => void;
-  updateFolder: (id: string, updates: Partial<FolderData>) => void;
   addNoteToFolder: (folderID: string, childNoteID: string) => void;
   removeNoteFromFolder: (folderID: string, childNoteID: string) => void;
 }
@@ -45,9 +44,6 @@ export const UseFolders = () => {
 export const FolderProvider = ({ children }: { children: ReactNode }) => {
   const [folders, setFolders] = useState<FolderData[]>([]);
 
-  // const user = auth.currentUser;
-  // if (!user) return;
-
   const fetchFolders = async () => {
     const folderQuery = query(
       collection(db, "folders"),
@@ -61,7 +57,7 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
       name: doc.data().name,
       notes: doc.data().notes || [],
       createdAt: doc.data().createdAt,
-      userId: doc.data().userId, // Added this to try and fix the "You don't own the selected folder" error
+      userId: doc.data().userId,
     }));
 
     setFolders(
@@ -95,22 +91,13 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
         },
         ...folders,
       ]);
-
-      console.log("Folder created with ID: ", folderDocRef.id);
     } catch (error) {
-      console.error("Error adding folder to firestore: ", error);
+      throw new Error(`Error creating folder: ${error}`);
     }
   };
 
   const addNoteToFolder = async (folderID: string, childNoteID: string) => {
     try {
-      const userIdTiedToFolder = folders.find(
-        (folder) => folder.id === folderID
-      )?.userId;
-      if (!userIdTiedToFolder) {
-        console.error("Folder not found in firestore: ", folderID);
-        return;
-      }
       const folderRef = doc(db, "folders", folderID);
       const noteRef = doc(db, "notes", childNoteID);
 
@@ -133,7 +120,7 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
         )
       );
     } catch (error) {
-      console.error("Error adding note to folder in firestore: ", error);
+      throw new Error(`Error adding note to folder: ${error}`);
     }
   };
 
@@ -142,14 +129,9 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
     childNoteID: string
   ) => {
     const folderRef = doc(db, "folders", folderID);
-    const noteRef = doc(db, "notes", childNoteID);
 
     await updateDoc(folderRef, {
-      notes: arrayRemove(noteRef),
-    });
-
-    await updateDoc(noteRef, {
-      folder: "",
+      notes: arrayRemove(childNoteID),
     });
 
     setFolders(
@@ -169,17 +151,7 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
       await deleteDoc(doc(db, "folders", id));
       setFolders(folders.filter((folder) => folder.id !== id));
     } catch (error) {
-      console.error("Error deleting folder from firestore: ", error);
-    }
-  };
-
-  //! I need to keep (updateFolder) this incase I need to add functionality to thencga ehte name of the folder
-  const updateFolder = async (id: string, updates: Partial<FolderData>) => {
-    try {
-      const folderRef = doc(db, "folders", id);
-      await updateDoc(folderRef, updates);
-    } catch (error) {
-      console.error("Error updating folder in firestore: ", error);
+      throw new Error(`Error deleting folder: ${error}`);
     }
   };
 
@@ -190,7 +162,6 @@ export const FolderProvider = ({ children }: { children: ReactNode }) => {
         fetchFolders,
         createFolder,
         deleteFolder,
-        updateFolder,
         addNoteToFolder,
         removeNoteFromFolder,
       }}

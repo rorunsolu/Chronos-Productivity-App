@@ -4,9 +4,15 @@ import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { UseTasks } from "@/features/Tasks/context/TaskContext";
 import { DatePickerInput } from "@mantine/dates";
 import { Timestamp } from "firebase/firestore";
-import { Layers, LayoutList, ListTodo, NotebookTabs } from "lucide-react";
 import { useEffect, useState } from "react";
 import "react-day-picker/dist/style.css";
+import {
+  Layers,
+  LayoutList,
+  ListTodo,
+  NotebookTabs,
+  Calendar,
+} from "lucide-react";
 import DashActivityCard from "@/components/Dash Activity Card/DashActivityCard";
 import "@/pages/Dashboard Page/DashboardPage.scss";
 import "@/components/Creation Modal/CreationModal.scss";
@@ -16,7 +22,6 @@ import "@/pages/Dashboard Page/DashboardSummary.scss";
 import TaskCard from "@/features/Tasks/Task Card/DashTaskCard";
 import DashSubHeader from "@/components/Dash Sub Header/DashSubHeader";
 import DashChartBlock from "@/components/Dash Chart Block/DashChartBlock";
-import DashNoteBlock from "@/features/Notes/Dash Note Block/DashNoteBlock";
 import DashProjectBlock from "@/features/Projects/Dash Project Block/DashProjectBlock";
 import DashStatCard from "@/components/Dash Stat Card/DashStatCard";
 
@@ -110,9 +115,7 @@ const Dashboard = () => {
           </section>
 
           <section className="dashboard-grid__2">
-            <DashProjectBlock />
-
-            <DashNoteBlock />
+            <DashChartBlock />
           </section>
 
           <section className="dashboard-grid__3">
@@ -136,9 +139,12 @@ const Dashboard = () => {
               <div className="dashboard-results__top">
                 <DashSubHeader title="Tasks" />
                 <DatePickerInput
+                  clearable
                   placeholder="Pick a date"
                   value={selectedDateToFilterBy}
                   onChange={setSelectedDateToFilterBy}
+                  leftSection={<Calendar size={18} />}
+                  leftSectionPointerEvents="none"
                 />
               </div>
 
@@ -151,7 +157,7 @@ const Dashboard = () => {
               </ul>
             </div>
 
-            <DashChartBlock />
+            <DashProjectBlock />
           </section>
         </div>
       </div>

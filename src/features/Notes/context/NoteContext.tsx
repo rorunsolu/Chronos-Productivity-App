@@ -14,8 +14,8 @@ import {
 export interface NoteData {
   id: string;
   content: string;
-  folder?: string;
-  label?: string;
+  folder?: string | null;
+  label?: string | null;
   createdAt: Timestamp;
   title: string;
   userId?: string;
@@ -82,7 +82,6 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      alert("Authentication required");
       throw new Error("User is not authenticated");
     }
 
@@ -100,11 +99,9 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
       const docRef = await addDoc(collection(db, "notes"), noteData);
 
       setNotes([{ id: docRef.id, ...noteData }, ...notes]);
-      console.log("note created");
       return docRef.id;
     } catch (error) {
-      console.error("Error creating note:", error);
-      throw error;
+      throw new Error(`Error creating note: ${error}`);
     }
   };
 
@@ -113,7 +110,7 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
       await deleteDoc(doc(db, "notes", id));
       setNotes(notes.filter((note) => note.id !== id));
     } catch (error) {
-      console.error("Error deleting note:", error);
+      throw new Error(`Error deleting note: ${error}`);
     }
   };
 

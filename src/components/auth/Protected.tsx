@@ -1,16 +1,12 @@
-import { Navigate } from "react-router-dom";
 import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 
 const Protected: React.FC<ProtectedProps> = ({
   children,
   allowGuest = false,
 }) => {
   const { user } = UserAuth();
-
-  // if (!user) {
-  //     return <Navigate to="/" />;
-  // }
 
   const hasAccess = user && (allowGuest || !user.isAnonymous);
 

@@ -7,9 +7,9 @@ const NavbarMenu: React.FC<NavbarMenuProps> = ({ setIsMenuOpen }) => {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      logOut();
     } catch (error) {
-      console.log(error);
+      throw new Error(`Error signing out: ${error}`);
     }
   };
 

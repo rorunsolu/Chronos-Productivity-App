@@ -1,6 +1,11 @@
 .button-reg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
     border: var(--primary-border);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 6px 16px;
 
     width: 100%;
@@ -13,7 +18,16 @@
     cursor: pointer;
     transition: var(--primary-transition);
 
-    &--primary {
+    &:active {
+        box-shadow: inset var(--shadow);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &--secondary {
         background: var(--primary-bg);
         color: var(--primary-color);
 
@@ -24,7 +38,7 @@
         }
     }
 
-    &--secondary {
+    &--primary {
         background: hsl(0, 0%, 0%);
         color: white;
 

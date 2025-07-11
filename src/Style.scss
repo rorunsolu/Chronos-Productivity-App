@@ -125,14 +125,6 @@
   font-optical-sizing: auto !important;
 
   padding-left: 0 !important;
-
-  // svg:hover {
-  //   color: black !important;
-  // }
-
-  // &:hover {
-  //   color: black !important;
-  // }
 }
 
 .modal .css-1o7nse5-container {
@@ -165,4 +157,9 @@
 
   font-size: 16px !important;
   color: #181d27 !important;
+}
+
+.ql-toolbar .ql-snow {
+  border: none !important;
+  padding: 12px 15px !important;
 }

@@ -1,19 +1,13 @@
 .dash-activity-card {
     display: flex;
-    flex-direction: column;
+    align-items: center;
 
     border-bottom: var(--primary-border);
-    padding: 8px 20px;
+    padding: 8px 10px;
 
     overflow: hidden;
 
-    //cursor: pointer;
-
-    //transition: var(--primary-transition);
-
-    // &:hover {
-    //     background: whitesmoke;
-    // }
+    position: relative;
 
     &:last-child {
         border-bottom: none;
@@ -22,14 +16,13 @@
 
     &__title {
         font-size: 16px;
-        font-weight: 500;
-
-        //color: #181d27;
-        margin-top: 10px;
-        margin-bottom: 4px;
+        font-weight: 600;
     }
 
     &__dot {
+        position: relative;
+        top: 1px;
+
         width: 6px;
         height: 6px;
 
@@ -44,20 +37,6 @@
         gap: 6px;
 
         height: 24px;
-    }
-
-    &__text {
-        display: flex;
-        align-items: center;
-
-        height: 21px;
-
-        overflow: hidden;
-
-        font-size: 14px;
-        font-weight: 500;
-
-        color: #181d27;
     }
 
     &__date {
