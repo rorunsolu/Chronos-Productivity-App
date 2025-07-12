@@ -1,6 +1,7 @@
 import "@/App.css";
 import Protected from "@/components/auth/Protected";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import { UserAuth } from "@/contexts/authContext/AuthContext";
 import "@/Style.scss";
 import "@mantine/charts/styles.css";
 import { MantineProvider } from "@mantine/core";
@@ -28,18 +29,24 @@ import MobileSidebar from "@/components/Mobile Sidebar/MobileSidebar";
 function App() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isMobileSidebarExpanded, setIsMobileSidebarExpanded] = useState(false);
+  const { user } = UserAuth();
 
   return (
     <MantineProvider defaultColorScheme="light">
       <div className="app-layout">
-        <Sidebar
-          className="app-layout__sidebar"
-          isSidebarExpanded={isSidebarExpanded}
-        />
-        <MobileSidebar
-          isMobileSidebarExpanded={isMobileSidebarExpanded}
-          setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
-        />
+        {user && (
+          <>
+            <Sidebar
+              className="app-layout__sidebar"
+              isSidebarExpanded={isSidebarExpanded}
+            />
+            <MobileSidebar
+              isMobileSidebarExpanded={isMobileSidebarExpanded}
+              setIsMobileSidebarExpanded={setIsMobileSidebarExpanded}
+            />
+          </>
+        )}
+
         <NavigationBar
           className="app-layout__navbar"
           isSidebarExpanded={isSidebarExpanded}
