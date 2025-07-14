@@ -8,12 +8,14 @@ import FolderListCard from "@/features/Folders/Folder List Card/FolderListCard";
 import SearchBar from "@/components/Search Bar/SearchBar";
 import AddButton from "@/components/Add Button/AddButton";
 import InputHeader from "@/components/Input Header/InputHeader";
+import SortToggleButton from "@/components/Sort Toggle Button/SortToggleButton";
 
 const FolderListPage = () => {
   const { folders, fetchFolders, createFolder, deleteFolder } = UseFolders();
   const [noteName, setNoteName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewestFirst, setIsNewestFirst] = useState(true);
   const openModal = () => setIsModalOpen(true);
 
   const handleCreateFolder = async (
@@ -28,14 +30,21 @@ const FolderListPage = () => {
 
   useEffect(() => {
     fetchFolders();
-    console.log("Folders have been fetched.");
     // eslint-disable-next-line
   }, []);
 
-  const filteredFolders = folders.filter((folder) => {
-    const searchLower = searchQuery.toLowerCase();
-    return folder.name.toLowerCase().includes(searchLower);
-  });
+  const filteredFolders = folders
+    .filter((folder) => {
+      const searchLower = searchQuery.toLowerCase();
+      return folder.name?.toLowerCase().includes(searchLower);
+    })
+    .sort((a, b) => {
+      const dateA = a.createdAt.toDate();
+      const dateB = b.createdAt.toDate();
+      return isNewestFirst
+        ? dateB.getTime() - dateA.getTime()
+        : dateA.getTime() - dateB.getTime();
+    });
 
   return (
     <div className="page-wrapper">
@@ -55,6 +64,11 @@ const FolderListPage = () => {
           />
           <div className="folder-list-page__actions-buttons">
             <AddButton onClick={openModal} />
+
+            <SortToggleButton
+              isNewestFirst={isNewestFirst}
+              onToggle={() => setIsNewestFirst(!isNewestFirst)}
+            />
           </div>
         </div>
 

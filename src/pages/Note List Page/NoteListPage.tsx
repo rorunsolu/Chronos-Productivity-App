@@ -63,9 +63,6 @@ const NoteListPage = () => {
     // eslint-disable-next-line
   }, []);
 
-  //todo: Clicking a note should open a modal with the task details and options to edit or delete the task.
-  //todo: Add tooltips for the buttons
-
   return (
     <div className="page-wrapper">
       <div className="note-list-page">

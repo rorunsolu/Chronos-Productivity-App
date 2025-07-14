@@ -122,7 +122,7 @@ const ProjectEditPage = () => {
     );
   };
 
-  const handlecreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!user) {
@@ -260,7 +260,7 @@ const ProjectEditPage = () => {
       >
         <p className="modal__title">Create a task</p>
 
-        <form className="modal__form" onSubmit={handlecreateTask}>
+        <form className="modal__form" onSubmit={handleCreateTask}>
           <div className="modal__info-wrapper">
             <Stack gap="sm">
               <Stack gap={2}>

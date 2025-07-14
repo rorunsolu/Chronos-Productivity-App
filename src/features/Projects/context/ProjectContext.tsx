@@ -148,7 +148,6 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
 
     if (!user) {
       throw new Error("User is not authenticated");
-      return;
     }
 
     try {

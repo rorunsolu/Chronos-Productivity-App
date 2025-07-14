@@ -77,7 +77,7 @@ const NoteEditPage = () => {
 
         setNoteTitle(noteObjectData.title || "");
         setNoteContent(noteObjectData.content || "");
-        setNoteFolder(noteObjectData.folder || "");
+        setNoteFolder(noteObjectData.folderID || "");
         setNoteLabel(noteObjectData.label || "");
         setNote(noteObjectData as NoteData);
       } finally {
@@ -89,8 +89,6 @@ const NoteEditPage = () => {
 
   const updateNoteInFirebase = useCallback(
     async (newTitle: string, newContent: string) => {
-      console.log("Updating note in Firebase...");
-
       try {
         if (!id || !user) return;
 
@@ -118,8 +116,8 @@ const NoteEditPage = () => {
         throw new Error("User is not authenticated or note ID is missing");
       }
 
-      if (note?.folder) {
-        removeNoteFromFolder(note.folder, id);
+      if (note?.folderID) {
+        removeNoteFromFolder(note.folderID, id);
       }
 
       await setDoc(
@@ -135,7 +133,7 @@ const NoteEditPage = () => {
 
       setNote((prev) => (prev ? { ...prev, folder: newFolderID } : prev));
     } catch (error) {
-      setNoteFolder(note?.folder || "");
+      setNoteFolder(note?.folderID || "");
       alert("Failed to update folder assignment");
       throw error;
     }
@@ -145,7 +143,7 @@ const NoteEditPage = () => {
     const hasChanged =
       (noteContent.trim() !== "" && noteContent !== note?.content) ||
       (noteTitle.trim() !== "" && noteTitle !== note?.title) ||
-      noteFolder !== note?.folder;
+      noteFolder !== note?.folderID;
 
     if (!hasChanged) return;
 
@@ -159,7 +157,7 @@ const NoteEditPage = () => {
   }, [note, noteTitle, noteContent, noteFolder, updateNoteInFirebase]);
 
   useEffect(() => {
-    if (noteFolder === note?.folder) return;
+    if (noteFolder === note?.folderID) return;
 
     const getNoteFolder = setTimeout(() => {
       handleFolderChange(noteFolder);
@@ -167,7 +165,7 @@ const NoteEditPage = () => {
 
     return () => clearTimeout(getNoteFolder);
     // eslint-disable-next-line
-  }, [note?.folder, noteFolder]);
+  }, [note?.folderID, noteFolder]);
 
   return (
     <div className="page-wrapper">

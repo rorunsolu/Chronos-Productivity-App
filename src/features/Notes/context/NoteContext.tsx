@@ -8,13 +8,15 @@ import {
   getDocs,
   Timestamp,
   query,
+  updateDoc,
   where,
+  arrayUnion,
 } from "firebase/firestore";
 
 export interface NoteData {
   id: string;
   content: string;
-  folder?: string | null;
+  folderID?: string | null;
   label?: string | null;
   createdAt: Timestamp;
   title: string;
@@ -29,7 +31,7 @@ interface NotesContextType {
   createNote: (
     title: string,
     content: string,
-    folder?: string,
+    folderID?: string,
     label?: string
   ) => Promise<string>;
 }
@@ -58,7 +60,7 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
     const noteList = noteSnapshot.docs.map((doc) => ({
       id: doc.id,
       content: doc.data().content,
-      folder: doc.data().folder,
+      folderID: doc.data().folderID,
       label: doc.data().label,
       createdAt: doc.data().createdAt,
       title: doc.data().title,
@@ -74,7 +76,7 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const createNote = async (
     title: string,
     content: string,
-    folder?: string,
+    folderID?: string,
     label?: string
   ): Promise<string> => {
     const newDate = Timestamp.fromDate(new Date());
@@ -89,7 +91,7 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
       const noteData = {
         title,
         content,
-        folder: folder || "",
+        folderID: folderID || "",
         label: label || "",
         userId: user.uid,
         createdAt: newDate,
@@ -98,7 +100,13 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
 
       const docRef = await addDoc(collection(db, "notes"), noteData);
 
+      if (folderID) {
+        const folderRef = doc(db, "folders", folderID);
+        await updateDoc(folderRef, { notes: arrayUnion(docRef.id) });
+      }
+
       setNotes([{ id: docRef.id, ...noteData }, ...notes]);
+
       return docRef.id;
     } catch (error) {
       throw new Error(`Error creating note: ${error}`);

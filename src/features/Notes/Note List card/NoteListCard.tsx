@@ -26,7 +26,9 @@ const NoteListCard: React.FC<NoteListCard> = ({ note, deleteNote }) => {
 
   const plainContent = htmlToPlainText(note.content);
   const plainTitle = htmlToPlainText(note.title);
-  const folderName = folders.find((folder) => folder.id === note.folder)?.name;
+  const folderName = folders.find(
+    (folder) => folder.id === note.folderID
+  )?.name;
 
   return (
     <li

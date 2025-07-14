@@ -19,7 +19,7 @@ const FolderEditPage = () => {
 
   const labelOptions = ["Personal", "Work", "School"];
 
-  const { folders, fetchFolders, addNoteToFolder } = UseFolders();
+  const { folders, fetchFolders } = UseFolders();
   const { notes, fetchNotes, createNote, deleteNote } = UseNotes();
 
   const [folderName, setFolderName] = useState("");
@@ -33,24 +33,23 @@ const FolderEditPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isNewestFirst, setIsNewestFirst] = useState(true);
 
+  const [noteFolderID, setNoteFolderID] = useState<string>(folderName);
+
   const currentFolder = folders.find((folder) => folder.id === id);
 
-  const handleNoteCreation = async () => {
-    if (!currentFolder) return;
+  const handleNoteCreation = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     if (!user) {
       throw new Error("User is not authenticated");
     }
 
     try {
-      const newNoteID = await createNote(
-        noteContent ?? "",
-        currentFolder.id,
-        noteLabel,
-        user.uid
-      );
-      addNoteToFolder(currentFolder.id, newNoteID);
-      setNoteContent("");
+      await createNote(noteTitle, noteContent, noteFolderID, noteLabel);
+
+      fetchNotes();
+      fetchFolders();
+
       setIsModalOpen(false);
     } catch (error) {
       throw new Error(`Error creating note: ${error}`);
@@ -87,6 +86,7 @@ const FolderEditPage = () => {
   useEffect(() => {
     if (currentFolder) {
       setFolderName(currentFolder.name || "");
+      setNoteFolderID(currentFolder.id || "");
     }
   }, [currentFolder]);
 
