@@ -2,25 +2,26 @@ import { UserAuth } from "@/contexts/authContext/AuthContext";
 import { UseProjects } from "@/features/Projects/context/ProjectContext";
 import { TaskData, TaskStatus } from "@/features/Tasks/context/TaskContext";
 import { db } from "@/firebase/firebase";
-import { Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Calendar, Layers, NotepadText, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import {
+  Notification,
+  Select,
+  Stack,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import "@/pages/Task Edit Page/TaskEditPage.scss";
 import InputHeader from "@/components/Input Header/InputHeader";
 
 const TaskEditPage = () => {
   const { user } = UserAuth();
   const { id } = useParams<{ id: string }>();
-  const {
-    projects,
-    fetchProjects,
-    addTaskToProject,
-    removeTaskFromProject,
-    updateProject,
-  } = UseProjects();
+  const { projects, fetchProjects, addTaskToProject, removeTaskFromProject } =
+    UseProjects();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -46,39 +47,37 @@ const TaskEditPage = () => {
     }
 
     const fetchTask = async () => {
-      if (!id || !user) {
+      try {
+        if (!id || !user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const taskRef = doc(db, "tasks", id);
+        const taskSnapshot = await getDoc(taskRef);
+
+        if (!taskSnapshot.exists()) {
+          setIsLoading(false);
+          throw new Error("Task does not exist");
+        }
+
+        const taskdata = taskSnapshot.data();
+        if (taskdata.userId !== user.uid) {
+          setIsLoading(false);
+          throw new Error("Unauthorized access attempt");
+        }
+
+        const taskObjectdata = taskSnapshot.data();
+        setTaskTitle(taskObjectdata.title);
+        setTaskContent(taskObjectdata.content);
+        setTaskProjectAssignment(taskObjectdata.projectId);
+        setTaskStatus(taskObjectdata.status);
+        setTaskDueDate(taskObjectdata.dueDate || null);
+        setTaskLabel(taskObjectdata.label);
+        setTask(taskObjectdata as TaskData);
+      } finally {
         setIsLoading(false);
-        return;
       }
-
-      const taskRef = doc(db, "tasks", id);
-      const taskSnapshot = await getDoc(taskRef);
-
-      if (!taskSnapshot.exists()) {
-        console.log("Task does not exist");
-        alert("This task could not be found");
-        setIsLoading(false);
-        return;
-      }
-
-      const taskdata = taskSnapshot.data();
-      if (taskdata.userId !== user.uid) {
-        console.log("Unauthorized access attempt");
-        alert("You don't have permission to access this task");
-        setIsLoading(false);
-        return;
-      }
-
-      const taskObjectdata = taskSnapshot.data();
-      setTaskTitle(taskObjectdata.title);
-      setTaskContent(taskObjectdata.content);
-      setTaskProjectAssignment(taskObjectdata.projectId);
-      setTaskStatus(taskObjectdata.status);
-      setTaskDueDate(taskObjectdata.dueDate || null);
-      setTaskLabel(taskObjectdata.label);
-      setTask(taskObjectdata as TaskData);
-
-      setIsLoading(false);
     };
 
     fetchTask();
@@ -102,77 +101,57 @@ const TaskEditPage = () => {
     ) => {
       if (!id || !user) return;
 
-      await setDoc(
-        doc(db, "tasks", id),
-        {
-          title: newTitle,
-          content: newContent || "",
-          label: newLabel || "",
-          dueDate: newDueDate || "",
-          status: newStatus || "pending",
-          userId: user.uid,
-        },
-        { merge: true }
-      );
+      try {
+        await setDoc(
+          doc(db, "tasks", id),
+          {
+            title: newTitle,
+            content: newContent || "",
+            label: newLabel || "",
+            dueDate: newDueDate || "",
+            status: newStatus || "pending",
+          },
+          { merge: true }
+        );
+      } finally {
+        setIsLoading(false);
+      }
     },
     [id, user]
   );
 
   const handleProjectChange = useCallback(
     async (newProjectId: string) => {
-      if (!id || !user) return;
-
-      const oldProjectID = task?.projectId;
-      if (oldProjectID === newProjectId) return;
-
-      const oldProject = projects.find(
-        (project) => project.id === task?.projectId
-      );
-      const newProject = projects.find(
-        (project) => project.id === newProjectId
-      );
-
-      if (oldProject && oldProject.userId !== user.uid) {
-        alert("You don't own the current project");
-        return;
-      }
-
-      if (newProject && newProject.userId !== user.uid) {
-        alert("You don't own the selected project");
-        return;
-      }
-
-      if (oldProjectID) {
-        removeTaskFromProject(oldProjectID, id);
-        setTask((prev) => (prev ? { ...prev, projectId: "" } : prev));
-      }
-
-      if (newProjectId) {
-        addTaskToProject(newProjectId, id);
-        setTask((prev) => (prev ? { ...prev, projectId: newProjectId } : prev));
-
-        const project = projects.find((project) => project.id === newProjectId);
-        if (project) {
-          updateProject(newProjectId, {
-            updatedAt: Timestamp.fromDate(new Date()),
-          });
+      try {
+        if (!id || !user) {
+          throw new Error("User is not authenticated or task ID is missing");
         }
+
+        if (task?.projectId) {
+          removeTaskFromProject(task.projectId, id);
+        }
+
+        await setDoc(
+          doc(db, "tasks", id),
+          {
+            projectId: newProjectId || null,
+            userId: user.uid,
+          },
+          { merge: true }
+        );
+
+        addTaskToProject(newProjectId || "", id);
+
+        setTask((prev) => (prev ? { ...prev, projectId: newProjectId } : prev));
+      } catch (error) {
+        setTaskProjectAssignment(task?.projectId || "");
+        throw new Error(`Error changing project: ${error}`);
       }
     },
-    [
-      id,
-      user,
-      projects,
-      task?.projectId,
-      addTaskToProject,
-      removeTaskFromProject,
-      updateProject,
-    ]
+    [id, user, task, removeTaskFromProject, addTaskToProject]
   );
 
   useEffect(() => {
-    console.log("checking for changes");
-
     const hasFieldChanged =
       taskTitle !== task?.title ||
       taskContent !== task?.content ||
@@ -182,8 +161,9 @@ const TaskEditPage = () => {
 
     if (!hasFieldChanged) return;
 
+    setIsLoading(true);
+
     const timeout = setTimeout(() => {
-      console.log("updating task in firebase");
       updateTaskFields(
         taskTitle,
         taskContent,
@@ -209,7 +189,6 @@ const TaskEditPage = () => {
 
     const timeout = setTimeout(() => {
       handleProjectChange(taskProjectAssignment);
-      console.log("updating task's project in FB");
     }, 1000);
 
     return () => clearTimeout(timeout);
@@ -219,8 +198,6 @@ const TaskEditPage = () => {
   return (
     <div className="page-wrapper">
       <div className="task-edit-page">
-        {isLoading && <p>Saving...</p>}
-
         <header className="task-edit-page__header">
           <TextInput
             placeholder="Title"
@@ -285,6 +262,19 @@ const TaskEditPage = () => {
               clearable
             />
           </Stack>
+
+          <div className="h-5">
+            {isLoading && (
+              <Notification
+                loading
+                withBorder
+                color="teal"
+                radius="8"
+                title="Saving..."
+                closeButtonProps={{ "aria-label": "Hide notification" }}
+              ></Notification>
+            )}
+          </div>
         </Stack>
       </div>
     </div>

@@ -12,8 +12,6 @@ import "@/pages/Note Edit Page/NoteEditPage.scss";
 import { RichTextEditor } from "@/components/Rich Text Editor/RichTextEditor";
 import InputHeader from "@/components/Input Header/InputHeader";
 
-// Todo: Need to add a removal options for the dropdowns
-
 const NoteEditPage = () => {
   const { user } = UserAuth();
 
@@ -23,8 +21,8 @@ const NoteEditPage = () => {
 
   const [note, setNote] = useState<NoteData>();
   const [noteContent, setNoteContent] = useState("");
-  const [noteFolder, setNoteFolder] = useState<string | null>("");
-  const [noteLabel, setNoteLabel] = useState<string | null>("");
+  const [noteFolder, setNoteFolder] = useState<string>("");
+  const [noteLabel, setNoteLabel] = useState<string>("");
   const [noteTitle, setNoteTitle] = useState("");
 
   const { folders, fetchFolders, addNoteToFolder, removeNoteFromFolder } =
@@ -52,25 +50,22 @@ const NoteEditPage = () => {
     const fetchNote = async () => {
       try {
         if (!id || !user) {
-          console.log("Missing note ID or user authentication");
           setIsLoading(false);
-          return;
+          throw new Error("Note ID or user is not defined");
         }
 
         const noteRef = doc(db, "notes", id);
         const noteSnapshot = await getDoc(noteRef);
 
         if (!noteSnapshot.exists()) {
-          alert("This note could not be found");
           setIsLoading(false);
-          return;
+          throw new Error("Note does not exist");
         }
 
         const noteData = noteSnapshot.data();
         if (noteData.userId !== user.uid) {
-          alert("You don't have permission to access this note");
           setIsLoading(false);
-          return;
+          throw new Error("Unauthorized access attempt");
         }
 
         const noteObjectData = noteSnapshot.data();
@@ -88,7 +83,7 @@ const NoteEditPage = () => {
   }, [id, user, isInitialLoad]);
 
   const updateNoteInFirebase = useCallback(
-    async (newTitle: string, newContent: string) => {
+    async (newTitle: string, newContent: string, newLabel?: string) => {
       try {
         if (!id || !user) return;
 
@@ -97,7 +92,7 @@ const NoteEditPage = () => {
           {
             title: newTitle,
             content: newContent,
-            userId: user.uid,
+            label: newLabel,
           },
           { merge: true }
         );
@@ -134,8 +129,7 @@ const NoteEditPage = () => {
       setNote((prev) => (prev ? { ...prev, folder: newFolderID } : prev));
     } catch (error) {
       setNoteFolder(note?.folderID || "");
-      alert("Failed to update folder assignment");
-      throw error;
+      throw new Error(`Error changing folder: ${error}`);
     }
   };
 
@@ -143,18 +137,26 @@ const NoteEditPage = () => {
     const hasChanged =
       (noteContent.trim() !== "" && noteContent !== note?.content) ||
       (noteTitle.trim() !== "" && noteTitle !== note?.title) ||
-      noteFolder !== note?.folderID;
+      noteFolder !== note?.folderID ||
+      noteLabel !== note?.label;
 
     if (!hasChanged) return;
 
     setIsLoading(true);
 
     const getNoteData = setTimeout(() => {
-      updateNoteInFirebase(noteTitle, noteContent);
+      updateNoteInFirebase(noteTitle, noteContent, noteLabel);
     }, 1000);
 
     return () => clearTimeout(getNoteData);
-  }, [note, noteTitle, noteContent, noteFolder, updateNoteInFirebase]);
+  }, [
+    note,
+    noteTitle,
+    noteContent,
+    noteFolder,
+    noteLabel,
+    updateNoteInFirebase,
+  ]);
 
   useEffect(() => {
     if (noteFolder === note?.folderID) return;
@@ -210,7 +212,7 @@ const NoteEditPage = () => {
               value={noteLabel}
               clearable
               onChange={(value) => {
-                setNoteLabel(value || null);
+                setNoteLabel(value || "");
               }}
             />
           </Stack>

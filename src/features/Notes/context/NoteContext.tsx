@@ -16,8 +16,8 @@ import {
 export interface NoteData {
   id: string;
   content: string;
-  folderID?: string | null;
-  label?: string | null;
+  folderID?: string;
+  label?: string;
   createdAt: Timestamp;
   title: string;
   userId?: string;
