@@ -33,7 +33,6 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-modal": "^3.16.3",
-    "react-quill": "^2.0.0",
     "react-router-dom": "^7.1.5",
     "react-sizeme": "^3.0.2",
     "react-textarea-autosize": "^8.5.8",

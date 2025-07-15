@@ -6,7 +6,6 @@ import { Notification, Select, Stack, TextInput } from "@mantine/core";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { FolderOpen, Tag } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import "react-quill/dist/quill.snow.css";
 import { useParams } from "react-router-dom";
 import "@/pages/Note Edit Page/NoteEditPage.scss";
 import { RichTextEditor } from "@/components/Rich Text Editor/RichTextEditor";
